@@ -1,0 +1,26 @@
+﻿<Window x:Class="MOPS_2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MOPS_2"
+        mc:Ignorable="d"
+        Title="MOPS-2" Height="600" Width="800" Background="Aqua" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" SizeChanged="Window_SizeChanged" StateChanged="Window_StateChanged" LocationChanged="Window_LocationChanged" MinWidth="400" MinHeight="300" KeyDown="Window_KeyDown">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.Background>
+            <ImageBrush ImageSource="WHITE.png" Opacity="0.3"/>
+        </Grid.Background>
+        <Label x:Name="TempLabel" Content="Label" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="24" Width="572"/>
+        <UniformGrid>
+            <Image x:Name="image" Source="Kyubey.png" RenderTransformOrigin="0.551,0.498" Opacity="0.7" Stretch="UniformToFill" HorizontalAlignment="Center"/>
+        </UniformGrid>
+        <Label x:Name="timeline_label" Content="timeline_label" Margin="0,0,0,5" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="Consolas"/>
+        <Label x:Name="song_label" Content="song_label" Margin="0,0,0,31" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="Consolas" HorizontalAlignment="Left" Width="200"/>
+        <Label x:Name="color_label" Content="color_label" Margin="0,0,0,83" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="Consolas" HorizontalAlignment="Left" Width="200"/>
+        <Label x:Name="character_label" Content="character_label" Margin="0,0,0,109" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="Consolas" HorizontalAlignment="Left" Width="200"/>
+        <Label x:Name="volume_label" Content="50" Margin="0,0,0,57" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="Consolas" HorizontalAlignment="Left" Width="200"/>
+    </Grid>
+</Window>
