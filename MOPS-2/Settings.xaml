@@ -5,25 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MOPS_2"
         mc:Ignorable="d"
-        Title="Settings" Height="300" Width="400" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" MouseDown="SettingsWindow_MouseDown" AllowsTransparency="True" WindowStyle="None" Opacity="0.8">
+        Title="Settings" Height="400" Width="600" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" MouseDown="SettingsWindow_MouseDown" AllowsTransparency="True" WindowStyle="None" Opacity="0.8" Loaded="SettingsWindow_Loaded">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="285" VerticalAlignment="Top" Width="400" Margin="0,15,0,0">
-            <TabItem Header="RESOURCES" Margin="0,0,-22,-3" Cursor="Hand">
-                <Grid Background="#FFE5E5E5" Cursor="Arrow">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="43*"/>
-                        <ColumnDefinition Width="347*"/>
-                    </Grid.ColumnDefinitions>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="385" VerticalAlignment="Top" Width="600" Margin="0,15,0,0" SelectionChanged="tabControl_SelectionChanged">
+            <TabItem Header="RESOURCES" Cursor="Hand" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" FontSize="10" Width="150" Height="25">
+                <Grid Background="#FFE5E5E5" Cursor="Arrow" HorizontalAlignment="Right" Width="590">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="19*"/>
-                        <RowDefinition Height="234*"/>
+                        <RowDefinition Height="65*"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="197" VerticalAlignment="Top" Width="197" Grid.RowSpan="2" Grid.ColumnSpan="2"/>
-                    <ProgressBar HorizontalAlignment="Left" Height="10" Margin="0,214,0,0" VerticalAlignment="Top" Width="187" Grid.Row="1" Grid.ColumnSpan="2"/>
-                    <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="0,183,0,0" VerticalAlignment="Top" Width="75" FontWeight="Bold" Grid.Row="1" Grid.ColumnSpan="2">
+                    <ListBox x:Name="respack_listbox" HorizontalAlignment="Left" Height="277" VerticalAlignment="Top" Width="237" Margin="0,23,0,0" FontSize="8" SelectionChanged="respack_listbox_SelectionChanged" Grid.RowSpan="2"/>
+                    <ProgressBar HorizontalAlignment="Left" Height="10" Margin="0,0,0,13" VerticalAlignment="Bottom" Width="187" Grid.Row="1"/>
+                    <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="0,0,0,29" Width="85" FontWeight="Bold" Grid.Row="1" Height="14" VerticalAlignment="Bottom">
                         <Button.Background>
                             <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
                                 <GradientStop Color="#FFF3F3F3" Offset="0"/>
@@ -33,20 +26,36 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <Label x:Name="rp_name_label" Content="Respack name here" HorizontalAlignment="Left" Margin="159,0,0,0" VerticalAlignment="Top" Width="188" Grid.RowSpan="2" Grid.Column="1"/>
+                    <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" Margin="0,0,160,0" VerticalAlignment="Top" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" MaxWidth="246" HorizontalAlignment="Right" Width="188" Height="23"/>
+                    <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="237" Height="23"/>
+                    <TextBox x:Name="rp_description_textbox" Margin="242,39,10,5" TextWrapping="Wrap" Text="&lt;no description&gt;"/>
+                    <TabControl x:Name="tabControl1" HorizontalAlignment="Left" Margin="242,0,0,48" Width="348" Grid.Row="1">
+                        <TabItem Header="Songs: &lt;&gt;" Width="169">
+                            <Grid Background="#FFE5E5E5">
+                                <ListBox x:Name="songs_listbox" HorizontalAlignment="Left" Height="209" VerticalAlignment="Top" Width="338"/>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="Images: &lt;&gt;" Margin="-2,-2,-75,-1">
+                            <Grid Background="#FFE5E5E5">
+                                <ListBox x:Name="images_listbox" HorizontalAlignment="Left" Height="211" VerticalAlignment="Top" Width="338"/>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                    <Label x:Name="rp_author_label" Content="&lt;no author&gt;" HorizontalAlignment="Left" Margin="242,23,0,0" VerticalAlignment="Top" FontSize="6" Height="16" Width="76"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="EDITOR" Margin="22,0,-68,-3" Cursor="Hand">
+            <TabItem Header="EDITOR" Cursor="Hand" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" FontSize="10" Width="150" Height="25">
                 <Grid Background="#FFE5E5E5" Cursor="Arrow"/>
             </TabItem>
-            <TabItem Header="OPTIONS" Margin="68,0,-104,-3" Cursor="Hand">
-                <Grid Background="#FFE5E5E5" Cursor="Arrow"/>
+            <TabItem Header="OPTIONS" Cursor="Hand" FontSize="10" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" Width="150" Height="25">
+                <Grid Background="#FFE5E5E5" Cursor="Arrow" Height="248" VerticalAlignment="Bottom">
+                </Grid>
             </TabItem>
-            <TabItem Header="INFO" Margin="104,0,-154,-3" Cursor="Hand">
+            <TabItem Header="INFO" Cursor="Hand" FontSize="10" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" IsSelected="True" RenderTransformOrigin="0.5,0.5" Margin="-2,-2,-73,-1" Height="25">
                 <Grid Background="#FFE5E5E5" Cursor="Arrow"/>
             </TabItem>
         </TabControl>
-        <Button x:Name="hide_button" Content="X" HorizontalAlignment="Left" Margin="385,0,0,0" VerticalAlignment="Top" Width="15" Height="15" FontWeight="Bold" FontSize="6" FontFamily="SimHei" Foreground="White" Background="Black" BorderBrush="Black" Click="hide_button_Click" Cursor="Hand"/>
+        <Button x:Name="hide_button" Content="X" HorizontalAlignment="Left" Margin="585,0,0,0" VerticalAlignment="Top" Width="15" Height="15" FontWeight="Bold" FontSize="6" FontFamily="SimHei" Foreground="White" Background="Black" BorderBrush="Black" Click="hide_button_Click" Cursor="Hand"/>
 
     </Grid>
 </Window>

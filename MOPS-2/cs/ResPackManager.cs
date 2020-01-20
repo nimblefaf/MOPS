@@ -19,8 +19,8 @@ namespace MOPS_2
         public string author;
         public string description;
         public string link;
-        public string pics_range;
-        public string songs_range;
+        public int pics_range;
+        public int songs_range;
     }
 
     public struct Pics
@@ -132,9 +132,8 @@ namespace MOPS_2
 
                     if (songs_xml.HasChildNodes)
                     {
-                        resPacks[resPacks.Length - 1].songs_range = (allSongs.Length - 1).ToString();
                         XmlElement xRoot = songs_xml.DocumentElement;
-                        foreach(XmlNode node in xRoot)
+                        foreach (XmlNode node in xRoot)
                         {
                             if (node.NodeType == XmlNodeType.Comment) continue;
                             Array.Resize(ref allSongs, allSongs.Length + 1);
@@ -165,11 +164,12 @@ namespace MOPS_2
                                 }
                             }
                         }
-                        resPacks[resPacks.Length - 1].songs_range += "/" + (allSongs.Length - 1).ToString();
+                        resPacks[resPacks.Length - 1].songs_range = allSongs.Length - 1;
                     }
+                    else resPacks[resPacks.Length - 1].songs_range = resPacks[resPacks.Length - 2].songs_range;
+
                     if (images_xml.HasChildNodes)
                     {
-                        resPacks[resPacks.Length - 1].pics_range = (allPics.Length - 1).ToString();
                         XmlElement xRoot = images_xml.DocumentElement;
                         foreach (XmlNode node in xRoot)
                         {
@@ -209,11 +209,14 @@ namespace MOPS_2
                                 }
                             }
                         }
-                        resPacks[resPacks.Length - 1].pics_range += "/" + allPics.Length.ToString();
+                        resPacks[resPacks.Length - 1].pics_range = allPics.Length - 1;
                     }
+                    else resPacks[resPacks.Length - 1].pics_range = resPacks[resPacks.Length - 2].pics_range;
                 }
+
             }
 
+            
         }
 
 

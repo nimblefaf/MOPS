@@ -33,5 +33,28 @@ namespace MOPS_2
         {
             Hide();
         }
+
+        public void rp_display()
+        {
+            respack_listbox.Items.Add(ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name);
+        }
+
+        private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            respack_listbox.ItemsSource = ResPackManager.resPacks;
+        }
+
+        private void respack_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int ind = respack_listbox.SelectedIndex;
+            rp_name_label.Content = ResPackManager.resPacks[ind].name;
+            rp_author_label.Content = ResPackManager.resPacks[ind].author;
+            rp_description_textbox.Text = ResPackManager.resPacks[ind].description;
+        }
+
+        private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
