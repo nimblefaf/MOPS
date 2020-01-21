@@ -11,17 +11,28 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace MOPS_2
 {
+    public class rpsetnames
+    {
+        public string Name { get; set; }
+    }
+    
+    
     /// <summary>
     /// Логика взаимодействия для Window1.xaml
     /// </summary>
     public partial class Settings : Window
     {
+        public static List<rpsetnames> names = new List<rpsetnames>();
+
         public Settings()
         {
             InitializeComponent();
+            respack_listbox.ItemsSource = names;
+            stat_update();
         }
 
         private void SettingsWindow_MouseDown(object sender, MouseButtonEventArgs e)
@@ -34,14 +45,8 @@ namespace MOPS_2
             Hide();
         }
 
-        public void rp_display()
-        {
-            respack_listbox.Items.Add(ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name);
-        }
-
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            respack_listbox.ItemsSource = ResPackManager.resPacks;
         }
 
         private void respack_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -55,6 +60,26 @@ namespace MOPS_2
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void load_rp_button_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.DefaultExt = ".zip";
+            openFile.Filter = "Zip archive (.zip)|*.zip";
+            if (openFile.ShowDialog() == true)
+            {
+                ResPackManager.SupremeReader(openFile.FileName);
+                names.Add(new rpsetnames() { Name = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name });
+                respack_listbox.Items.Refresh();
+                stat_update();
+            }
+        }
+
+        private void stat_update()
+        {
+            ImagesNumber_label.Content = ResPackManager.allPics.Length;
+            SongNumber_label.Content = ResPackManager.allSongs.Length;
         }
     }
 }

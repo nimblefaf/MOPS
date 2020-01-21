@@ -23,6 +23,8 @@ namespace MOPS_2
         public int songs_range;
     }
 
+    
+
     public struct Pics
     {
         public string fullname;
@@ -52,9 +54,9 @@ namespace MOPS_2
         public static ResPack[] resPacks = new ResPack[0];
         public static Songs[] allSongs = new Songs[0];
         public static Pics[] allPics = new Pics[0];
+        public static string[] RP_Names = new string[0];
 
-
-        public static void SupremeReader(string path)
+        public static void SupremeReader(string target_path)
         {
             XDocument info_xml = new XDocument();
             XmlDocument songs_xml = new XmlDocument();
@@ -65,7 +67,7 @@ namespace MOPS_2
             Array.Resize(ref resPacks, resPacks.Length + 1);
 
 
-            using (FileStream zipToOpen = new FileStream("Defaults_v5.0.zip", FileMode.Open))
+            using (FileStream zipToOpen = new FileStream(target_path, FileMode.Open))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read))
                 {
@@ -216,7 +218,8 @@ namespace MOPS_2
 
             }
 
-            
+            Array.Resize(ref RP_Names, RP_Names.Length + 1);
+            RP_Names[RP_Names.Length - 1] = resPacks[resPacks.Length - 1].name;
         }
 
 

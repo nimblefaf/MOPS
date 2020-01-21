@@ -98,9 +98,12 @@ namespace MOPS_2
         public static Window set = new Settings();
 
         public bool muted = false;
-
         public int muted_volume;
-        
+
+        public int current_song = 0;
+        public int current_image = 0;
+
+
 
         public MainWindow()
         {
@@ -129,7 +132,6 @@ namespace MOPS_2
             FAFbass.Play("loop_Moan.mp3", FAFbass.Volume);
             
             Background = Brushes.Black;
-            TempLabel.Content = FAFbass.GetTimeOfStream(FAFbass.Stream);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -144,6 +146,8 @@ namespace MOPS_2
             FAFbass.PlayLoop(ResPackManager.allSongs[0].buffer, FAFbass.Volume);
             song_label.Content = ResPackManager.allSongs[0].title.ToUpper();
             timeline_label.Content = ResPackManager.allSongs[0].rhythm;
+
+            Settings.names.Add(new rpsetnames() { Name = ResPackManager.resPacks[0].name });
         }
 
 
@@ -169,8 +173,26 @@ namespace MOPS_2
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.M) toggle_mute();
+            if (e.Key == Key.Up) next_song();
+            if (e.Key == Key.Down) prev_song();
         }
-        public void toggle_mute()
+
+        private void next_song()
+        {
+            int i;
+            if (current_song == ResPackManager.allSongs.Length - 1) i = 0;
+            else i = current_song + 1;
+
+
+
+        }
+
+        private void prev_song()
+        {
+
+        }
+
+        private void toggle_mute()
         {
             if (!muted)
             {

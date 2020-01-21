@@ -13,7 +13,6 @@
         <Grid.Background>
             <ImageBrush ImageSource="WHITE.png" Opacity="0.3"/>
         </Grid.Background>
-        <Label x:Name="TempLabel" Content="Label" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="24" Width="572"/>
         <UniformGrid>
             <Image x:Name="image" Source="Kyubey.png" RenderTransformOrigin="0.551,0.498" Opacity="0.7" Stretch="UniformToFill" HorizontalAlignment="Center"/>
         </UniformGrid>
