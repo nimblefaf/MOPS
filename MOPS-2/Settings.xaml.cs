@@ -15,23 +15,27 @@ using Microsoft.Win32;
 
 namespace MOPS_2
 {
-    public class rpsetnames
+    public class setdata
     {
         public string Name { get; set; }
+        public bool State { get; set; }
     }
-    
-    
+
     /// <summary>
     /// Логика взаимодействия для Window1.xaml
     /// </summary>
     public partial class Settings : Window
     {
-        public static List<rpsetnames> names = new List<rpsetnames>();
+        public static List<setdata> rp_names = new List<setdata>();
+        public static List<setdata> song_names = new List<setdata>();
+        public static List<setdata> images_names = new List<setdata>();
 
         public Settings()
         {
             InitializeComponent();
-            respack_listbox.ItemsSource = names;
+            respack_listbox.ItemsSource = rp_names;
+            songs_listbox.ItemsSource = song_names;
+            images_listbox.ItemsSource = images_names;
             stat_update();
         }
 
@@ -55,6 +59,25 @@ namespace MOPS_2
             rp_name_label.Content = ResPackManager.resPacks[ind].name;
             rp_author_label.Content = ResPackManager.resPacks[ind].author;
             rp_description_textbox.Text = ResPackManager.resPacks[ind].description;
+
+            song_names.Clear();
+            int start;
+            if (ind == 0) start = 0;
+            else start = ResPackManager.resPacks[ind - 1].songs_range + 1;
+            for (int i = start; i <= ResPackManager.resPacks[ind].songs_range; i++)
+            {
+                song_names.Add(new setdata() { Name = ResPackManager.allSongs[i].title, State = ResPackManager.allSongs[i].enabled });
+            }
+            songs_listbox.Items.Refresh();
+
+            images_names.Clear();
+            if (ind == 0) start = 0;
+            else start = ResPackManager.resPacks[ind - 1].pics_range + 1;
+            for (int i = start; i <= ResPackManager.resPacks[ind].pics_range; i++)
+            {
+                images_names.Add(new setdata() { Name = ResPackManager.allPics[i].name, State = ResPackManager.allPics[i].enabled });
+            }
+            images_listbox.Items.Refresh();
         }
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -70,7 +93,7 @@ namespace MOPS_2
             if (openFile.ShowDialog() == true)
             {
                 ResPackManager.SupremeReader(openFile.FileName);
-                names.Add(new rpsetnames() { Name = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name });
+                rp_names.Add(new setdata() { Name = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name, State = true });
                 respack_listbox.Items.Refresh();
                 stat_update();
             }

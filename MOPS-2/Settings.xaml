@@ -15,16 +15,16 @@
                         <RowDefinition/>
                         <RowDefinition Height="53"/>
                     </Grid.RowDefinitions>
-                    <ListBox x:Name="respack_listbox" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Height="270" VerticalAlignment="Top" Width="237" Margin="0,23,0,0" FontSize="8" SelectionChanged="respack_listbox_SelectionChanged" Grid.RowSpan="2">
+                    <ListBox x:Name="respack_listbox" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Height="270" VerticalAlignment="Top" Width="190" Margin="0,23,0,0" FontSize="10" SelectionChanged="respack_listbox_SelectionChanged" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Margin="0,2">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" MaxWidth="200" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox></CheckBox>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    <CheckBox IsChecked="{Binding State}"></CheckBox>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" Width="175"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -40,22 +40,48 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" VerticalAlignment="Top" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" MaxWidth="246" HorizontalAlignment="Left" Width="343" Height="23" Margin="242,0,0,0" FontSize="10"/>
+                    <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" VerticalAlignment="Top" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="195,0,0,0" FontSize="10"/>
                     <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="237" Height="23"/>
-                    <TextBox x:Name="rp_description_textbox" Margin="242,39,0,7" Text="&lt;no description&gt;" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True"/>
-                    <TabControl x:Name="tabControl1" HorizontalAlignment="Left" Margin="242,1,0,2" Width="348" Grid.Row="1">
+                    <TextBox x:Name="rp_description_textbox" Margin="195,39,0,7" Text="&lt;no description&gt;" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True"/>
+                    <TabControl x:Name="tabControl1" HorizontalAlignment="Left" Margin="195,1,0,2" Width="395" Grid.Row="1">
                         <TabItem x:Name="Songs_tab" Header="Songs: &lt;&gt;" Width="169">
                             <Grid Background="#FFE5E5E5">
-                                <ListBox x:Name="songs_listbox" HorizontalAlignment="Left" Width="338"/>
+                                <ListBox x:Name="songs_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Height="Auto"  Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox IsChecked="{Binding State}"></CheckBox>
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="360" TextWrapping="Wrap"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                             </Grid>
                         </TabItem>
                         <TabItem x:Name="Images_tab" Header="Images: &lt;&gt;" Margin="-2,-2,-75,-1">
                             <Grid Background="#FFE5E5E5">
-                                <ListBox x:Name="images_listbox" HorizontalAlignment="Left" Height="205" VerticalAlignment="Top" Width="338"/>
+                                <ListBox x:Name="images_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" MaxWidth="300" />
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox IsChecked="{Binding State}"></CheckBox>
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="360" TextWrapping="Wrap"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                             </Grid>
                         </TabItem>
                     </TabControl>
-                    <Label x:Name="rp_author_label" Content="&lt;no author&gt;" HorizontalAlignment="Left" Margin="242,22,0,0" VerticalAlignment="Top" FontSize="8" Height="17" Width="243"/>
+                    <Label x:Name="rp_author_label" Content="&lt;no author&gt;" HorizontalAlignment="Left" Margin="195,22,0,0" VerticalAlignment="Top" FontSize="8" Height="17" Width="290"/>
                     <Label x:Name="label_ts" Content="Total Songs:" HorizontalAlignment="Left" Margin="242,15,0,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Width="130"/>
                     <Label x:Name="label" Content="Total Images:" HorizontalAlignment="Left" Margin="242,29,0,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Width="140"/>
                     <Button x:Name="enableAll_button" Content="ENABLE ALL" HorizontalAlignment="Left" Margin="242,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="140"/>

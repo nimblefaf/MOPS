@@ -147,7 +147,7 @@ namespace MOPS_2
             song_label.Content = ResPackManager.allSongs[0].title.ToUpper();
             timeline_label.Content = ResPackManager.allSongs[0].rhythm;
 
-            Settings.names.Add(new rpsetnames() { Name = ResPackManager.resPacks[0].name });
+            Settings.rp_names.Add(new setdata() { Name = ResPackManager.resPacks[0].name, State = true });
         }
 
 
@@ -270,7 +270,7 @@ namespace MOPS_2
             int index;
             while (true)
             {
-                index = rnd.Next(0, hues.Length - 1);
+                index = rnd.Next(0, ResPackManager.allPics.Length - 1);
                 if (image.Source != ResPackManager.allPics[index].png) break;
             }
             image.Source = ResPackManager.allPics[index].png;
