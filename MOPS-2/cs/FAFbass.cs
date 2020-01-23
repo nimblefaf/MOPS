@@ -28,6 +28,8 @@ namespace MOPS_2
         /// </summary>
         public static int Volume = 50;
 
+        public static int Channel;
+
         /// <summary>
         /// Ининциализация Bass.dll
         /// </summary>
@@ -65,7 +67,7 @@ namespace MOPS_2
         /// <summary>
         /// Воспроизвидение
         /// </summary>
-        /// <param name="filename"></param>
+        /// <param name="mem"></param>
         /// <param name="vol"></param>
         public static void PlayLoop(byte[] mem, int vol)
         {
@@ -74,7 +76,7 @@ namespace MOPS_2
             {
                 //Bass.BASS_SampleLoad();
                 Stream = Bass.BASS_SampleLoad(mem, 0, mem.Length, 1, BASSFlag.BASS_SAMPLE_LOOP);
-                int channel = Bass.BASS_SampleGetChannel(Stream, false);
+                Channel = Bass.BASS_SampleGetChannel(Stream, false);
 
 
 
@@ -82,7 +84,7 @@ namespace MOPS_2
                 {
                     Volume = vol;
                     Bass.BASS_ChannelSetAttribute(Stream, BASSAttribute.BASS_ATTRIB_VOL, Volume / 100f);
-                    Bass.BASS_ChannelPlay(channel, false);
+                    Bass.BASS_ChannelPlay(Channel, false);
                     err = Bass.BASS_ErrorGetCode().ToString();
                 }
             }
@@ -120,6 +122,7 @@ namespace MOPS_2
         {
             Bass.BASS_ChannelStop(Stream);
             Bass.BASS_StreamFree(Stream);
+            Bass.BASS_SampleFree(Stream);
         }
 
 
