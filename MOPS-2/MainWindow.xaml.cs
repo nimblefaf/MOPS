@@ -125,27 +125,27 @@ namespace MOPS_2
                 else set.Show();
             }
         }
-
         
-        public void start_loop()
+        public void play_current_song()
         {
-            FAFbass.Play("loop_Moan.mp3", FAFbass.Volume);
-            
-            Background = Brushes.Black;
+            FAFbass.PlayLoop(ResPackManager.allSongs[current_song].buffer, FAFbass.Volume);
+            song_label.Content = ResPackManager.allSongs[current_song].title.ToUpper();
+            timeline_label.Content = ResPackManager.allSongs[current_song].rhythm;
+        }
+        public void show_current_image()
+        {
+            image.Source = ResPackManager.allPics[current_image].png;
+            character_label.Content = ResPackManager.allPics[current_image].fullname.ToUpper();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             set.Owner = this;
             
-
             ResPackManager.SupremeReader("Defaults_v5.0.zip");
-            image.Source = ResPackManager.allPics[0].png;
-            character_label.Content = ResPackManager.allPics[0].fullname.ToUpper();
 
-            FAFbass.PlayLoop(ResPackManager.allSongs[0].buffer, FAFbass.Volume);
-            song_label.Content = ResPackManager.allSongs[0].title.ToUpper();
-            timeline_label.Content = ResPackManager.allSongs[0].rhythm;
+            show_current_image();
+            play_current_song();
 
             Settings.rp_names.Add(new setdata() { Name = ResPackManager.resPacks[0].name, State = true });
         }
@@ -172,24 +172,53 @@ namespace MOPS_2
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.M) toggle_mute();
-            if (e.Key == Key.Up) next_song();
-            if (e.Key == Key.Down) prev_song();
+            switch (e.Key)
+            {
+                case Key.M:
+                    toggle_mute();
+                    break;
+                case Key.Up:
+                    next_song();
+                    break;
+                case Key.Down:
+                    prev_song();
+                    break;
+                case Key.Right:
+                    next_image();
+                    break;
+                case Key.Left:
+                    prev_image();
+                    break;
+            }
         }
 
         private void next_song()
         {
-            int i;
-            if (current_song == ResPackManager.allSongs.Length - 1) i = 0;
-            else i = current_song + 1;
-
+            for (int i = current_song + 1; true; i++)
+            {
+                if (ResPackManager.allSongs[i % (ResPackManager.allSongs.Length - 1)].enabled)
+                {
+                    current_song = i % ResPackManager.allSongs.Length;
+                    play_current_song();
+                    break;
+                }
+                if (i == 100000) break; //Yeah, lame failsafe
+            }
 
 
         }
-
         private void prev_song()
         {
-
+            for (int i = current_song - 1; true; i--)
+            {
+                if (i == -1) i = ResPackManager.allSongs.Length - 1;
+                if (ResPackManager.allSongs[i].enabled)
+                {
+                    current_song = i;
+                    play_current_song();
+                    break;
+                }
+            }
         }
 
         private void toggle_mute()
@@ -208,6 +237,33 @@ namespace MOPS_2
                 volume_label.Content = FAFbass.Volume;
                 FAFbass.SetVolumeToStream(FAFbass.Stream, FAFbass.Volume);
                 muted = false;
+            }
+        }
+
+        private void next_image()
+        {
+            for (int i = current_image + 1; true; i++)
+            {
+                if (ResPackManager.allPics[i % (ResPackManager.allPics.Length - 1)].enabled)
+                {
+                    current_image = i % ResPackManager.allPics.Length;
+                    show_current_image();
+                    break;
+                }
+                if (i == 100000) break;
+            }
+        }
+        private void prev_image()
+        {
+            for (int i = current_image - 1; true; i--)
+            {
+                if (i == -1) i = ResPackManager.allPics.Length - 1;
+                if (ResPackManager.allPics[i].enabled)
+                {
+                    current_image = i;
+                    show_current_image();
+                    break;
+                }
             }
         }
 

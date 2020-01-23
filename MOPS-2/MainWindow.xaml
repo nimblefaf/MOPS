@@ -17,7 +17,7 @@
             <Image x:Name="image" Source="Kyubey.png" RenderTransformOrigin="0.551,0.498" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center"/>
         </UniformGrid>
         <Label x:Name="timeline_label" Content="timeline_label" Margin="0,0,0,5" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64"/>
-        <Label x:Name="song_label" Content="song_label" Margin="0,0,0,31" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="200"/>
+        <Label x:Name="song_label" Content="song_label" Margin="0,0,0,31" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="792"/>
         <Label x:Name="color_label" Content="color_label" Margin="0,0,0,83" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="200"/>
         <Label x:Name="character_label" Content="character_label" Margin="0,0,0,109" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="200"/>
         <Label x:Name="volume_label" Content="50" Margin="0,0,0,57" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="200"/>

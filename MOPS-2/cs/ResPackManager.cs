@@ -20,8 +20,8 @@ namespace MOPS_2
         public string author;
         public string description;
         public string link;
-        public int pics_range;
-        public int songs_range;
+        public int pics_start;
+        public int songs_start;
     }
 
     
@@ -152,6 +152,8 @@ namespace MOPS_2
             resPacks[resPacks.Length - 1].author = info_xml.XPathSelectElement("//info/author").Value;
             resPacks[resPacks.Length - 1].description = info_xml.XPathSelectElement("//info/description").Value;
             resPacks[resPacks.Length - 1].link = info_xml.XPathSelectElement("//info/link").Value;
+            resPacks[resPacks.Length - 1].songs_start = allSongs.Length;
+            resPacks[resPacks.Length - 1].pics_start = allPics.Length;
 
             if (songs_xml.HasChildNodes)
             {
@@ -187,9 +189,7 @@ namespace MOPS_2
                         }
                     }
                 }
-                resPacks[resPacks.Length - 1].songs_range = allSongs.Length - 1;
             }
-            else resPacks[resPacks.Length - 1].songs_range = resPacks[resPacks.Length - 2].songs_range;
 
             if (images_xml.HasChildNodes)
             {
@@ -237,9 +237,7 @@ namespace MOPS_2
                         }
                     }
                 }
-                resPacks[resPacks.Length - 1].pics_range = allPics.Length - 1;
             }
-            else resPacks[resPacks.Length - 1].pics_range = resPacks[resPacks.Length - 2].pics_range;
         }
     }
 }

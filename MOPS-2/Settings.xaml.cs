@@ -61,19 +61,20 @@ namespace MOPS_2
             rp_description_textbox.Text = ResPackManager.resPacks[ind].description;
 
             song_names.Clear();
-            int start;
-            if (ind == 0) start = 0;
-            else start = ResPackManager.resPacks[ind - 1].songs_range + 1;
-            for (int i = start; i <= ResPackManager.resPacks[ind].songs_range; i++)
+
+            int ceiling;
+            if (ind == ResPackManager.resPacks.Length - 1) ceiling = ResPackManager.allSongs.Length;
+            else ceiling = ResPackManager.resPacks[ind + 1].songs_start;
+            for (int i = ResPackManager.resPacks[ind].songs_start; i < ceiling; i++)
             {
                 song_names.Add(new setdata() { Name = ResPackManager.allSongs[i].title, State = ResPackManager.allSongs[i].enabled });
             }
             songs_listbox.Items.Refresh();
 
             images_names.Clear();
-            if (ind == 0) start = 0;
-            else start = ResPackManager.resPacks[ind - 1].pics_range + 1;
-            for (int i = start; i <= ResPackManager.resPacks[ind].pics_range; i++)
+            if (ind == ResPackManager.resPacks.Length - 1) ceiling = ResPackManager.allPics.Length;
+            else ceiling = ResPackManager.resPacks[ind + 1].pics_start;
+            for (int i = ResPackManager.resPacks[ind].pics_start; i < ceiling; i++)
             {
                 images_names.Add(new setdata() { Name = ResPackManager.allPics[i].name, State = ResPackManager.allPics[i].enabled });
             }
@@ -103,6 +104,11 @@ namespace MOPS_2
         {
             ImagesNumber_label.Content = ResPackManager.allPics.Length;
             SongNumber_label.Content = ResPackManager.allSongs.Length;
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
