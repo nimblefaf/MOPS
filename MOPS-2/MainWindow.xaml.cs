@@ -20,6 +20,12 @@ using System.Drawing;
 
 namespace MOPS_2
 {
+    public class rdata
+    {
+        public string name { get; set; }
+        public int ind { get; set; }
+    }
+    
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
@@ -103,7 +109,11 @@ namespace MOPS_2
         public int current_song = 0;
         public int current_image = 0;
 
+        public double beat_length = 0;
+        public double buildup_beat_len = 0;
 
+        public static List<rdata> enabled_songs = new List<rdata>();
+        public static List<rdata> enabled_images = new List<rdata>();
 
         public MainWindow()
         {
@@ -130,6 +140,7 @@ namespace MOPS_2
         {
             FAFbass.PlayLoop(ResPackManager.allSongs[current_song].buffer, FAFbass.Volume);
             song_label.Content = ResPackManager.allSongs[current_song].title.ToUpper();
+            beat_length = FAFbass.GetTimeOfStream(FAFbass.Stream) / ResPackManager.allSongs[current_song].rhythm.Length;
             timeline_label.Content = ResPackManager.allSongs[current_song].rhythm;
         }
         public void show_current_image()
@@ -196,7 +207,7 @@ namespace MOPS_2
         {
             for (int i = current_song + 1; true; i++)
             {
-                if (ResPackManager.allSongs[i % (ResPackManager.allSongs.Length - 1)].enabled)
+                if (ResPackManager.allSongs[i % (ResPackManager.allSongs.Length - 1)].enabled & ResPackManager.resPacks[ResPackManager.get_rp_of_song(i)].enabled)
                 {
                     current_song = i % ResPackManager.allSongs.Length;
                     play_current_song();
@@ -216,6 +227,11 @@ namespace MOPS_2
                 {
                     current_song = i;
                     play_current_song();
+                    break;
+                }
+                if (i == current_song) //looped a full circle with no songs enabled
+                {
+
                     break;
                 }
             }

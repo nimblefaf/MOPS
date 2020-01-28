@@ -93,10 +93,12 @@ namespace MOPS_2
             openFile.Filter = "Zip archive (.zip)|*.zip";
             if (openFile.ShowDialog() == true)
             {
-                ResPackManager.SupremeReader(openFile.FileName);
-                rp_names.Add(new setdata() { Name = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name, State = true });
-                respack_listbox.Items.Refresh();
-                stat_update();
+                if (ResPackManager.SupremeReader(openFile.FileName))
+                {
+                    rp_names.Add(new setdata() { Name = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name, State = true });
+                    respack_listbox.Items.Refresh();
+                    stat_update();
+                }
             }
         }
 
@@ -107,6 +109,16 @@ namespace MOPS_2
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }

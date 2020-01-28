@@ -30,7 +30,7 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <ProgressBar HorizontalAlignment="Left" Margin="0,0,0,10" Width="190" Grid.Row="2" Height="10" VerticalAlignment="Bottom"/>
-                    <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="0,0,0,34" Width="112" Grid.Row="2" Click="load_rp_button_Click" Height="19" VerticalAlignment="Bottom">
+                    <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="0,0,0,34" Width="100" Grid.Row="2" Click="load_rp_button_Click" Height="19" VerticalAlignment="Bottom">
                         <Button.Background>
                             <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
                                 <GradientStop Color="#FFF3F3F3" Offset="0"/>
@@ -46,7 +46,7 @@
                     <TabControl x:Name="tabControl1" HorizontalAlignment="Left" Margin="195,1,0,2" Width="395" Grid.Row="1">
                         <TabItem x:Name="Songs_tab" Header="Songs: &lt;&gt;" Width="200">
                             <Grid Background="#FFE5E5E5">
-                                <ListBox x:Name="songs_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox x:Name="songs_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid Height="Auto"  Margin="0,2">
@@ -64,7 +64,7 @@
                         </TabItem>
                         <TabItem x:Name="Images_tab" Header="Images: &lt;&gt;" Margin="-2,-2,-75,-1">
                             <Grid Background="#FFE5E5E5">
-                                <ListBox x:Name="images_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox x:Name="images_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="images_listbox_SelectionChanged">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid Margin="0,2">
