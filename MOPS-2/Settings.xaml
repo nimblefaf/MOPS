@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MOPS_2"
         mc:Ignorable="d"
-        Title="Settings" Height="400" Width="600" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" MouseDown="SettingsWindow_MouseDown" AllowsTransparency="True" WindowStyle="None" Opacity="0.8" Loaded="SettingsWindow_Loaded">
+        Title="Settings" Height="400" Width="600" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" MouseDown="SettingsWindow_MouseDown" AllowsTransparency="True" WindowStyle="None" Opacity="0.8" Loaded="SettingsWindow_Loaded" FontFamily="/MOPS-2;component/fonts/#Pet Me 128">
     <Grid>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="385" VerticalAlignment="Top" Width="600" Margin="0,15,0,0" SelectionChanged="tabControl_SelectionChanged">
-            <TabItem Header="RESOURCES" Cursor="Hand" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" FontSize="10" Width="150" Height="25">
+            <TabItem Header="RESOURCES" Cursor="Hand" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" FontSize="10" Width="150" Height="25">
                 <Grid Background="#FFE5E5E5" Cursor="Arrow" HorizontalAlignment="Right" Width="590">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" MinHeight="62"/>
@@ -40,7 +40,7 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" VerticalAlignment="Top" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="195,0,0,0" FontSize="10"/>
+                    <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" VerticalAlignment="Top" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="195,0,0,0" FontSize="10"/>
                     <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="237" Height="23"/>
                     <TextBox x:Name="rp_description_textbox" Margin="195,39,0,7" Text="&lt;no description&gt;" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True"/>
                     <TabControl x:Name="tabControl1" HorizontalAlignment="Left" Margin="195,1,0,2" Width="395" Grid.Row="1">
@@ -91,14 +91,14 @@
                     <Label x:Name="ImagesNumber_label" Content="Label" HorizontalAlignment="Left" Margin="520,29,0,0" Grid.Row="2" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="EDITOR" Cursor="Hand" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" FontSize="10" Width="150" Height="25">
+            <TabItem Header="EDITOR" Cursor="Hand" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" FontSize="10" Width="150" Height="25">
                 <Grid Background="#FFE5E5E5" Cursor="Arrow"/>
             </TabItem>
-            <TabItem Header="OPTIONS" Cursor="Hand" FontSize="10" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" Width="150" Height="25">
+            <TabItem Header="OPTIONS" Cursor="Hand" FontSize="10" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" Width="150" Height="25">
                 <Grid Background="#FFE5E5E5" Cursor="Arrow" Height="348" VerticalAlignment="Bottom">
                 </Grid>
             </TabItem>
-            <TabItem Header="INFO" Cursor="Hand" FontSize="10" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" IsSelected="True" RenderTransformOrigin="0.5,0.5" Margin="-2,-2,-73,-1" Height="25">
+            <TabItem Header="INFO" Cursor="Hand" FontSize="10" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" IsSelected="True" RenderTransformOrigin="0.5,0.5" Margin="-2,-2,-73,-1" Height="25">
                 <Grid Background="#FFE5E5E5" Cursor="Arrow"/>
             </TabItem>
         </TabControl>

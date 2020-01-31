@@ -22,8 +22,8 @@ namespace MOPS_2
 {
     public class rdata
     {
-        public string name { get; set; }
-        public int ind { get; set; }
+        public string Name { get; set; }
+        public int Ind { get; set; }
     }
     
     /// <summary>
@@ -118,11 +118,15 @@ namespace MOPS_2
         public MainWindow()
         {
             InitializeComponent();
+            ResPackManager.SupremeReader("Defaults_v5.0.zip");
+            for (int i = 0; i < ResPackManager.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = ResPackManager.allSongs[i].title, Ind = i });
+            songs_listbox.ItemsSource = enabled_songs;
+            songs_listbox.SelectedIndex = 0;
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ChangedButton == MouseButton.Left) timeline_noblur();
+            //if (e.ChangedButton == MouseButton.Left) timeline_noblur();
             if (e.ChangedButton == MouseButton.Right)
             {
                 
@@ -136,12 +140,22 @@ namespace MOPS_2
             }
         }
         
-        public void play_current_song()
+        public void play_current_song(int i)
         {
-            FAFbass.PlayLoop(ResPackManager.allSongs[current_song].buffer, FAFbass.Volume);
-            song_label.Content = ResPackManager.allSongs[current_song].title.ToUpper();
-            beat_length = FAFbass.GetTimeOfStream(FAFbass.Stream) / ResPackManager.allSongs[current_song].rhythm.Length;
-            timeline_label.Content = ResPackManager.allSongs[current_song].rhythm;
+            if (i != -1)
+            {
+                FAFbass.PlayLoop(ResPackManager.allSongs[i].buffer, FAFbass.Volume);
+                song_label.Content = ResPackManager.allSongs[i].title.ToUpper();
+                beat_length = FAFbass.GetTimeOfStream(FAFbass.Stream) / ResPackManager.allSongs[i].rhythm.Length;
+                timeline_label.Content = ">>" + ResPackManager.allSongs[i].rhythm;
+            }
+            else
+            {
+                FAFbass.Stop();
+                song_label.Content = "NONE";
+                beat_length = 0;
+                timeline_label.Content = ">>.";
+            }
         }
         public void show_current_image()
         {
@@ -152,11 +166,7 @@ namespace MOPS_2
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             set.Owner = this;
-            
-            ResPackManager.SupremeReader("Defaults_v5.0.zip");
-
             show_current_image();
-            play_current_song();
 
             Settings.rp_names.Add(new setdata() { Name = ResPackManager.resPacks[0].name, State = true });
         }
@@ -200,41 +210,21 @@ namespace MOPS_2
                 case Key.Left:
                     prev_image();
                     break;
+                case Key.Space:
+                    timeline_noblur();
+                    break;
             }
         }
 
         private void next_song()
         {
-            for (int i = current_song + 1; true; i++)
-            {
-                if (ResPackManager.allSongs[i % (ResPackManager.allSongs.Length - 1)].enabled & ResPackManager.resPacks[ResPackManager.get_rp_of_song(i)].enabled)
-                {
-                    current_song = i % ResPackManager.allSongs.Length;
-                    play_current_song();
-                    break;
-                }
-                if (i == 100000) break; //Yeah, lame failsafe
-            }
-
-
+            if (songs_listbox.SelectedIndex == enabled_songs.Count - 1) songs_listbox.SelectedIndex = 0;
+            else songs_listbox.SelectedIndex += 1;
         }
         private void prev_song()
         {
-            for (int i = current_song - 1; true; i--)
-            {
-                if (i == -1) i = ResPackManager.allSongs.Length - 1;
-                if (ResPackManager.allSongs[i].enabled)
-                {
-                    current_song = i;
-                    play_current_song();
-                    break;
-                }
-                if (i == current_song) //looped a full circle with no songs enabled
-                {
-
-                    break;
-                }
-            }
+            if (songs_listbox.SelectedIndex == 0) songs_listbox.SelectedIndex = enabled_songs.Count - 1;
+            else songs_listbox.SelectedIndex -= 1;
         }
 
         private void toggle_mute()
@@ -450,6 +440,8 @@ namespace MOPS_2
                 set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
                 set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
             }
+            if (Width / Height > 2) image.Stretch = Stretch.Uniform;
+            else image.Stretch = Stretch.UniformToFill;
         }
         private void Window_StateChanged(object sender, EventArgs e)
         {
@@ -473,7 +465,50 @@ namespace MOPS_2
             set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
         }
 
-        
+        private void next_song_be_MouseEnter(object sender, MouseEventArgs e)
+        {
+            next_song_be.Opacity = 1;
+        }
+        private void next_song_be_MouseLeave(object sender, MouseEventArgs e)
+        {
+            next_song_be.Opacity = 0.5;
+        }
+        private void next_song_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            next_song();
+        }
+
+        private void songs_be_MouseEnter(object sender, MouseEventArgs e)
+        {
+            songs_be.Opacity = 1;
+        }
+        private void songs_be_MouseLeave(object sender, MouseEventArgs e)
+        {
+            songs_be.Opacity = 0.5;
+        }
+        private void songs_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (songs_listbox.Visibility == Visibility.Hidden) songs_listbox.Visibility = Visibility.Visible;
+            else songs_listbox.Visibility = Visibility.Hidden;
+        }
+
+        private void prev_song_be_MouseEnter(object sender, MouseEventArgs e)
+        {
+            prev_song_be.Opacity = 1;
+        }
+        private void prev_song_be_MouseLeave(object sender, MouseEventArgs e)
+        {
+            prev_song_be.Opacity = 0.5;
+        }
+        private void prev_song_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            prev_song();
+        }
+
+        private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            play_current_song(enabled_songs[songs_listbox.SelectedIndex].Ind);
+        }
     }
 
     public struct Palette

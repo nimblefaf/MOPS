@@ -107,6 +107,8 @@
     </EmbeddedResource>
     <Resource Include="Packs\Defaults_v5.0.zip" />
     <Resource Include="fonts\PetMe64.ttf" />
+    <Resource Include="fonts\PetMe.ttf" />
+    <Resource Include="fonts\PetMe128.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

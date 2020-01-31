@@ -5,21 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MOPS_2"
         mc:Ignorable="d"
-        Title="MOPS-2" Height="600" Width="800" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" SizeChanged="Window_SizeChanged" StateChanged="Window_StateChanged" LocationChanged="Window_LocationChanged" MinWidth="400" MinHeight="300" KeyDown="Window_KeyDown" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" Background="Black">
+        Title="MOPS-2" Height="600" Width="800" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" SizeChanged="Window_SizeChanged" StateChanged="Window_StateChanged" LocationChanged="Window_LocationChanged" MinWidth="400" MinHeight="300" KeyDown="Window_KeyDown" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" Background="#7F000000">
+    
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
         <Grid.Background>
-            <ImageBrush ImageSource="WHITE.png" Opacity="0.3"/>
+            <ImageBrush ImageSource="WHITE.png" Opacity="0.2"/>
         </Grid.Background>
-        <UniformGrid>
-            <Image x:Name="image" Source="Kyubey.png" RenderTransformOrigin="0.551,0.498" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center"/>
-        </UniformGrid>
-        <Label x:Name="timeline_label" Content="timeline_label" Margin="0,0,0,5" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64"/>
-        <Label x:Name="song_label" Content="song_label" Margin="0,0,0,31" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="792"/>
-        <Label x:Name="color_label" Content="BLACK" Margin="0,0,0,83" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="200"/>
-        <Label x:Name="character_label" Content="character_label" Margin="0,0,0,109" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="200"/>
-        <Label x:Name="volume_label" Content="50" Margin="0,0,0,57" VerticalAlignment="Bottom" FontWeight="Bold" FontFamily="/MOPS-2;component/fonts/#Pet Me 64" HorizontalAlignment="Left" Width="200"/>
+        <Image x:Name="image" Source="Kyubey.png" RenderTransformOrigin="0.551,0.498" Opacity="1" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" Stretch="UniformToFill" UseLayoutRounding="True" OpacityMask="#BF000000"/>
+        <Label x:Name="timeline_label" Content="timeline_label" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" FontSize="9"/>
+        <Label x:Name="song_label" Content="song_label" Margin="0,0,0,13" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="792" FontSize="9"/>
+        <Label x:Name="color_label" Content="BLACK" Margin="0,0,0,39" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="200" FontSize="9"/>
+        <Label x:Name="character_label" Content="character_label" Margin="0,0,0,52" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="200" FontSize="9"/>
+        <Label x:Name="volume_label" Content="50" Margin="0,0,0,26" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="200" FontSize="9"/>
+        <TextBlock x:Name="songs_be" HorizontalAlignment="Right" Margin="0,0,40,33" TextWrapping="Wrap" Text="SONGS" VerticalAlignment="Bottom" Opacity="0.5" RenderTransformOrigin="0.325,0.542" MouseEnter="songs_be_MouseEnter" MouseLeave="songs_be_MouseLeave" MouseLeftButtonDown="songs_be_MouseLeftButtonDown"/>
+        <TextBlock x:Name="next_song_be" HorizontalAlignment="Right" Margin="0,0,10,24" TextWrapping="Wrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" MouseEnter="next_song_be_MouseEnter" MouseLeave="next_song_be_MouseLeave" Opacity="0.5" Height="31" Width="30" MouseLeftButtonDown="next_song_be_MouseLeftButtonDown"/>
+        <TextBlock x:Name="prev_song_be" HorizontalAlignment="Right" Margin="0,0,105,24" TextWrapping="Wrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" Opacity="0.5" RenderTransformOrigin="0.222,0.472" Width="32" Height="31" TextDecorations="{x:Null}" MouseEnter="prev_song_be_MouseEnter" MouseLeave="prev_song_be_MouseLeave" MouseLeftButtonDown="prev_song_be_MouseLeftButtonDown"/>
+        <ListBox x:Name="songs_listbox" HorizontalAlignment="Right" Margin="0,0,40,60" VerticalAlignment="Bottom" Width="500" Background="#4C000000" BorderBrush="#FF020202" Opacity="1" Visibility="Hidden" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="4,1,2,1" BorderBrush="Black" Margin="-3,0,0,0">
+                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap" Width="500" HorizontalAlignment="Left"/>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>
