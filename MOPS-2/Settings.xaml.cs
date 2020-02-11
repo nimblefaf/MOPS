@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.Collections.ObjectModel;
 
 namespace MOPS_2
 {
@@ -26,9 +27,9 @@ namespace MOPS_2
     /// </summary>
     public partial class Settings : Window
     {
-        public static List<setdata> rp_names = new List<setdata>();
-        public static List<setdata> song_names = new List<setdata>();
-        public static List<setdata> images_names = new List<setdata>();
+        public static ObservableCollection<setdata> rp_names = new ObservableCollection<setdata>();
+        public static ObservableCollection<setdata> song_names = new ObservableCollection<setdata>();
+        public static ObservableCollection<setdata> images_names = new ObservableCollection<setdata>();
 
         public Settings()
         {
@@ -36,7 +37,6 @@ namespace MOPS_2
             respack_listbox.ItemsSource = rp_names;
             songs_listbox.ItemsSource = song_names;
             images_listbox.ItemsSource = images_names;
-            stat_update();
         }
 
         private void SettingsWindow_MouseDown(object sender, MouseButtonEventArgs e)
@@ -46,7 +46,7 @@ namespace MOPS_2
 
         private void hide_button_Click(object sender, RoutedEventArgs e)
         {
-            Hide();
+            this.Hide();
         }
 
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
@@ -59,6 +59,7 @@ namespace MOPS_2
             rp_name_label.Content = ResPackManager.resPacks[ind].name;
             rp_author_label.Content = ResPackManager.resPacks[ind].author;
             rp_description_textbox.Text = ResPackManager.resPacks[ind].description;
+            //Songs_tab.Header = "Songs: " + ResPackManager.resPacks[ind].songs_start;
 
             song_names.Clear();
 
@@ -69,7 +70,6 @@ namespace MOPS_2
             {
                 song_names.Add(new setdata() { Name = ResPackManager.allSongs[i].title, State = ResPackManager.allSongs[i].enabled });
             }
-            songs_listbox.Items.Refresh();
 
             images_names.Clear();
             if (ind == ResPackManager.resPacks.Length - 1) ceiling = ResPackManager.allPics.Length;
@@ -78,7 +78,6 @@ namespace MOPS_2
             {
                 images_names.Add(new setdata() { Name = ResPackManager.allPics[i].name, State = ResPackManager.allPics[i].enabled });
             }
-            images_listbox.Items.Refresh();
         }
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -90,22 +89,29 @@ namespace MOPS_2
         {
             OpenFileDialog openFile = new OpenFileDialog();
             openFile.DefaultExt = ".zip";
-            openFile.Filter = "Zip archive (.zip)|*.zip";
+            openFile.Filter = "Zip Archive (.zip)|*.zip";
             if (openFile.ShowDialog() == true)
             {
                 if (ResPackManager.SupremeReader(openFile.FileName))
                 {
                     rp_names.Add(new setdata() { Name = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name, State = true });
-                    respack_listbox.Items.Refresh();
+
+                    if (ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].songs_count > 0)
+                        for (int i = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].songs_start; i < ResPackManager.allSongs.Length; i++)
+                            MainWindow.enabled_songs.Add(new rdata() { Name = ResPackManager.allSongs[i].title, Ind = i });
+                    if (ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].pics_count > 0)
+                        for (int i = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].pics_start; i < ResPackManager.allPics.Length; i++)
+                            MainWindow.enabled_images.Add(new rdata() { Name = ResPackManager.allPics[i].name, Ind = i });
+                       
                     stat_update();
                 }
             }
         }
 
-        private void stat_update()
+        public void stat_update()
         {
-            ImagesNumber_label.Content = ResPackManager.allPics.Length;
-            SongNumber_label.Content = ResPackManager.allSongs.Length;
+            ImagesNumber_label.Content = MainWindow.enabled_images.Count() + "/" + ResPackManager.allPics.Length;
+            SongNumber_label.Content = MainWindow.enabled_songs.Count().ToString() + "/" + ResPackManager.allSongs.Length.ToString();
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)

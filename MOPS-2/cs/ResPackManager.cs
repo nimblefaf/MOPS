@@ -21,7 +21,9 @@ namespace MOPS_2
         public string description;
         public string link;
         public int pics_start;
+        public int pics_count;
         public int songs_start;
+        public int songs_count;
         public bool enabled;
     }
 
@@ -54,7 +56,7 @@ namespace MOPS_2
 
     public class ResPackManager
     {
-        static string RemoveDiacritics(string text)
+        static string RemoveDiacritics(string text) //Because German names are suffering
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
@@ -88,6 +90,7 @@ namespace MOPS_2
             return -1;
         }
 
+        public static string status = "Loader Idle";
 
         public static ResPack[] resPacks = new ResPack[0];
         public static Songs[] allSongs = new Songs[0];
@@ -212,7 +215,9 @@ namespace MOPS_2
                             }
                         }
                     }
+                    resPacks[resPacks.Length - 1].songs_count = allSongs.Length - resPacks[resPacks.Length - 1].songs_start;
                 }
+                else resPacks[resPacks.Length - 1].songs_count = 0;
 
                 if (images_xml.HasChildNodes)
                 {
@@ -260,12 +265,18 @@ namespace MOPS_2
                             }
                         }
                     }
+                    resPacks[resPacks.Length - 1].pics_count = allPics.Length - resPacks[resPacks.Length - 1].pics_start;
                 }
+                else resPacks[resPacks.Length - 1].pics_count = 0;
+                PicsBuffer.Clear();
+                SongsBuffer.Clear();
                 return true;
             }
             else
             {
                 System.Windows.MessageBox.Show("Error: info.xml not found");
+                PicsBuffer.Clear();
+                SongsBuffer.Clear();
                 return false;
             }
         }
