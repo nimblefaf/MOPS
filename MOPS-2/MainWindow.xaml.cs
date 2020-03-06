@@ -35,6 +35,8 @@ namespace MOPS_2
     {        
         Random rnd = new Random();
 
+        FAFbass Player = new FAFbass();
+
         public static Palette[] hues =
         {
             new Palette("Black", (SolidColorBrush)new BrushConverter().ConvertFromString("#000000")),
@@ -153,18 +155,20 @@ namespace MOPS_2
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (muted) toggle_mute();
-            if(e.Delta < 0 & FAFbass.Volume != 0)
+            if (e.Delta < 0 & Player.Volume != 0)
             {
-                FAFbass.Volume -= 10;
-                volume_label.Content = FAFbass.Volume;
-                FAFbass.SetVolumeToStream(FAFbass.Stream, FAFbass.Volume);
+                Player.Volume -= 10;
+                volume_label.Content = Player.Volume;
+                Player.SetVolumeToStream(Player.Stream_L, Player.Volume);
+                Player.SetVolumeToStream(Player.Mixed, Player.Volume);
             }
-            if(e.Delta > 0 & FAFbass.Volume != 100)
+            if (e.Delta > 0 & Player.Volume != 100)
             {
                 if (muted) toggle_mute();
-                FAFbass.Volume += 10;
-                volume_label.Content = FAFbass.Volume;
-                FAFbass.SetVolumeToStream(FAFbass.Stream, FAFbass.Volume);
+                Player.Volume += 10;
+                volume_label.Content = Player.Volume;
+                Player.SetVolumeToStream(Player.Stream_L, Player.Volume);
+                Player.SetVolumeToStream(Player.Mixed, Player.Volume);
             }
         }
 
@@ -208,17 +212,19 @@ namespace MOPS_2
         {
             if (!muted)
             {
-                muted_volume = FAFbass.Volume;
+                muted_volume = Player.Volume;
                 volume_label.Content = 0;
-                FAFbass.Volume = 0;
-                FAFbass.SetVolumeToStream(FAFbass.Stream, FAFbass.Volume);
+                Player.Volume = 0;
+                Player.SetVolumeToStream(Player.Mixed, Player.Volume);
+                Player.SetVolumeToStream(Player.Stream_L, Player.Volume);
                 muted = true;
             }
             else
             {
-                FAFbass.Volume = muted_volume;
-                volume_label.Content = FAFbass.Volume;
-                FAFbass.SetVolumeToStream(FAFbass.Stream, FAFbass.Volume);
+                Player.Volume = muted_volume;
+                volume_label.Content = Player.Volume;
+                Player.SetVolumeToStream(Player.Mixed, Player.Volume);
+                Player.SetVolumeToStream(Player.Stream_L, Player.Volume);
                 muted = false;
             }
         }
@@ -441,14 +447,22 @@ namespace MOPS_2
             if (songs_listbox.SelectedIndex != -1)
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
-                FAFbass.PlayLoop(ResPackManager.allSongs[i].buffer, FAFbass.Volume);
+                Player.loop_mem = ResPackManager.allSongs[i].buffer;
+                if (ResPackManager.allSongs[i].buildup_buffer != null)
+                {
+                    Player.build_mem = ResPackManager.allSongs[i].buildup_buffer;
+                    Player.Play_With_Buildup();
+                }
+                else Player.Play_Without_Buildup();
+
+
                 song_label.Content = ResPackManager.allSongs[i].title.ToUpper();
-                beat_length = FAFbass.GetTimeOfStream(FAFbass.Stream) / ResPackManager.allSongs[i].rhythm.Length;
+                //beat_length = FAFbass.GetTimeOfStream(Player.Stream_L) / ResPackManager.allSongs[i].rhythm.Length;
                 timeline_label.Content = ">>" + ResPackManager.allSongs[i].rhythm;
             }
             else
             {
-                FAFbass.Stop();
+                Player.Stop();
                 song_label.Content = "NONE";
                 beat_length = 0;
                 timeline_label.Content = ">>.";
