@@ -14,12 +14,13 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 
-namespace MOPS_2
+namespace MOPS
 {
     public class setdata
     {
         public string Name { get; set; }
         public bool State { get; set; }
+        public int Ind { get; set; }
     }
 
     /// <summary>
@@ -30,6 +31,7 @@ namespace MOPS_2
         public static ObservableCollection<setdata> rp_names = new ObservableCollection<setdata>();
         public static ObservableCollection<setdata> song_names = new ObservableCollection<setdata>();
         public static ObservableCollection<setdata> images_names = new ObservableCollection<setdata>();
+        MainWindow main;
 
         public Settings()
         {
@@ -37,6 +39,11 @@ namespace MOPS_2
             respack_listbox.ItemsSource = rp_names;
             songs_listbox.ItemsSource = song_names;
             images_listbox.ItemsSource = images_names;
+        }
+
+        public void SetReference(MainWindow window)
+        {
+            main = window;
         }
 
         private void SettingsWindow_MouseDown(object sender, MouseButtonEventArgs e)
@@ -47,6 +54,7 @@ namespace MOPS_2
         private void hide_button_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
+            main.Visibility = Visibility.Visible;
         }
 
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
@@ -56,27 +64,24 @@ namespace MOPS_2
         private void respack_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             int ind = respack_listbox.SelectedIndex;
-            rp_name_label.Content = ResPackManager.resPacks[ind].name;
-            rp_author_label.Content = ResPackManager.resPacks[ind].author;
-            rp_description_textbox.Text = ResPackManager.resPacks[ind].description;
-            //Songs_tab.Header = "Songs: " + ResPackManager.resPacks[ind].songs_start;
+            rp_name_label.Content = RPManager.ResPacks[ind].name;
+            rp_author_label.Content = RPManager.ResPacks[ind].author;
+            rp_description_textbox.Text = RPManager.ResPacks[ind].description;
+            Songs_tab.Header = "Songs: " + RPManager.ResPacks[ind].songs_count;
+            Images_tab.Header = "Images: " + RPManager.ResPacks[ind].pics_count;
 
             song_names.Clear();
-
-            int ceiling;
-            if (ind == ResPackManager.resPacks.Length - 1) ceiling = ResPackManager.allSongs.Length;
-            else ceiling = ResPackManager.resPacks[ind + 1].songs_start;
-            for (int i = ResPackManager.resPacks[ind].songs_start; i < ceiling; i++)
+            int ceiling = RPManager.ResPacks[ind].songs_start + RPManager.ResPacks[ind].songs_count;
+            for (int i = RPManager.ResPacks[ind].songs_start; i < ceiling; i++)
             {
-                song_names.Add(new setdata() { Name = ResPackManager.allSongs[i].title, State = ResPackManager.allSongs[i].enabled });
+                song_names.Add(new setdata() { Name = RPManager.allSongs[i].title, State = RPManager.allSongs[i].enabled, Ind = i });
             }
 
             images_names.Clear();
-            if (ind == ResPackManager.resPacks.Length - 1) ceiling = ResPackManager.allPics.Length;
-            else ceiling = ResPackManager.resPacks[ind + 1].pics_start;
-            for (int i = ResPackManager.resPacks[ind].pics_start; i < ceiling; i++)
+            ceiling = RPManager.ResPacks[ind].pics_start + RPManager.ResPacks[ind].pics_count;
+            for (int i = RPManager.ResPacks[ind].pics_start; i < ceiling; i++)
             {
-                images_names.Add(new setdata() { Name = ResPackManager.allPics[i].name, State = ResPackManager.allPics[i].enabled });
+                images_names.Add(new setdata() { Name = RPManager.allPics[i].name, State = RPManager.allPics[i].enabled, Ind = i });
             }
         }
 
@@ -92,16 +97,16 @@ namespace MOPS_2
             openFile.Filter = "Zip Archive (.zip)|*.zip";
             if (openFile.ShowDialog() == true)
             {
-                if (ResPackManager.SupremeReader(openFile.FileName))
+                if (RPManager.SupremeReader(openFile.FileName))
                 {
-                    rp_names.Add(new setdata() { Name = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].name, State = true });
+                    rp_names.Add(new setdata() { Name = RPManager.ResPacks[RPManager.ResPacks.Length - 1].name, State = true });
 
-                    if (ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].songs_count > 0)
-                        for (int i = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].songs_start; i < ResPackManager.allSongs.Length; i++)
-                            MainWindow.enabled_songs.Add(new rdata() { Name = ResPackManager.allSongs[i].title, Ind = i });
-                    if (ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].pics_count > 0)
-                        for (int i = ResPackManager.resPacks[ResPackManager.resPacks.Length - 1].pics_start; i < ResPackManager.allPics.Length; i++)
-                            MainWindow.enabled_images.Add(new rdata() { Name = ResPackManager.allPics[i].name, Ind = i });
+                    if (RPManager.ResPacks[RPManager.ResPacks.Length - 1].songs_count > 0)
+                        for (int i = RPManager.ResPacks[RPManager.ResPacks.Length - 1].songs_start; i < RPManager.allSongs.Length; i++)
+                            MainWindow.enabled_songs.Add(new rdata() { Name = RPManager.allSongs[i].title, Ind = i });
+                    if (RPManager.ResPacks[RPManager.ResPacks.Length - 1].pics_count > 0)
+                        for (int i = RPManager.ResPacks[RPManager.ResPacks.Length - 1].pics_start; i < RPManager.allPics.Length; i++)
+                            MainWindow.enabled_images.Add(new rdata() { Name = RPManager.allPics[i].name, Ind = i });
                        
                     stat_update();
                 }
@@ -110,21 +115,123 @@ namespace MOPS_2
 
         public void stat_update()
         {
-            ImagesNumber_label.Content = MainWindow.enabled_images.Count() + "/" + ResPackManager.allPics.Length;
-            SongNumber_label.Content = MainWindow.enabled_songs.Count().ToString() + "/" + ResPackManager.allSongs.Length.ToString();
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
+            ImagesNumber_label.Content = MainWindow.enabled_images.Count() + "/" + RPManager.allPics.Length;
+            SongNumber_label.Content = MainWindow.enabled_songs.Count().ToString() + "/" + RPManager.allSongs.Length.ToString();
         }
 
         private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (songs_listbox.SelectedIndex != -1)
+            {
+                if (!song_names[songs_listbox.SelectedIndex].State)
+                {
+                    song_names[songs_listbox.SelectedIndex].State = true;
+                    songs_listbox.Items.Refresh();
+                    Add_Enabled_Song(song_names[songs_listbox.SelectedIndex]);
+                    stat_update();
+                }
+                for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
+                {
+                    if (MainWindow.enabled_songs[i].Ind == song_names[songs_listbox.SelectedIndex].Ind) main.SelectSongByInd(i);
+                }
+            }
+            
         }
 
+
         private void images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(images_listbox.SelectedIndex != -1)
+            {
+                if (!images_names[images_listbox.SelectedIndex].State)
+                {
+                    images_names[images_listbox.SelectedIndex].State = true;
+                    images_listbox.Items.Refresh();
+                    Add_Enabled_Image(images_names[images_listbox.SelectedIndex]);
+                    stat_update();
+                }
+                for (int i = 0; i < MainWindow.enabled_images.Count; i++)
+                {
+                    if (MainWindow.enabled_images[i].Ind == images_names[images_listbox.SelectedIndex].Ind) main.SelectImageByInd(i);
+                }
+            }
+        }
+
+        private void Song_CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (setdata el in song_names)
+            {
+                if (el.State != RPManager.allSongs[el.Ind].enabled)
+                {
+                    if (!el.State)
+                    {
+                        RPManager.allSongs[el.Ind].enabled = false;
+                        for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
+                        {
+                            if (MainWindow.enabled_songs[i].Ind == el.Ind)  MainWindow.enabled_songs.RemoveAt(i);
+                        }
+                    }
+                    else Add_Enabled_Song(el);
+                    break;
+                }
+            }
+            stat_update();
+        }
+
+        private void Add_Enabled_Song(setdata elem)
+        {
+            rdata copy = new rdata { Name = elem.Name, Ind = elem.Ind };
+            if (MainWindow.enabled_songs.Count == 0) MainWindow.enabled_songs.Add(copy);
+            else if (MainWindow.enabled_songs.Last().Ind < elem.Ind) MainWindow.enabled_songs.Add(copy);
+            else for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
+                {
+                    if (MainWindow.enabled_songs[i].Ind > elem.Ind)
+                    {
+                        MainWindow.enabled_songs.Insert(i, copy);
+                        break;
+                    }
+                }
+            RPManager.allSongs[elem.Ind].enabled = true;
+        }
+
+        private void Images_CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (setdata el in images_names)
+            {
+                if (el.State != RPManager.allPics[el.Ind].enabled)
+                {
+                    if (!el.State)
+                    {
+                        RPManager.allPics[el.Ind].enabled = false;
+                        for (int i = 0; i < MainWindow.enabled_images.Count; i++)
+                        {
+                            if (MainWindow.enabled_images[i].Ind == el.Ind) MainWindow.enabled_images.RemoveAt(i);
+                        }
+                    }
+                    else Add_Enabled_Image(el);
+                    
+                    break;
+                }
+            }
+            stat_update();
+        }
+        private void Add_Enabled_Image(setdata elem)
+        {
+            rdata copy = new rdata { Name = elem.Name, Ind = elem.Ind };
+            if (MainWindow.enabled_images.Count == 0) MainWindow.enabled_images.Add(copy);
+            else if (MainWindow.enabled_images.Last().Ind < elem.Ind) MainWindow.enabled_images.Add(copy);
+            else for (int i = 0; i < MainWindow.enabled_images.Count; i++)
+            {
+                    if (MainWindow.enabled_images[i].Ind > elem.Ind)
+                    {
+                        MainWindow.enabled_images.Insert(i, copy);
+                        break;
+                    }
+            }
+            RPManager.allPics[elem.Ind].enabled = true;
+        }
+
+        private void RPList_CheckBox_Clicked(object sender, RoutedEventArgs e)
         {
 
         }

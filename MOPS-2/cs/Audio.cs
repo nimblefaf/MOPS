@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 using Un4seen.Bass.AddOn.Mix;
 
 
-namespace MOPS_2
+namespace MOPS
 {
-    public class FAFbass
+    public class Audio
     {
         
         public static string err;
@@ -35,7 +35,6 @@ namespace MOPS_2
 
         public int Channel;
         public int Stream_B;
-        public int Mixed;
 
         long build_len;
         long loop_len;
@@ -49,11 +48,6 @@ namespace MOPS_2
         public byte[] loop_mem;
         public byte[] build_mem;
 
-        private DSPPROC _dupCallback;
-        private void DupDSP(int handle, int channel, IntPtr buffer, int length, IntPtr user)
-        {
-            Bass.BASS_StreamPutData(user.ToInt32(), buffer, length);
-        }
 
 
         private static bool InitBass(int hz)
@@ -87,7 +81,7 @@ namespace MOPS_2
             if (InitBass(HZ))
             {
 
-                Mixed = BassMix.BASS_Mixer_StreamCreate(HZ, 2, BASSFlag.BASS_MIXER_NONSTOP);
+                Channel = BassMix.BASS_Mixer_StreamCreate(HZ, 2, BASSFlag.BASS_MIXER_NONSTOP);
 
                 point_B = GCHandle.Alloc(build_mem, GCHandleType.Pinned);
                 point_L = GCHandle.Alloc(loop_mem, GCHandleType.Pinned);
@@ -102,34 +96,24 @@ namespace MOPS_2
 
                 mixed_len = build_len + loop_len;
 
-                Channel = Bass.BASS_StreamCreatePush(HZ, 2, BASSFlag.BASS_DEFAULT, IntPtr.Zero);
+                Bass.BASS_ChannelSetSync(Channel, BASSSync.BASS_SYNC_END, 0, _loopSyncCallback, IntPtr.Zero);
 
-                Bass.BASS_ChannelSetSync(Mixed, BASSSync.BASS_SYNC_END, 0, _loopSyncCallback, IntPtr.Zero);
-
-                BassMix.BASS_Mixer_StreamAddChannel(Mixed, Stream_B, BASSFlag.BASS_MIXER_NORAMPIN);
-                BassMix.BASS_Mixer_StreamAddChannelEx(Mixed, Stream_L, BASSFlag.BASS_MIXER_NORAMPIN, build_len, 0);
+                BassMix.BASS_Mixer_StreamAddChannel(Channel, Stream_B, BASSFlag.BASS_DEFAULT);
+                BassMix.BASS_Mixer_StreamAddChannelEx(Channel, Stream_L, BASSFlag.BASS_MIXER_NORAMPIN, build_len, 0);
                 
                 err = Bass.BASS_ErrorGetCode().ToString();
 
-
-                _dupCallback = new DSPPROC(DupDSP);
-                err = Bass.BASS_ErrorGetCode().ToString();
-                Bass.BASS_ChannelSetDSP(Mixed, _dupCallback, new IntPtr(Mixed), 0);
-                err = Bass.BASS_ErrorGetCode().ToString();
-
-
                 _loopSync = BassMix.BASS_Mixer_ChannelSetSync(Stream_L, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_MIXTIME, loop_len, _loopSyncCallback, new IntPtr(1));
                 err = Bass.BASS_ErrorGetCode().ToString();
-                Bass.BASS_ChannelSetAttribute(Mixed, BASSAttribute.BASS_ATTRIB_VOL, Volume / 100f);
+                Bass.BASS_ChannelSetAttribute(Channel, BASSAttribute.BASS_ATTRIB_VOL, Volume / 100f);
                 err = Bass.BASS_ErrorGetCode().ToString();
-                Bass.BASS_ChannelPlay(Mixed, false);
-                //Build(Volume);
+                Bass.BASS_ChannelPlay(Channel, false);
             }
         }
 
         private int _loopSync = 0;
         private SYNCPROC _loopSyncCallback;
-        public FAFbass()
+        public Audio()
         {
             _loopSyncCallback = new SYNCPROC(EndSync);
         }
@@ -144,6 +128,7 @@ namespace MOPS_2
             if (InitBass(HZ))
             {
                 Stream_L = Bass.BASS_SampleLoad(loop_mem, 0, loop_mem.Length, 1, BASSFlag.BASS_SAMPLE_LOOP);
+                err = Bass.BASS_ErrorGetCode().ToString();
                 Channel = Bass.BASS_SampleGetChannel(Stream_L, false);
                 Bass.BASS_ChannelSetAttribute(Channel, BASSAttribute.BASS_ATTRIB_VOL, Volume / 100f);
                 Loop(Volume);
@@ -197,15 +182,18 @@ namespace MOPS_2
         /// </summary>
         public void Stop()
         {
-            Bass.BASS_ChannelStop(Mixed);
-            Bass.BASS_ChannelStop(Stream_L);
-            Bass.BASS_ChannelStop(Stream_B);
+            Bass.BASS_ChannelStop(Channel);
             if (point_L.IsAllocated) point_L.Free();
             if (point_B.IsAllocated) point_B.Free();
-            Bass.BASS_StreamFree(Stream_L);
+            Bass.BASS_StreamFree(Channel);
+            Bass.BASS_SampleFree(Channel);
+
             Bass.BASS_StreamFree(Stream_B);
-            Bass.BASS_StreamFree(Mixed);
-            Bass.BASS_SampleFree(Stream_L);
+            Bass.BASS_StreamFree(Stream_L);
+
+            ////Uncomment this in case of unsolvable memory leak. Will create a small pause before new song is played.
+            //Bass.BASS_Free();
+            //InitDefaultDevice = false;
         }
 
 

@@ -19,7 +19,7 @@ using System.Drawing;
 using System.Collections.ObjectModel;
 
 
-namespace MOPS_2
+namespace MOPS
 {
     
     public class rdata
@@ -32,10 +32,10 @@ namespace MOPS_2
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {        
+    {
         Random rnd = new Random();
 
-        FAFbass Player = new FAFbass();
+        Audio Player = new Audio();
 
         public static Palette[] hues =
         {
@@ -109,6 +109,7 @@ namespace MOPS_2
 
         public bool muted = false;
         public bool full_auto_mode = true;
+        public bool buildup_enabled = true;
         public int muted_volume;
 
         public int current_song = 0;
@@ -117,7 +118,7 @@ namespace MOPS_2
         public double beat_length = 0;
         public double buildup_beat_len = 0;
 
-        
+
         public static ObservableCollection<rdata> enabled_songs = new ObservableCollection<rdata>();
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
@@ -125,13 +126,15 @@ namespace MOPS_2
         {
             InitializeComponent();
 
-            ResPackManager.SupremeReader("Defaults_v5.0.zip");
-            for (int i = 0; i < ResPackManager.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = ResPackManager.allSongs[i].title, Ind = i });
+            RPManager.SupremeReader("Defaults_v5.0.zip");
+            for (int i = 0; i < RPManager.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = RPManager.allSongs[i].title, Ind = i });
             songs_listbox.ItemsSource = enabled_songs;
-            songs_listbox.SelectedIndex = 0;
-            for (int i = 0; i < ResPackManager.allPics.Length; i++) enabled_images.Add(new rdata() { Name = ResPackManager.allPics[i].name, Ind = i});
+            songs_listbox.SelectedIndex = current_song;
+            for (int i = 0; i < RPManager.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPManager.allPics[i].name, Ind = i });
             images_listbox.ItemsSource = enabled_images;
-            images_listbox.SelectedIndex = 55;
+            images_listbox.SelectedIndex = current_image;
+
+            set.SetReference(this);
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -148,7 +151,7 @@ namespace MOPS_2
         {
             set.Owner = this;
             timeline_color_change();
-            Settings.rp_names.Add(new setdata() { Name = ResPackManager.resPacks[0].name, State = true });
+            Settings.rp_names.Add(new setdata() { Name = RPManager.ResPacks[0].name, State = true });
             set.stat_update();
         }
 
@@ -159,16 +162,14 @@ namespace MOPS_2
             {
                 Player.Volume -= 10;
                 volume_label.Content = Player.Volume;
-                Player.SetVolumeToStream(Player.Stream_L, Player.Volume);
-                Player.SetVolumeToStream(Player.Mixed, Player.Volume);
+                Player.SetVolumeToStream(Player.Channel, Player.Volume);
             }
             if (e.Delta > 0 & Player.Volume != 100)
             {
                 if (muted) toggle_mute();
                 Player.Volume += 10;
                 volume_label.Content = Player.Volume;
-                Player.SetVolumeToStream(Player.Stream_L, Player.Volume);
-                Player.SetVolumeToStream(Player.Mixed, Player.Volume);
+                Player.SetVolumeToStream(Player.Channel, Player.Volume);
             }
         }
 
@@ -215,16 +216,14 @@ namespace MOPS_2
                 muted_volume = Player.Volume;
                 volume_label.Content = 0;
                 Player.Volume = 0;
-                Player.SetVolumeToStream(Player.Mixed, Player.Volume);
-                Player.SetVolumeToStream(Player.Stream_L, Player.Volume);
+                Player.SetVolumeToStream(Player.Channel, Player.Volume);
                 muted = true;
             }
             else
             {
                 Player.Volume = muted_volume;
                 volume_label.Content = Player.Volume;
-                Player.SetVolumeToStream(Player.Mixed, Player.Volume);
-                Player.SetVolumeToStream(Player.Stream_L, Player.Volume);
+                Player.SetVolumeToStream(Player.Channel, Player.Volume);
                 muted = false;
             }
         }
@@ -255,7 +254,7 @@ namespace MOPS_2
         // Horizontal blur (bass)
         private void timeline_o()
         {
-            
+
         }
 
         /// <summary>
@@ -347,7 +346,7 @@ namespace MOPS_2
         // 'i' Invert all colours
         private void timeline_invert()
         {
-            
+
         }
 
         // 'I' Invert & change image
@@ -447,26 +446,34 @@ namespace MOPS_2
             if (songs_listbox.SelectedIndex != -1)
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
-                Player.loop_mem = ResPackManager.allSongs[i].buffer;
-                if (ResPackManager.allSongs[i].buildup_buffer != null)
+                Player.loop_mem = RPManager.allSongs[i].buffer;
+                if (RPManager.allSongs[i].buildup_buffer != null & buildup_enabled)
                 {
-                    Player.build_mem = ResPackManager.allSongs[i].buildup_buffer;
+                    Player.build_mem = RPManager.allSongs[i].buildup_buffer;
                     Player.Play_With_Buildup();
                 }
                 else Player.Play_Without_Buildup();
 
 
-                song_label.Content = ResPackManager.allSongs[i].title.ToUpper();
-                //beat_length = FAFbass.GetTimeOfStream(Player.Stream_L) / ResPackManager.allSongs[i].rhythm.Length;
-                timeline_label.Content = ">>" + ResPackManager.allSongs[i].rhythm;
+                song_label.Content = RPManager.allSongs[i].title.ToUpper();
+                beat_length = Audio.GetTimeOfStream(Player.Stream_L) / RPManager.allSongs[i].rhythm.Length;
+                timeline_label.Content = ">>" + RPManager.allSongs[i].rhythm;
+                current_song = songs_listbox.SelectedIndex;
             }
             else
             {
-                Player.Stop();
-                song_label.Content = "NONE";
-                beat_length = 0;
-                timeline_label.Content = ">>.";
+                if (enabled_songs.Count == 0)
+                {
+                    StopSong();
+                }
             }
+        }
+        public void StopSong()
+        {
+            Player.Stop();
+            song_label.Content = "NONE";
+            beat_length = 0;
+            timeline_label.Content = ">>.";
         }
 
         private void prev_image_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -484,35 +491,15 @@ namespace MOPS_2
             full_auto_mode = true;
         }
 
-        private void be_MouseLeave(object sender, MouseEventArgs e)
-        {
-            if (sender == next_song_be) next_song_be.Opacity = 0.5;
-            else if (sender == prev_song_be) prev_song_be.Opacity = 0.5;
-            else if (sender == songs_be) songs_be.Opacity = 0.5;
-            else if (sender == next_image_be) next_image_be.Opacity = 0.5;
-            else if (sender == prev_image_be) prev_image_be.Opacity = 0.5;
-            else if (sender == images_be) images_be.Opacity = 0.5;
-            else if (sender == full_auto_be) full_auto_be.Opacity = 0.5;
-        }
-        private void be_MouseEnter(object sender, MouseEventArgs e)
-        {
-            if (sender == next_song_be) next_song_be.Opacity = 1;
-            else if (sender == prev_song_be) prev_song_be.Opacity = 1;
-            else if (sender == songs_be) songs_be.Opacity = 1;
-            else if (sender == next_image_be) next_image_be.Opacity = 1;
-            else if (sender == prev_image_be) prev_image_be.Opacity = 1;
-            else if (sender == images_be) images_be.Opacity = 1;
-            else if (sender == full_auto_be) full_auto_be.Opacity = 1;
-        }
 
         private void Images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (images_listbox.SelectedIndex != -1)
             {
                 int i = enabled_images[images_listbox.SelectedIndex].Ind;
-                image.Source = ResPackManager.allPics[i].png;
-                character_label.Content = ResPackManager.allPics[i].fullname.ToUpper();
-                switch (ResPackManager.allPics[i].align)
+                image.Source = RPManager.allPics[i].png;
+                character_label.Content = RPManager.allPics[i].fullname.ToUpper();
+                switch (RPManager.allPics[i].align)
                 {
                     case "left":
                         image.HorizontalAlignment = HorizontalAlignment.Left;
@@ -527,8 +514,11 @@ namespace MOPS_2
             }
             else
             {
-                image.Source = null;
-                character_label.Content = "NONE";
+                if (enabled_images.Count == 0)
+                {
+                    image.Source = null;
+                    character_label.Content = "NONE";
+                }
             }
         }
 
@@ -550,6 +540,15 @@ namespace MOPS_2
         private void Songs_listbox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
+        }
+
+        public void SelectSongByInd(int ind)
+        {
+            songs_listbox.SelectedIndex = ind;
+        }
+        public void SelectImageByInd(int ind)
+        {
+            images_listbox.SelectedIndex = ind;
         }
     }
 

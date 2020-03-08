@@ -76,7 +76,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="cs\FAFbass.cs" />
+    <Compile Include="cs\Audio.cs" />
     <Compile Include="cs\ResPackManager.cs" />
     <Compile Include="cs\Vars.cs" />
     <Compile Include="MainWindow.xaml.cs">

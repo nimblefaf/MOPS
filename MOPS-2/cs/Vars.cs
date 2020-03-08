@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MOPS_2
+namespace MOPS
 {
     public static class Vars
     {

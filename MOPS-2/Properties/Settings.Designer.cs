@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MOPS_2.Properties
+namespace MOPS.Properties
 {
 
 

@@ -12,9 +12,9 @@ using System.Xml.XPath;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace MOPS_2
+namespace MOPS
 {
-    public struct ResPack
+    public struct RP
     {
         public string name;
         public string author;
@@ -54,7 +54,7 @@ namespace MOPS_2
         public bool enabled;
     }
 
-    public class ResPackManager
+    public class RPManager
     {
         static string RemoveDiacritics(string text) //Because German names are suffering
         {
@@ -75,24 +75,24 @@ namespace MOPS_2
 
         public static int get_rp_of_song(int ind)
         {
-            for (int i = resPacks.Length - 1; i >= 0; i--)
+            for (int i = ResPacks.Length - 1; i >= 0; i--)
             {
-                if (ind >= resPacks[i].songs_start) return i;
+                if (ind >= ResPacks[i].songs_start) return i;
             }
             return -1;
         }
         public static int get_rp_of_image(int ind)
         {
-            for (int i = resPacks.Length - 1; i >= 0; i--)
+            for (int i = ResPacks.Length - 1; i >= 0; i--)
             {
-                if (ind > resPacks[i].pics_start) return i;
+                if (ind > ResPacks[i].pics_start) return i;
             }
             return -1;
         }
 
         public static string status = "Loader Idle";
 
-        public static ResPack[] resPacks = new ResPack[0];
+        public static RP[] ResPacks = new RP[0];
         public static Songs[] allSongs = new Songs[0];
         public static Pics[] allPics = new Pics[0];
 
@@ -103,7 +103,6 @@ namespace MOPS_2
             XmlDocument images_xml = new XmlDocument();
             Dictionary<string, BitmapImage> PicsBuffer = new Dictionary<string, BitmapImage> { };
             Dictionary<string, byte[]> SongsBuffer = new Dictionary<string, byte[]> { };
-
             
 
 
@@ -115,19 +114,21 @@ namespace MOPS_2
                     {
                         if (entry.FullName.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            if (entry.Name == "info.xml")
+                            if (entry.Name.ToLower() == "info.xml")
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
                                 {
                                     info_xml = XDocument.Load(reader);
                                 }
-                            if (entry.Name == "songs.xml")
+                            if (entry.Name.ToLower() == "songs.xml")
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
                                 {
+                                    XmlParserContext xml;
                                     songs_xml.Load(reader);
+                                    
                                 }
-                            if (entry.Name == "images.xml")
+                            if (entry.Name.ToLower() == "images.xml")
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
                                 {
@@ -147,7 +148,7 @@ namespace MOPS_2
                                 }
                             }
                         }
-                        if (entry.FullName.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase))
+                        if (entry.FullName.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".gif", StringComparison.InvariantCultureIgnoreCase))
                         {
                             using (var stream = entry.Open())
                             using (var memoryStream = new MemoryStream())
@@ -171,15 +172,15 @@ namespace MOPS_2
 
             if (info_xml.Root != null)
             {
-                Array.Resize(ref resPacks, resPacks.Length + 1);
+                Array.Resize(ref ResPacks, ResPacks.Length + 1);
 
-                resPacks[resPacks.Length - 1].name = info_xml.XPathSelectElement("//info/name").Value;
-                resPacks[resPacks.Length - 1].author = info_xml.XPathSelectElement("//info/author").Value;
-                resPacks[resPacks.Length - 1].description = info_xml.XPathSelectElement("//info/description").Value;
-                resPacks[resPacks.Length - 1].link = info_xml.XPathSelectElement("//info/link").Value;
-                resPacks[resPacks.Length - 1].songs_start = allSongs.Length;
-                resPacks[resPacks.Length - 1].pics_start = allPics.Length;
-                resPacks[resPacks.Length - 1].enabled = true;
+                ResPacks[ResPacks.Length - 1].name = info_xml.XPathSelectElement("//info/name").Value;
+                ResPacks[ResPacks.Length - 1].author = info_xml.XPathSelectElement("//info/author").Value;
+                ResPacks[ResPacks.Length - 1].description = info_xml.XPathSelectElement("//info/description").Value;
+                ResPacks[ResPacks.Length - 1].link = info_xml.XPathSelectElement("//info/link").Value;
+                ResPacks[ResPacks.Length - 1].songs_start = allSongs.Length;
+                ResPacks[ResPacks.Length - 1].pics_start = allPics.Length;
+                ResPacks[ResPacks.Length - 1].enabled = true;
 
                 if (songs_xml.HasChildNodes)
                 {
@@ -215,9 +216,9 @@ namespace MOPS_2
                             }
                         }
                     }
-                    resPacks[resPacks.Length - 1].songs_count = allSongs.Length - resPacks[resPacks.Length - 1].songs_start;
+                    ResPacks[ResPacks.Length - 1].songs_count = allSongs.Length - ResPacks[ResPacks.Length - 1].songs_start;
                 }
-                else resPacks[resPacks.Length - 1].songs_count = 0;
+                else ResPacks[ResPacks.Length - 1].songs_count = 0;
 
                 if (images_xml.HasChildNodes)
                 {
@@ -229,7 +230,7 @@ namespace MOPS_2
                         allPics[allPics.Length - 1].name = node.Attributes[0].Value;
                         if (node.LastChild.Name == "frameDuration")
                         {
-                            allPics[allPics.Length - 1].png = PicsBuffer[node.Attributes[0].Value + "_01.png"];
+                            allPics[allPics.Length - 1].png = PicsBuffer[node.Attributes[0].Value + "_01.png"]; //Animation TBD
                             allPics[allPics.Length - 1].still = false;
                         }
                         else
@@ -239,6 +240,8 @@ namespace MOPS_2
                                 allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value) + ".png"];
                             else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText + ".png")))
                                 allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText + ".png")];
+                            else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value) + ".gif"))
+                                allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value) + ".gif"];
                         }
                         allPics[allPics.Length - 1].enabled = true;
                         foreach (XmlNode childnode in node)
@@ -265,9 +268,9 @@ namespace MOPS_2
                             }
                         }
                     }
-                    resPacks[resPacks.Length - 1].pics_count = allPics.Length - resPacks[resPacks.Length - 1].pics_start;
+                    ResPacks[ResPacks.Length - 1].pics_count = allPics.Length - ResPacks[ResPacks.Length - 1].pics_start;
                 }
-                else resPacks[resPacks.Length - 1].pics_count = 0;
+                else ResPacks[ResPacks.Length - 1].pics_count = 0;
                 PicsBuffer.Clear();
                 SongsBuffer.Clear();
                 return true;

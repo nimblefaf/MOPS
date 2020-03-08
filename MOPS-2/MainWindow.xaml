@@ -1,9 +1,9 @@
-﻿<Window x:Class="MOPS_2.MainWindow"
+﻿<Window x:Class="MOPS.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MOPS_2"
+        xmlns:local="clr-namespace:MOPS"
         mc:Ignorable="d"
         Title="MOPS-2" Height="600" Width="800" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" SizeChanged="Window_SizeChanged" StateChanged="Window_StateChanged" LocationChanged="Window_LocationChanged" MinWidth="800" MinHeight="600" KeyDown="Window_KeyDown" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" Background="#7F000000">
 
@@ -17,30 +17,14 @@
         <Label x:Name="color_label" Content="BLACK" Margin="0,0,0,39" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="200" FontSize="9"/>
         <Label x:Name="character_label" Content="character_label" Margin="0,0,0,52" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="200" FontSize="9"/>
         <Label x:Name="volume_label" Content="50" Margin="0,0,0,26" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="200" FontSize="9"/>
-        <TextBlock x:Name="songs_be" HorizontalAlignment="Right" Margin="0,0,40,33" TextWrapping="Wrap" Text="SONGS" VerticalAlignment="Bottom" Opacity="0.5" RenderTransformOrigin="0.325,0.542" MouseEnter="be_MouseEnter" MouseLeave="be_MouseLeave" MouseLeftButtonDown="songs_be_MouseLeftButtonDown"/>
-        <TextBlock x:Name="next_song_be" HorizontalAlignment="Right" Margin="0,0,10,24" TextWrapping="Wrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" MouseEnter="be_MouseEnter" MouseLeave="be_MouseLeave" Opacity="0.5" Height="31" Width="30" MouseLeftButtonDown="next_song_be_MouseLeftButtonDown"/>
-        <TextBlock x:Name="prev_song_be" HorizontalAlignment="Right" Margin="0,0,105,24" TextWrapping="Wrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" Opacity="0.5" RenderTransformOrigin="0.222,0.472" Width="32" Height="31" TextDecorations="{x:Null}" MouseEnter="be_MouseEnter" MouseLeave="be_MouseLeave" MouseLeftButtonDown="prev_song_be_MouseLeftButtonDown"/>
-        <ListBox x:Name="songs_listbox" HorizontalAlignment="Right" Margin="0,0,40,60" VerticalAlignment="Bottom" Width="500" Background="#4C000000" BorderBrush="#FF020202" Opacity="1" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" Visibility="Hidden" PreviewKeyDown="Songs_listbox_PreviewKeyDown">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderThickness="2,1,2,1" BorderBrush="Black" Margin="-3,0,0,0">
-                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap" Width="500" HorizontalAlignment="Left"/>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <TextBlock x:Name="next_image_be" HorizontalAlignment="Right" Margin="0,0,142,24" TextWrapping="Wrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" MouseEnter="be_MouseEnter" MouseLeave="be_MouseLeave" Opacity="0.5" Height="32" Width="30" MouseLeftButtonDown="next_image_be_MouseLeftButtonDown"/>
-        <TextBlock x:Name="prev_image_be" HorizontalAlignment="Right" Margin="0,0,285,24" TextWrapping="Wrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" Opacity="0.5" RenderTransformOrigin="0.222,0.472" Width="32" Height="31" TextDecorations="{x:Null}" MouseEnter="be_MouseEnter" MouseLeave="be_MouseLeave" MouseLeftButtonDown="prev_image_be_MouseLeftButtonDown"/>
-        <TextBlock x:Name="images_be" HorizontalAlignment="Right" Margin="0,0,190,43" TextWrapping="Wrap" Text="IMAGES" VerticalAlignment="Bottom" Opacity="0.5" RenderTransformOrigin="0.325,0.542" MouseLeave="be_MouseLeave" MouseEnter="be_MouseEnter" MouseLeftButtonDown="Images_be_MouseLeftButtonDown"/>
-        <TextBlock x:Name="full_auto_be" HorizontalAlignment="Right" Margin="0,0,172,23" TextWrapping="Wrap" Text="FULL AUTO" VerticalAlignment="Bottom" Opacity="0.5" RenderTransformOrigin="0.325,0.542" MouseLeftButtonDown="full_auto_be_MouseLeftButtonDown" MouseLeave="be_MouseLeave" MouseEnter="be_MouseEnter"/>
-        <ListBox x:Name="images_listbox" HorizontalAlignment="Right" Margin="0,0,172,60" VerticalAlignment="Bottom" Width="250" Background="#4C000000" BorderBrush="#FF020202" Opacity="1" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="Images_listbox_SelectionChanged" Visibility="Hidden" PreviewKeyDown="Images_listbox_PreviewKeyDown">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderThickness="2,1,2,1" BorderBrush="Black" Margin="-3,0,0,0">
-                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap" Width="500" HorizontalAlignment="Left"/>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <TextBlock x:Name="songs_be" HorizontalAlignment="Right" Margin="0,0,40,33" TextWrapping="Wrap" Text="SONGS" VerticalAlignment="Bottom" RenderTransformOrigin="0.325,0.542" MouseLeftButtonDown="songs_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
+        <TextBlock x:Name="next_song_be" HorizontalAlignment="Right" Margin="0,0,10,24" TextWrapping="Wrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" Height="31" Width="30" MouseLeftButtonDown="next_song_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
+        <TextBlock x:Name="prev_song_be" HorizontalAlignment="Right" Margin="0,0,105,24" TextWrapping="Wrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" RenderTransformOrigin="0.222,0.472" Width="32" Height="31" TextDecorations="{x:Null}" MouseLeftButtonDown="prev_song_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
+        <ListBox x:Name="songs_listbox" HorizontalAlignment="Right" Margin="0,0,40,60" VerticalAlignment="Bottom" Width="500" Background="#4C000000" BorderBrush="#FF020202" Opacity="1" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" PreviewKeyDown="Songs_listbox_PreviewKeyDown" ItemTemplate="{DynamicResource DataTemplateHues}" Style="{DynamicResource ListBoxStyleHues}" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Visibility="Hidden"/>
+        <TextBlock x:Name="next_image_be" HorizontalAlignment="Right" Margin="0,0,142,24" TextWrapping="Wrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" Height="32" Width="30" MouseLeftButtonDown="next_image_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
+        <TextBlock x:Name="prev_image_be" HorizontalAlignment="Right" Margin="0,0,285,24" TextWrapping="Wrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" RenderTransformOrigin="0.222,0.472" Width="32" Height="31" TextDecorations="{x:Null}" MouseLeftButtonDown="prev_image_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
+        <TextBlock x:Name="images_be" HorizontalAlignment="Right" Margin="0,0,190,43" TextWrapping="Wrap" Text="IMAGES" VerticalAlignment="Bottom" RenderTransformOrigin="0.325,0.542" MouseLeftButtonDown="Images_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
+        <TextBlock x:Name="full_auto_be" HorizontalAlignment="Right" Margin="0,0,172,23" TextWrapping="Wrap" Text="FULL AUTO" VerticalAlignment="Bottom" RenderTransformOrigin="0.325,0.542" MouseLeftButtonDown="full_auto_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
+        <ListBox x:Name="images_listbox" HorizontalAlignment="Right" Margin="0,0,172,60" VerticalAlignment="Bottom" Width="250" Background="#4C000000" BorderBrush="#FF020202" Opacity="1" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="Images_listbox_SelectionChanged" PreviewKeyDown="Images_listbox_PreviewKeyDown" ItemTemplate="{DynamicResource DataTemplateHues}" Style="{DynamicResource ListBoxStyleHues}" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Visibility="Hidden"/>
     </Grid>
 </Window>
