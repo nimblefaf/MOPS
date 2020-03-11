@@ -124,9 +124,7 @@ namespace MOPS
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
                                 {
-                                    XmlParserContext xml;
                                     songs_xml.Load(reader);
-                                    
                                 }
                             if (entry.Name.ToLower() == "images.xml")
                                 using (var stream = entry.Open())

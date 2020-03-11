@@ -12,11 +12,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Threading;
 using System.IO;
 using Un4seen.Bass;
 using System.Drawing;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 
 namespace MOPS
@@ -36,6 +38,9 @@ namespace MOPS
         Random rnd = new Random();
 
         Audio Player = new Audio();
+        public DispatcherTimer Timer = new DispatcherTimer(DispatcherPriority.Send);
+        private Stopwatch stopwatch = new Stopwatch();
+        TimeSpan Correction;
 
         public static Palette[] hues =
         {
@@ -109,7 +114,7 @@ namespace MOPS
 
         public bool muted = false;
         public bool full_auto_mode = true;
-        public bool buildup_enabled = true;
+        public bool buildup_enabled = false;
         public int muted_volume;
 
         public int current_song = 0;
@@ -117,7 +122,12 @@ namespace MOPS
 
         public double beat_length = 0;
         public double buildup_beat_len = 0;
+        private double sum = 0;
+        private double dur;
 
+        private string loop_rhythm;
+        private string build_rhythm;
+        public int rhythm_pos;
 
         public static ObservableCollection<rdata> enabled_songs = new ObservableCollection<rdata>();
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
@@ -125,16 +135,77 @@ namespace MOPS
         public MainWindow()
         {
             InitializeComponent();
-
             RPManager.SupremeReader("Defaults_v5.0.zip");
             for (int i = 0; i < RPManager.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = RPManager.allSongs[i].title, Ind = i });
             songs_listbox.ItemsSource = enabled_songs;
-            songs_listbox.SelectedIndex = current_song;
+
             for (int i = 0; i < RPManager.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPManager.allPics[i].name, Ind = i });
             images_listbox.ItemsSource = enabled_images;
             images_listbox.SelectedIndex = current_image;
 
+            Timer.Tick += new EventHandler(Timer_Tick);
+            
+            Player.SetReference(this);
             set.SetReference(this);
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            char c = loop_rhythm[rhythm_pos];
+            switch (c)
+            {
+                case 'o':
+                    timeline_o();
+                    break;
+                case 'x':
+                    timeline_x();
+                    break;
+                case '-':
+                    timeline_noblur();
+                    break;
+                case '‑'://thank to tylup for that one
+                    timeline_noblur();
+                    break;
+                case ':':
+                    timeline_color_change();
+                    break;
+                case '*':
+                    timeline_image_change();
+                    break;
+            }
+            if (rhythm_pos == loop_rhythm.Length - 1)
+            {
+                rhythm_pos = 0;
+                timeline_label.Content = loop_rhythm;
+                sum = 0;
+                Timer.Interval = TimeSpan.FromSeconds(beat_length);
+            }
+            else
+            {
+                rhythm_pos += 1;
+                timeline_label.Content = timeline_label.Content.ToString().Remove(0, 1);
+                sum += beat_length;
+                Correction = TimeSpan.FromSeconds(beat_length * rhythm_pos - Player.GetPosOfStream(Player.Stream_L));
+                if (Correction.TotalSeconds > 0) Timer.Interval = Correction;
+                //Jumping forward to compensate lag
+                else
+                {
+                    int new_pos = Convert.ToInt32(Math.Round(Player.GetPosOfStream(Player.Stream_L) / beat_length));
+                    if (new_pos < rhythm_pos)
+                    {
+                        timeline_label.Content = loop_rhythm.Remove(0, new_pos);
+                        rhythm_pos = new_pos;
+                    }
+                    else
+                    {
+                        timeline_label.Content = timeline_label.Content.ToString().Remove(0, new_pos - rhythm_pos);
+                        rhythm_pos = new_pos;
+                    }
+                }
+
+            }
+            character_label.Content = sum + " / " + dur;
+            
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -153,6 +224,8 @@ namespace MOPS
             timeline_color_change();
             Settings.rp_names.Add(new setdata() { Name = RPManager.ResPacks[0].name, State = true });
             set.stat_update();
+
+            songs_listbox.SelectedIndex = current_song;
         }
 
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -249,12 +322,12 @@ namespace MOPS
         // Vertical blur (snare)
         private void timeline_x()
         {
-
+            timeline_noblur();
         }
         // Horizontal blur (bass)
         private void timeline_o()
         {
-
+            timeline_noblur();
         }
 
         /// <summary>
@@ -421,11 +494,12 @@ namespace MOPS
             set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
             set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
         }
+
+
         private void next_song_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             next_song();
         }
-
         private void songs_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (songs_listbox.Visibility == Visibility.Hidden)
@@ -447,17 +521,30 @@ namespace MOPS
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
                 Player.loop_mem = RPManager.allSongs[i].buffer;
+                loop_rhythm = RPManager.allSongs[i].rhythm;
+                rhythm_pos = 0;
+                sum = 0;
+                Timer.Interval = TimeSpan.FromMilliseconds(219);
                 if (RPManager.allSongs[i].buildup_buffer != null & buildup_enabled)
                 {
+                    build_rhythm = RPManager.allSongs[i].buildup_rhythm;
                     Player.build_mem = RPManager.allSongs[i].buildup_buffer;
                     Player.Play_With_Buildup();
                 }
-                else Player.Play_Without_Buildup();
-
+                else
+                {
+                    Player.Play_Without_Buildup(i);
+                    dur = Audio.GetTimeOfStream(Player.Stream_L);
+                    Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64((Audio.GetTimeOfStream(Player.Stream_L) / Convert.ToDouble(RPManager.allSongs[i].rhythm.Length)) * 1000 * 10000));
+                    //Timer.Interval = TimeSpan.FromMilliseconds((Audio.GetTimeOfStream(Player.Stream_L) / RPManager.allSongs[i].rhythm.Length)*1000);
+                    
+                }
+                Player.Play();
+                Timer.Start();
 
                 song_label.Content = RPManager.allSongs[i].title.ToUpper();
                 beat_length = Audio.GetTimeOfStream(Player.Stream_L) / RPManager.allSongs[i].rhythm.Length;
-                timeline_label.Content = ">>" + RPManager.allSongs[i].rhythm;
+                timeline_label.Content = RPManager.allSongs[i].rhythm;
                 current_song = songs_listbox.SelectedIndex;
             }
             else
