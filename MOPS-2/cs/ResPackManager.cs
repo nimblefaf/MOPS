@@ -103,9 +103,13 @@ namespace MOPS
             XmlDocument images_xml = new XmlDocument();
             Dictionary<string, BitmapImage> PicsBuffer = new Dictionary<string, BitmapImage> { };
             Dictionary<string, byte[]> SongsBuffer = new Dictionary<string, byte[]> { };
-            
 
+            XmlReaderSettings readerSettings = new XmlReaderSettings();
+            readerSettings.IgnoreComments = true;
+            readerSettings.DtdProcessing = DtdProcessing.Ignore;
+            readerSettings.CheckCharacters = false;
 
+            MainWindow.set.Status_textBlock.Text = "Loading ZIP...";
             using (FileStream zipToOpen = new FileStream(target_path, FileMode.Open))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
@@ -118,19 +122,28 @@ namespace MOPS
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
                                 {
-                                    info_xml = XDocument.Load(reader);
+                                    using (var xmlread = XmlReader.Create(reader, readerSettings))
+                                        info_xml = XDocument.Load(xmlread);
                                 }
                             if (entry.Name.ToLower() == "songs.xml")
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
                                 {
-                                    songs_xml.Load(reader);
+                                    string doc = reader.ReadToEnd();
+                                    doc = doc.Replace("&", "&amp;");
+                                    doc = doc.Replace("&amp;amp;", "&amp;");
+                                    using (var inner = new MemoryStream(Encoding.UTF8.GetBytes(doc)))
+                                    using (var xmlread = XmlReader.Create(inner, readerSettings))
+                                    {
+                                        songs_xml.Load(xmlread);
+                                    }
                                 }
                             if (entry.Name.ToLower() == "images.xml")
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
                                 {
-                                    images_xml.Load(reader);
+                                    using (var xmlread = XmlReader.Create(reader, readerSettings))
+                                        images_xml.Load(xmlread);
                                 }
                         }
                         if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase))
@@ -168,6 +181,7 @@ namespace MOPS
                 }
             }
 
+            MainWindow.set.Status_textBlock.Text = "Parsing data...";
             if (info_xml.Root != null)
             {
                 Array.Resize(ref ResPacks, ResPacks.Length + 1);
@@ -269,13 +283,14 @@ namespace MOPS
                     ResPacks[ResPacks.Length - 1].pics_count = allPics.Length - ResPacks[ResPacks.Length - 1].pics_start;
                 }
                 else ResPacks[ResPacks.Length - 1].pics_count = 0;
+                MainWindow.set.Status_textBlock.Text = "Loaded";
                 PicsBuffer.Clear();
                 SongsBuffer.Clear();
                 return true;
             }
             else
             {
-                System.Windows.MessageBox.Show("Error: info.xml not found");
+                MainWindow.set.Status_textBlock.Text = "info.xml not found";
                 PicsBuffer.Clear();
                 SongsBuffer.Clear();
                 return false;
