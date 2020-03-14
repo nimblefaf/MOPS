@@ -143,7 +143,7 @@ namespace MOPS
         public MainWindow()
         {
             InitializeComponent();
-            RPManager.SupremeReader("Defaults_v5.0.zip");
+            RPManager.SupremeReader("Packs/Defaults_v5.0.zip");
             for (int i = 0; i < RPManager.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = RPManager.allSongs[i].title, Ind = i });
             songs_listbox.ItemsSource = enabled_songs;
 
@@ -258,11 +258,13 @@ namespace MOPS
         {
             if (images_listbox.SelectedIndex == images_listbox.Items.Count - 1) images_listbox.SelectedIndex = 0;
             else images_listbox.SelectedIndex += 1;
+            full_auto_mode = false;
         }
         private void prev_image()
         {
             if (images_listbox.SelectedIndex == 0) images_listbox.SelectedIndex = images_listbox.Items.Count - 1;
             else images_listbox.SelectedIndex -= 1;
+            full_auto_mode = false;
         }
 
 
@@ -274,36 +276,23 @@ namespace MOPS
         private void Timer_Tick(object sender, EventArgs e)
         {
             TimeLine_Move();
+
             if (rhythm_pos >= 0)
             {
-                
                 Correction = beat_length * rhythm_pos - Player.GetPosOfStream(Player.Stream_L);
                 if (Correction > 0 & Correction < beat_length * 1.5) Timer.Interval = TimeSpan.FromSeconds(Correction);
                 else //Jumping forward to compensate lag
                 {
-                    if (rhythm_pos != 0) Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
-                    //if (rhythm_pos != 0)
-                    //{
-                    //    int new_pos = Convert.ToInt32(Math.Round(Player.GetPosOfStream(Player.Stream_L) / beat_length));
-                    //    if (new_pos > rhythm_pos)
-                    //    {
-                    //        for (int i = 0; i < new_pos - rhythm_pos; i++) TimeLine_Move();
-                    //    }
-                    //}
+                    if (rhythm_pos != 0 & Correction < 0) Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
                 }
             }
             else
             {
                 b_rhythm_pos += 1;
                 Correction = buildup_beat_len * (build_rhythm.Length + rhythm_pos) - Player.GetPosOfStream(Player.Stream_B);
-                if (Correction > 0 & Correction < buildup_beat_len) Timer.Interval = TimeSpan.FromSeconds(Correction);
-                else if (Correction < 0) Timer.Interval = TimeSpan.FromMilliseconds(0.001);
-                else Timer.Interval = TimeSpan.FromSeconds(buildup_beat_len); 
-                //volume_label.Content = Player.GetPosOfStream(Player.Stream_B);
+                if (Correction > 0) Timer.Interval = TimeSpan.FromSeconds(Correction);
+                else Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
             }
-
-            volume_label.Content = Player.GetPosOfStream(Player.Channel);
-            song_label.Content = Correction;
         }
 
         private void TimelineLenghtFill()
@@ -394,17 +383,20 @@ namespace MOPS
         // '*'
         private void timeline_image_change()
         {
-            int i;
-            if (enabled_songs.Count != 0)
+            if (full_auto_mode)
             {
-                while (true)
+                int i;
+                if (enabled_images.Count != 0)
                 {
-                    i = rnd.Next(0, enabled_images.Count - 1);
-                    if (images_listbox.SelectedIndex != i) break;
+                    while (true)
+                    {
+                        i = rnd.Next(0, enabled_images.Count - 1);
+                        if (images_listbox.SelectedIndex != i) break;
+                    }
                 }
+                else i = -1;
+                images_listbox.SelectedIndex = i;
             }
-            else i = -1;
-            images_listbox.SelectedIndex = i;
         }
         // 'X' Vertical blur only
         private void timeline_blur_vert()

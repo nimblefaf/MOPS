@@ -80,7 +80,7 @@
                     <Button x:Name="disabelAll_button" Content="DISABLE ALL" HorizontalAlignment="Left" Margin="445,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="140"/>
                     <Label x:Name="SongNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,12" Grid.Row="2" VerticalAlignment="Bottom"/>
                     <Label x:Name="ImagesNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" VerticalAlignment="Bottom"/>
-                    <TextBlock x:Name="Status_textBlock" HorizontalAlignment="Left" Margin="0,26,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="Status_textBlock" HorizontalAlignment="Left" Margin="0,21,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top" Width="190" Height="15"/>
                 </Grid>
             </TabItem>
             <TabItem Header="EDITOR" Cursor="Hand" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" FontSize="10" Width="150" Height="25">

@@ -131,7 +131,9 @@ namespace MOPS
         /// <returns></returns>
         public double GetPosOfStream(int stream)
         {
-            long pos = Bass.BASS_ChannelGetPosition(stream);
+            long pos;
+            if (point_L.IsAllocated) pos = BassMix.BASS_Mixer_ChannelGetPosition(stream, BASSMode.BASS_POS_BYTES);
+            else pos = Bass.BASS_ChannelGetPosition(stream);
             return Bass.BASS_ChannelBytes2Seconds(stream, pos);
         }
 

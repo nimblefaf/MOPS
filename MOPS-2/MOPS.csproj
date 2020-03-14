@@ -106,7 +106,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="Packs\Defaults_v5.0.zip" />
+    <Content Include="Packs\Defaults_v5.0.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="fonts\PetMe64.ttf" />
     <Resource Include="fonts\PetMe.ttf" />
     <Resource Include="fonts\PetMe128.ttf" />

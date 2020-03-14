@@ -153,7 +153,11 @@ namespace MOPS
                 }
                 for (int i = 0; i < MainWindow.enabled_images.Count; i++)
                     if (MainWindow.enabled_images[i].Ind == images_names[images_listbox.SelectedIndex].Ind)
+                    {
+                        main.full_auto_mode = false;
                         main.images_listbox.SelectedIndex = i;
+                    }
+                        
             }
         }
 
