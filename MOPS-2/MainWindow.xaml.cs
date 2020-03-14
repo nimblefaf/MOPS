@@ -23,7 +23,17 @@ using System.Diagnostics;
 
 namespace MOPS
 {
-    
+    public struct Palette
+    {
+        public string name;
+        public Brush brush;
+
+        public Palette(string f1, Brush f2)
+        {
+            name = f1; brush = f2;
+        }
+    }
+
     public class rdata
     {
         public string Name { get; set; }
@@ -38,9 +48,11 @@ namespace MOPS
         Random rnd = new Random();
 
         Audio Player = new Audio();
+
         public DispatcherTimer Timer = new DispatcherTimer(DispatcherPriority.Send);
-        private Stopwatch stopwatch = new Stopwatch();
-        TimeSpan Correction;
+        double Correction;
+        public double beat_length = 0;
+        public double buildup_beat_len = 0;
 
         public static Palette[] hues =
         {
@@ -114,20 +126,16 @@ namespace MOPS
 
         public bool muted = false;
         public bool full_auto_mode = true;
-        public bool buildup_enabled = false;
+        public bool buildup_enabled = true;
         public int muted_volume;
 
         public int current_song = 0;
         public int current_image = 55;
 
-        public double beat_length = 0;
-        public double buildup_beat_len = 0;
-        private double sum = 0;
-        private double dur;
-
         private string loop_rhythm;
         private string build_rhythm;
-        public int rhythm_pos;
+        public int rhythm_pos = 0;
+        public int b_rhythm_pos = 0;
 
         public static ObservableCollection<rdata> enabled_songs = new ObservableCollection<rdata>();
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
@@ -149,63 +157,14 @@ namespace MOPS
             set.SetReference(this);
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            char c = loop_rhythm[rhythm_pos];
-            switch (c)
-            {
-                case 'o':
-                    timeline_o();
-                    break;
-                case 'x':
-                    timeline_x();
-                    break;
-                case '-':
-                    timeline_noblur();
-                    break;
-                case '‑'://thank to tylup for that one
-                    timeline_noblur();
-                    break;
-                case ':':
-                    timeline_color_change();
-                    break;
-                case '*':
-                    timeline_image_change();
-                    break;
-            }
-            if (rhythm_pos == loop_rhythm.Length - 1)
-            {
-                rhythm_pos = 0;
-                timeline_label.Content = loop_rhythm;
-                sum = 0;
-                Timer.Interval = TimeSpan.FromSeconds(beat_length);
-            }
-            else
-            {
-                rhythm_pos += 1;
-                timeline_label.Content = timeline_label.Content.ToString().Remove(0, 1);
-                sum += beat_length;
-                Correction = TimeSpan.FromSeconds(beat_length * rhythm_pos - Player.GetPosOfStream(Player.Stream_L));
-                if (Correction.TotalSeconds > 0) Timer.Interval = Correction;
-                //Jumping forward to compensate lag
-                else
-                {
-                    int new_pos = Convert.ToInt32(Math.Round(Player.GetPosOfStream(Player.Stream_L) / beat_length));
-                    if (new_pos < rhythm_pos)
-                    {
-                        timeline_label.Content = loop_rhythm.Remove(0, new_pos);
-                        rhythm_pos = new_pos;
-                    }
-                    else
-                    {
-                        timeline_label.Content = timeline_label.Content.ToString().Remove(0, new_pos - rhythm_pos);
-                        rhythm_pos = new_pos;
-                    }
-                }
+            set.Owner = this;
+            timeline_color_change();
+            Settings.rp_names.Add(new setdata() { Name = RPManager.ResPacks[0].name, State = true });
+            set.stat_update();
 
-            }
-            character_label.Content = sum + " / " + dur;
-            
+            songs_listbox.SelectedIndex = current_song;
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -218,15 +177,9 @@ namespace MOPS
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            set.Owner = this;
-            timeline_color_change();
-            Settings.rp_names.Add(new setdata() { Name = RPManager.ResPacks[0].name, State = true });
-            set.stat_update();
-
-            songs_listbox.SelectedIndex = current_song;
-        }
+        //
+        //Key Controls
+        //
 
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -318,6 +271,79 @@ namespace MOPS
         // Timeline Effects Controls
         //
 
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            TimeLine_Move();
+            if (rhythm_pos >= 0)
+            {
+                
+                Correction = beat_length * rhythm_pos - Player.GetPosOfStream(Player.Stream_L);
+                if (Correction > 0 & Correction < beat_length * 1.5) Timer.Interval = TimeSpan.FromSeconds(Correction);
+                else //Jumping forward to compensate lag
+                {
+                    if (rhythm_pos != 0) Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
+                    //if (rhythm_pos != 0)
+                    //{
+                    //    int new_pos = Convert.ToInt32(Math.Round(Player.GetPosOfStream(Player.Stream_L) / beat_length));
+                    //    if (new_pos > rhythm_pos)
+                    //    {
+                    //        for (int i = 0; i < new_pos - rhythm_pos; i++) TimeLine_Move();
+                    //    }
+                    //}
+                }
+            }
+            else
+            {
+                b_rhythm_pos += 1;
+                Correction = buildup_beat_len * (build_rhythm.Length + rhythm_pos) - Player.GetPosOfStream(Player.Stream_B);
+                if (Correction > 0 & Correction < buildup_beat_len) Timer.Interval = TimeSpan.FromSeconds(Correction);
+                else if (Correction < 0) Timer.Interval = TimeSpan.FromMilliseconds(0.001);
+                else Timer.Interval = TimeSpan.FromSeconds(buildup_beat_len); 
+                //volume_label.Content = Player.GetPosOfStream(Player.Stream_B);
+            }
+
+            volume_label.Content = Player.GetPosOfStream(Player.Channel);
+            song_label.Content = Correction;
+        }
+
+        private void TimelineLenghtFill()
+        {
+            if (timeline_label.Content.ToString().Length < 150) timeline_label.Content = timeline_label.Content.ToString() + loop_rhythm;
+        }
+
+        private void TimeLine_Move()
+        {
+            beat(timeline_label.Content.ToString()[0]);
+            timeline_label.Content = timeline_label.Content.ToString().Remove(0, 1);
+            TimelineLenghtFill();
+            rhythm_pos += 1;
+            if (rhythm_pos == loop_rhythm.Length) rhythm_pos = 0;
+        }
+
+        private void beat(char c)
+        {
+            switch (c)
+            {
+                case 'o':
+                    timeline_o();
+                    break;
+                case 'x':
+                    timeline_x();
+                    break;
+                case '-':
+                    timeline_noblur();
+                    break;
+                case '‑'://thank to tylup for that one
+                    timeline_noblur();
+                    break;
+                case ':':
+                    timeline_color_change();
+                    break;
+                case '*':
+                    timeline_image_change();
+                    break;
+            }
+        }
 
         // Vertical blur (snare)
         private void timeline_x()
@@ -522,30 +548,44 @@ namespace MOPS
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
                 Player.loop_mem = RPManager.allSongs[i].buffer;
                 loop_rhythm = RPManager.allSongs[i].rhythm;
-                rhythm_pos = 0;
-                sum = 0;
-                Timer.Interval = TimeSpan.FromMilliseconds(219);
-                if (RPManager.allSongs[i].buildup_buffer != null & buildup_enabled)
-                {
-                    build_rhythm = RPManager.allSongs[i].buildup_rhythm;
-                    Player.build_mem = RPManager.allSongs[i].buildup_buffer;
-                    Player.Play_With_Buildup();
-                }
-                else
-                {
-                    Player.Play_Without_Buildup(i);
-                    dur = Audio.GetTimeOfStream(Player.Stream_L);
-                    Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64((Audio.GetTimeOfStream(Player.Stream_L) / Convert.ToDouble(RPManager.allSongs[i].rhythm.Length)) * 1000 * 10000));
-                    //Timer.Interval = TimeSpan.FromMilliseconds((Audio.GetTimeOfStream(Player.Stream_L) / RPManager.allSongs[i].rhythm.Length)*1000);
-                    
-                }
-                Player.Play();
-                Timer.Start();
-
                 song_label.Content = RPManager.allSongs[i].title.ToUpper();
-                beat_length = Audio.GetTimeOfStream(Player.Stream_L) / RPManager.allSongs[i].rhythm.Length;
                 timeline_label.Content = RPManager.allSongs[i].rhythm;
                 current_song = songs_listbox.SelectedIndex;
+
+                rhythm_pos = 0;
+                b_rhythm_pos = 0;
+                if (RPManager.allSongs[i].buildup_buffer != null & buildup_enabled)
+                {
+                    Player.build_mem = RPManager.allSongs[i].buildup_buffer;
+                    Player.Play_With_Buildup();
+                    build_rhythm = RPManager.allSongs[i].buildup_rhythm;
+                    int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
+                    if (build_rhythm == null)
+                    {
+                        build_rhythm = new string('.', expected_size);
+                    }
+                    else if (build_rhythm.Length < expected_size)
+                    {
+                        build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
+                    }
+                    timeline_label.Content = build_rhythm + timeline_label.Content;
+                    rhythm_pos -= expected_size;
+                }
+                else Player.Play_Without_Buildup();
+
+                beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
+                
+                TimelineLenghtFill();
+                Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
+                if (RPManager.allSongs[i].buildup_buffer != null & buildup_enabled)
+                {
+                    Timer.Interval = TimeSpan.FromSeconds(buildup_beat_len);
+                    buildup_beat_len = Audio.GetTimeOfStream(Player.Stream_B) / build_rhythm.Length;
+                }
+
+                Player.Play();
+                TimeLine_Move();
+                Timer.Start();
             }
             else
             {
@@ -557,6 +597,7 @@ namespace MOPS
         }
         public void StopSong()
         {
+            Timer.Stop();
             Player.Stop();
             song_label.Content = "NONE";
             beat_length = 0;
@@ -629,25 +670,5 @@ namespace MOPS
             e.Handled = true;
         }
 
-        public void SelectSongByInd(int ind)
-        {
-            songs_listbox.SelectedIndex = ind;
-        }
-        public void SelectImageByInd(int ind)
-        {
-            images_listbox.SelectedIndex = ind;
-        }
     }
-
-    public struct Palette
-    {
-        public string name;
-        public Brush brush;
-
-        public Palette(string f1, Brush f2)
-        {
-            name = f1; brush = f2;
-        }
-    }
-
 }

@@ -92,9 +92,11 @@ namespace MOPS
 
         private void load_rp_button_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFile = new OpenFileDialog();
-            openFile.DefaultExt = ".zip";
-            openFile.Filter = "Zip Archive (.zip)|*.zip";
+            OpenFileDialog openFile = new OpenFileDialog
+            {
+                DefaultExt = ".zip",
+                Filter = "Zip Archive (.zip)|*.zip"
+            };
             if (openFile.ShowDialog() == true)
             {
                 if (RPManager.SupremeReader(openFile.FileName))
@@ -131,9 +133,8 @@ namespace MOPS
                     stat_update();
                 }
                 for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
-                {
-                    if (MainWindow.enabled_songs[i].Ind == song_names[songs_listbox.SelectedIndex].Ind) main.SelectSongByInd(i);
-                }
+                    if (MainWindow.enabled_songs[i].Ind == song_names[songs_listbox.SelectedIndex].Ind)
+                        main.songs_listbox.SelectedIndex = i;
             }
             
         }
@@ -151,9 +152,8 @@ namespace MOPS
                     stat_update();
                 }
                 for (int i = 0; i < MainWindow.enabled_images.Count; i++)
-                {
-                    if (MainWindow.enabled_images[i].Ind == images_names[images_listbox.SelectedIndex].Ind) main.SelectImageByInd(i);
-                }
+                    if (MainWindow.enabled_images[i].Ind == images_names[images_listbox.SelectedIndex].Ind)
+                        main.images_listbox.SelectedIndex = i;
             }
         }
 

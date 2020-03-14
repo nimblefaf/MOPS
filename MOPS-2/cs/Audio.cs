@@ -19,7 +19,7 @@ namespace MOPS
         /// <summary>
         /// Частота дискретизации
         /// </summary>
-        private static int HZ = 44100;
+        private static readonly int HZ = 44100;
         /// <summary>
         /// Состояние инициалиации
         /// </summary>
@@ -65,7 +65,7 @@ namespace MOPS
             Stop();
             if (InitBass(HZ))
             {
-                Channel = BassMix.BASS_Mixer_StreamCreate(HZ, 2, BASSFlag.BASS_MIXER_NONSTOP);
+                Channel = BassMix.BASS_Mixer_StreamCreate(HZ, 2, BASSFlag.BASS_MIXER_END);
 
                 point_B = GCHandle.Alloc(build_mem, GCHandleType.Pinned);
                 point_L = GCHandle.Alloc(loop_mem, GCHandleType.Pinned);
@@ -94,7 +94,7 @@ namespace MOPS
             BassMix.BASS_Mixer_ChannelSetPosition(Stream_L, user.ToInt64());
         }
 
-        public void Play_Without_Buildup(int i)
+        public void Play_Without_Buildup()
         {
             Stop();
             if (InitBass(HZ))
