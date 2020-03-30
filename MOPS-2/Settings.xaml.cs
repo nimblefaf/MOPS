@@ -167,19 +167,21 @@ namespace MOPS
             {
                 if (el.State != RPManager.allSongs[el.Ind].enabled)
                 {
-                    if (!el.State)
-                    {
-                        RPManager.allSongs[el.Ind].enabled = false;
-                        for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
-                        {
-                            if (MainWindow.enabled_songs[i].Ind == el.Ind)  MainWindow.enabled_songs.RemoveAt(i);
-                        }
-                    }
+                    if (!el.State) Remove_Disabled_Song(el);
                     else Add_Enabled_Song(el);
                     break;
                 }
             }
             stat_update();
+        }
+
+        private void Remove_Disabled_Song(setdata elem)
+        {
+            RPManager.allSongs[elem.Ind].enabled = false;
+            for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
+            {
+                if (MainWindow.enabled_songs[i].Ind == elem.Ind) MainWindow.enabled_songs.RemoveAt(i);
+            }
         }
 
         private void Add_Enabled_Song(setdata elem)
@@ -204,21 +206,23 @@ namespace MOPS
             {
                 if (el.State != RPManager.allPics[el.Ind].enabled)
                 {
-                    if (!el.State)
-                    {
-                        RPManager.allPics[el.Ind].enabled = false;
-                        for (int i = 0; i < MainWindow.enabled_images.Count; i++)
-                        {
-                            if (MainWindow.enabled_images[i].Ind == el.Ind) MainWindow.enabled_images.RemoveAt(i);
-                        }
-                    }
+                    if (!el.State) Remove_Disabled_Image(el);
                     else Add_Enabled_Image(el);
-                    
                     break;
                 }
             }
             stat_update();
         }
+
+        private void Remove_Disabled_Image(setdata elem)
+        {
+            RPManager.allPics[elem.Ind].enabled = false;
+            for (int i = 0; i < MainWindow.enabled_images.Count; i++)
+            {
+                if (MainWindow.enabled_images[i].Ind == elem.Ind) MainWindow.enabled_images.RemoveAt(i);
+            }
+        }
+
         private void Add_Enabled_Image(setdata elem)
         {
             rdata copy = new rdata { Name = elem.Name, Ind = elem.Ind };
@@ -238,6 +242,106 @@ namespace MOPS
         private void RPList_CheckBox_Clicked(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void enableAll_button_Click(object sender, RoutedEventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 0)
+            {
+                foreach (setdata el in song_names)
+                {
+                    if (!el.State)
+                    {
+                        el.State = true;
+                        Add_Enabled_Song(el);
+                    }
+                }
+                songs_listbox.Items.Refresh();
+            }
+
+            else
+            {
+                foreach (setdata el in images_names)
+                {
+                    if (!el.State)
+                    {
+                        el.State = true;
+                        Add_Enabled_Image(el);
+                    }
+                }
+                images_listbox.Items.Refresh();
+            }
+            stat_update();
+        }
+
+        private void disabelAll_button_Click(object sender, RoutedEventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 0)
+            {
+                foreach (setdata el in song_names)
+                {
+                    if (el.State)
+                    {
+                        el.State = false;
+                        Remove_Disabled_Song(el);
+                    }
+                }
+                songs_listbox.Items.Refresh();
+            }
+
+            else
+            {
+                foreach (setdata el in images_names)
+                {
+                    if (el.State)
+                    {
+                        el.State = false;
+                        Remove_Disabled_Image(el);
+                    }
+                }
+                images_listbox.Items.Refresh();
+            }
+            stat_update();
+        }
+
+        private void invert_button_Click(object sender, RoutedEventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 0)
+            {
+                foreach (setdata el in song_names)
+                {
+                    if (el.State)
+                    {
+                        el.State = false;
+                        Remove_Disabled_Song(el);
+                    }
+                    else
+                    {
+                        el.State = true;
+                        Add_Enabled_Song(el);
+                    }
+                }
+                songs_listbox.Items.Refresh();
+            }
+
+            else
+            {
+                foreach (setdata el in images_names)
+                {
+                    if (el.State)
+                    {
+                        el.State = false;
+                        Remove_Disabled_Image(el);
+                    }
+                    else
+                    {
+                        el.State = true;
+                        Add_Enabled_Image(el);
+                    }
+                }
+                images_listbox.Items.Refresh();
+            }
+            stat_update();
         }
     }
 }

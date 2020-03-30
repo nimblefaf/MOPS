@@ -149,7 +149,7 @@ namespace MOPS
 
             for (int i = 0; i < RPManager.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPManager.allPics[i].name, Ind = i });
             images_listbox.ItemsSource = enabled_images;
-            images_listbox.SelectedIndex = current_image;
+            ImageChange(current_image);
 
             Timer.Tick += new EventHandler(Timer_Tick);
             
@@ -345,9 +345,7 @@ namespace MOPS
             timeline_noblur();
         }
 
-        /// <summary>
-        /// For '-' in the timeline
-        /// </summary>
+        // For '-' in the timeline
         private void timeline_noblur()
         {
             timeline_color_change();
@@ -395,7 +393,7 @@ namespace MOPS
                     }
                 }
                 else i = -1;
-                images_listbox.SelectedIndex = i;
+                ImageChange(i);
             }
         }
         // 'X' Vertical blur only
@@ -493,18 +491,15 @@ namespace MOPS
         }
         private void Window_StateChanged(object sender, EventArgs e)
         {
-            if (set.IsVisible)
+            if (this.WindowState == WindowState.Normal)
             {
-                if (this.WindowState == WindowState.Normal)
-                {
-                    set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
-                    set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
-                }
-                if (this.WindowState == WindowState.Maximized)
-                {
-                    set.Top = (SystemParameters.MaximizedPrimaryScreenHeight / 2) - (set.Height / 2);
-                    set.Left = (SystemParameters.MaximizedPrimaryScreenWidth / 2) - (set.Width / 2);
-                }
+                set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
+                set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
+            }
+            if (this.WindowState == WindowState.Maximized)
+            {
+                set.Top = (SystemParameters.MaximizedPrimaryScreenHeight / 2) - (set.Height / 2);
+                set.Left = (SystemParameters.MaximizedPrimaryScreenWidth / 2) - (set.Width / 2);
             }
         }
         private void Window_LocationChanged(object sender, EventArgs e)
@@ -614,9 +609,15 @@ namespace MOPS
 
         private void Images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (images_listbox.SelectedIndex != -1)
+            full_auto_mode = false;
+            ImageChange(images_listbox.SelectedIndex);
+        }
+
+        private void ImageChange(int index)
+        {
+            if (index != -1)
             {
-                int i = enabled_images[images_listbox.SelectedIndex].Ind;
+                int i = enabled_images[index].Ind;
                 image.Source = RPManager.allPics[i].png;
                 character_label.Content = RPManager.allPics[i].fullname.ToUpper();
                 switch (RPManager.allPics[i].align)
