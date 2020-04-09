@@ -302,8 +302,8 @@ namespace MOPS
 
         private void TimeLine_Move()
         {
-            beat(timeline_label.Content.ToString()[0]);
-            timeline_label.Content = timeline_label.Content.ToString().Remove(0, 1);
+            beat(timeline_label.Content.ToString()[2]);
+            timeline_label.Content = timeline_label.Content.ToString().Remove(2, 1);
             TimelineLenghtFill();
             rhythm_pos += 1;
             if (rhythm_pos == loop_rhythm.Length) rhythm_pos = 0;
@@ -559,6 +559,8 @@ namespace MOPS
                     rhythm_pos -= expected_size;
                 }
                 else Player.Play_Without_Buildup();
+
+                timeline_label.Content = ">>" + timeline_label.Content;
 
                 beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
                 

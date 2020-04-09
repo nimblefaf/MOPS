@@ -104,10 +104,12 @@ namespace MOPS
             Dictionary<string, BitmapImage> PicsBuffer = new Dictionary<string, BitmapImage> { };
             Dictionary<string, byte[]> SongsBuffer = new Dictionary<string, byte[]> { };
 
-            XmlReaderSettings readerSettings = new XmlReaderSettings();
-            readerSettings.IgnoreComments = true;
-            readerSettings.DtdProcessing = DtdProcessing.Ignore;
-            readerSettings.CheckCharacters = false;
+            XmlReaderSettings readerSettings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                DtdProcessing = DtdProcessing.Ignore,
+                CheckCharacters = false
+            };
 
             MainWindow.set.Status_textBlock.Text = "Loading ZIP...";
             using (FileStream zipToOpen = new FileStream(target_path, FileMode.Open))
@@ -159,7 +161,7 @@ namespace MOPS
                                 }
                             }
                         }
-                        if (entry.FullName.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".gif", StringComparison.InvariantCultureIgnoreCase))
+                        if (entry.FullName.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".gif", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase))
                         {
                             using (var stream = entry.Open())
                             using (var memoryStream = new MemoryStream())
@@ -173,8 +175,8 @@ namespace MOPS
                                 pic.CacheOption = BitmapCacheOption.OnLoad;
                                 pic.StreamSource = memoryStream;
                                 pic.EndInit();
-
-                                PicsBuffer.Add(entry.Name, pic);
+                                string name = entry.Name.Substring(0, entry.Name.Length - 4);
+                                PicsBuffer.Add(name, pic);
                             }
                         }
                     }
@@ -242,20 +244,23 @@ namespace MOPS
                         allPics[allPics.Length - 1].name = node.Attributes[0].Value;
                         if (node.LastChild.Name == "frameDuration")
                         {
-                            allPics[allPics.Length - 1].png = PicsBuffer[node.Attributes[0].Value + "_01.png"]; //Animation TBD
+                            allPics[allPics.Length - 1].png = PicsBuffer[node.Attributes[0].Value + "_01"]; //Animation TBD
                             allPics[allPics.Length - 1].still = false;
                         }
                         else
                         {
-                            string test = node.Attributes[0].Value + ".png";
-                            if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value) + ".png"))
-                                allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value) + ".png"];
-                            else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText + ".png")))
-                                allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText + ".png")];
-                            else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value) + ".gif"))
-                                allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value) + ".gif"];
+                            if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
+                                allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value)];
+                            else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
+                                allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
                         }
                         allPics[allPics.Length - 1].enabled = true;
+
+                        allPics[allPics.Length - 1].source = "";
+                        allPics[allPics.Length - 1].source_other = "";
+                        allPics[allPics.Length - 1].fullname = allPics[allPics.Length - 1].name;
+                        allPics[allPics.Length - 1].align = "center";
+
                         foreach (XmlNode childnode in node)
                         {
                             if (childnode.Name == "source")
