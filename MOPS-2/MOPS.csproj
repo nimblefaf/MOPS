@@ -135,7 +135,6 @@
     <Content Include="bassmix.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="WHITE.png" />
     <Resource Include="Bass.Net.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
