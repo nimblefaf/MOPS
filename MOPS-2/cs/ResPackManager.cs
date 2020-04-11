@@ -36,9 +36,9 @@ namespace MOPS
         public string source;
         public string source_other; 
         public string align;
-        public BitmapImage png;
+        public BitmapImage pic;
         public BitmapImage[] animation;
-        public bool still;
+        public int frameDuration;
         public bool enabled;
     }
 
@@ -183,9 +183,9 @@ namespace MOPS
                 }
             }
 
-            MainWindow.set.Status_textBlock.Text = "Parsing data...";
             if (info_xml.Root != null)
             {
+                MainWindow.set.Status_textBlock.Text = "Parsing data...";
                 Array.Resize(ref ResPacks, ResPacks.Length + 1);
 
                 ResPacks[ResPacks.Length - 1].name = info_xml.XPathSelectElement("//info/name").Value;
@@ -242,18 +242,12 @@ namespace MOPS
                         if (node.NodeType == XmlNodeType.Comment) continue; //WHY DOES IT EVEN PARSE COMMENTS?!
                         Array.Resize(ref allPics, allPics.Length + 1);
                         allPics[allPics.Length - 1].name = node.Attributes[0].Value;
-                        if (node.LastChild.Name == "frameDuration")
-                        {
-                            allPics[allPics.Length - 1].png = PicsBuffer[node.Attributes[0].Value + "_01"]; //Animation TBD
-                            allPics[allPics.Length - 1].still = false;
-                        }
-                        else
-                        {
-                            if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
-                                allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value)];
-                            else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
-                                allPics[allPics.Length - 1].png = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
-                        }
+
+                        if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
+                            allPics[allPics.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value)];
+                        else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
+                            allPics[allPics.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
+
                         allPics[allPics.Length - 1].enabled = true;
 
                         allPics[allPics.Length - 1].source = "";
@@ -281,7 +275,21 @@ namespace MOPS
                             }
                             if (childnode.Name == "frameDuration")
                             {
-
+                                allPics[allPics.Length - 1].frameDuration = Convert.ToInt32(childnode.InnerText);
+                                allPics[allPics.Length - 1].pic = PicsBuffer[node.Attributes[0].Value + "_01"];
+                                allPics[allPics.Length - 1].animation = new BitmapImage[0];
+                                for (int i = 1; i < PicsBuffer.Count; i++)
+                                {
+                                    string end = "";
+                                    if (i < 10) end = "_0" + Convert.ToString(i);
+                                    else end = "_" + Convert.ToString(i);
+                                    if (PicsBuffer.ContainsKey(node.Attributes[0].Value + end))
+                                    {
+                                        Array.Resize(ref allPics[allPics.Length - 1].animation, allPics[allPics.Length - 1].animation.Length + 1);
+                                        allPics[allPics.Length - 1].animation[allPics[allPics.Length - 1].animation.Length - 1] = PicsBuffer[node.Attributes[0].Value + end];
+                                    }
+                                    else break;
+                                }
                             }
                         }
                     }

@@ -50,6 +50,7 @@ namespace MOPS
         Audio Player = new Audio();
 
         public DispatcherTimer Timer = new DispatcherTimer(DispatcherPriority.Send);
+        public DispatcherTimer AnimTimer = new DispatcherTimer(DispatcherPriority.Render);
         double Correction;
         public double beat_length = 0;
         public double buildup_beat_len = 0;
@@ -131,6 +132,7 @@ namespace MOPS
 
         public int current_song = 0;
         public int current_image = 55;
+        private int anim_ind = 0;
 
         private string loop_rhythm;
         private string build_rhythm;
@@ -152,6 +154,7 @@ namespace MOPS
             ImageChange(current_image);
 
             Timer.Tick += new EventHandler(Timer_Tick);
+            AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
             
             Player.SetReference(this);
             set.SetReference(this);
@@ -612,27 +615,49 @@ namespace MOPS
         private void Images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             full_auto_mode = false;
-            ImageChange(images_listbox.SelectedIndex);
+            ImageChange(enabled_images[images_listbox.SelectedIndex].Ind);
         }
 
         private void ImageChange(int index)
         {
+            current_image = index;
             if (index != -1)
             {
-                int i = enabled_images[index].Ind;
-                image.Source = RPManager.allPics[i].png;
-                character_label.Content = RPManager.allPics[i].fullname.ToUpper();
-                switch (RPManager.allPics[i].align)
+                image.Source = RPManager.allPics[index].pic;
+                if (RPManager.allPics[index].animation == null)
                 {
-                    case "left":
-                        image.HorizontalAlignment = HorizontalAlignment.Left;
-                        break;
-                    case "center":
-                        image.HorizontalAlignment = HorizontalAlignment.Center;
-                        break;
-                    case "right":
-                        image.HorizontalAlignment = HorizontalAlignment.Right;
-                        break;
+                    AnimTimer.Stop();
+                    character_label.Content = RPManager.allPics[index].fullname.ToUpper();
+                    switch (RPManager.allPics[index].align)
+                    {
+                        case "left":
+                            image.HorizontalAlignment = HorizontalAlignment.Left;
+                            break;
+                        case "center":
+                            image.HorizontalAlignment = HorizontalAlignment.Center;
+                            break;
+                        case "right":
+                            image.HorizontalAlignment = HorizontalAlignment.Right;
+                            break;
+                    }
+                }
+                else
+                {
+                    anim_ind = 1;
+                    AnimTimer.Interval = TimeSpan.FromMilliseconds(RPManager.allPics[current_image].frameDuration);
+                    AnimTimer.Start();
+                    switch (RPManager.allPics[index].align)
+                    {
+                        case "left":
+                            image.HorizontalAlignment = HorizontalAlignment.Left;
+                            break;
+                        case "center":
+                            image.HorizontalAlignment = HorizontalAlignment.Center;
+                            break;
+                        case "right":
+                            image.HorizontalAlignment = HorizontalAlignment.Right;
+                            break;
+                    }
                 }
             }
             else
@@ -643,6 +668,13 @@ namespace MOPS
                     character_label.Content = "NONE";
                 }
             }
+        }
+
+        private void AnimTimer_Tick(object sender, EventArgs e)
+        {
+            image.Source = RPManager.allPics[current_image].animation[anim_ind];
+            if (RPManager.allPics[current_image].animation.Length == anim_ind + 1) anim_ind = 0;
+            else anim_ind++;
         }
 
         private void Images_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
