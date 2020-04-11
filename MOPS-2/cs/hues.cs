@@ -82,7 +82,7 @@ namespace MOPS
             new Palette("Turquoise", (SolidColorBrush)new BrushConverter().ConvertFromString("#55ffff")),
             new Palette("Powder", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaffff")),
             new Palette("White", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffffff"))
-        };
+        };          //  Macros would help with these.
 
         public static Palette[] hues_pastel =
         {
