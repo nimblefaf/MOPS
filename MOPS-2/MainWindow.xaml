@@ -24,6 +24,7 @@
         <TextBlock x:Name="images_be" HorizontalAlignment="Right" Margin="0,0,190,43" TextWrapping="Wrap" Text="IMAGES" VerticalAlignment="Bottom" RenderTransformOrigin="0.325,0.542" MouseLeftButtonDown="Images_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
         <TextBlock x:Name="full_auto_be" HorizontalAlignment="Right" Margin="0,0,172,23" TextWrapping="Wrap" Text="FULL AUTO" VerticalAlignment="Bottom" RenderTransformOrigin="0.325,0.542" MouseLeftButtonDown="full_auto_be_MouseLeftButtonDown" Style="{DynamicResource TextBlockStyleHues}"/>
         <ListBox x:Name="images_listbox" HorizontalAlignment="Right" Margin="0,0,172,60" VerticalAlignment="Bottom" Width="250" Background="#4C000000" BorderBrush="#FF020202" Opacity="1" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="Images_listbox_SelectionChanged" PreviewKeyDown="Images_listbox_PreviewKeyDown" ItemTemplate="{DynamicResource DataTemplateHues}" Style="{DynamicResource ListBoxStyleHues}" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Visibility="Hidden"/>
+        <TextBlock x:Name="Message_textBlock" Visibility="Hidden" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Message" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

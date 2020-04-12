@@ -131,7 +131,7 @@ namespace MOPS
         public int muted_volume;
 
         public int current_song = 0;
-        public int current_image = 55;
+        public int current_image_pos = 55;
         private int anim_ind = 0;
 
         private string loop_rhythm;
@@ -151,7 +151,7 @@ namespace MOPS
 
             for (int i = 0; i < RPManager.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPManager.allPics[i].name, Ind = i });
             images_listbox.ItemsSource = enabled_images;
-            ImageChange(current_image);
+            ImageChange(current_image_pos);
 
             Timer.Tick += new EventHandler(Timer_Tick);
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
@@ -229,13 +229,19 @@ namespace MOPS
 
         private void next_song()
         {
-            if (songs_listbox.SelectedIndex == enabled_songs.Count - 1) songs_listbox.SelectedIndex = 0;
-            else songs_listbox.SelectedIndex += 1;
+            if (enabled_songs.Count > 1)
+            {
+                if (songs_listbox.SelectedIndex == enabled_songs.Count - 1) songs_listbox.SelectedIndex = 0;
+                else songs_listbox.SelectedIndex += 1;
+            }
         }
         private void prev_song()
         {
-            if (songs_listbox.SelectedIndex == 0) songs_listbox.SelectedIndex = songs_listbox.Items.Count - 1;
-            else songs_listbox.SelectedIndex -= 1;
+            if (enabled_songs.Count > 1)
+            {
+                if (songs_listbox.SelectedIndex <= 0) songs_listbox.SelectedIndex = songs_listbox.Items.Count - 1;
+                else songs_listbox.SelectedIndex -= 1;
+            }
         }
 
         private void toggle_mute()
@@ -259,15 +265,21 @@ namespace MOPS
 
         private void next_image()
         {
-            if (images_listbox.SelectedIndex == images_listbox.Items.Count - 1) images_listbox.SelectedIndex = 0;
-            else images_listbox.SelectedIndex += 1;
-            full_auto_mode = false;
+            if (enabled_images.Count > 1)
+            {
+                if (current_image_pos == images_listbox.Items.Count - 1) images_listbox.SelectedIndex = 0;
+                else images_listbox.SelectedIndex = current_image_pos + 1;
+                full_auto_mode = false;
+            }
         }
         private void prev_image()
         {
-            if (images_listbox.SelectedIndex == 0) images_listbox.SelectedIndex = images_listbox.Items.Count - 1;
-            else images_listbox.SelectedIndex -= 1;
-            full_auto_mode = false;
+            if (enabled_images.Count > 1)
+            {
+                if (current_image_pos == 0) images_listbox.SelectedIndex = images_listbox.Items.Count - 1;
+                else images_listbox.SelectedIndex = current_image_pos - 1;
+                full_auto_mode = false;
+            }
         }
 
 
@@ -279,7 +291,6 @@ namespace MOPS
         private void Timer_Tick(object sender, EventArgs e)
         {
             TimeLine_Move();
-
             if (rhythm_pos >= 0)
             {
                 Correction = beat_length * rhythm_pos - Player.GetPosOfStream(Player.Stream_L);
@@ -489,8 +500,9 @@ namespace MOPS
                 set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
                 set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
             }
-            if (Width / Height > 2) image.Stretch = Stretch.Uniform;
-            else image.Stretch = Stretch.UniformToFill;
+            //if (Width / Height > 2) image.Stretch = Stretch.Uniform;
+            //else image.Stretch = Stretch.UniformToFill;
+            Smart_Stretch();
         }
         private void Window_StateChanged(object sender, EventArgs e)
         {
@@ -510,6 +522,17 @@ namespace MOPS
             set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
             set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
         }
+        private void Smart_Stretch()
+        {
+            if (Width / Height > image.ActualWidth / image.ActualHeight) image.Stretch = Stretch.Uniform;
+            else image.Stretch = Stretch.UniformToFill;
+        }
+
+
+
+        //
+        //
+        //
 
 
         private void next_song_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -614,15 +637,20 @@ namespace MOPS
 
         private void Images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            full_auto_mode = false;
-            ImageChange(enabled_images[images_listbox.SelectedIndex].Ind);
+            if (images_listbox.SelectedIndex != -1)
+            {
+                ImageChange(images_listbox.SelectedIndex);
+                full_auto_mode = false;
+                images_listbox.SelectedIndex = -1;
+            }
         }
 
-        private void ImageChange(int index)
+        public void ImageChange(int p)
         {
-            current_image = index;
-            if (index != -1)
+            current_image_pos = p;
+            if (p != -1)
             {
+                int index = enabled_images[p].Ind;
                 image.Source = RPManager.allPics[index].pic;
                 if (RPManager.allPics[index].animation == null)
                 {
@@ -640,11 +668,12 @@ namespace MOPS
                             image.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
+                    Smart_Stretch();
                 }
                 else
                 {
                     anim_ind = 1;
-                    AnimTimer.Interval = TimeSpan.FromMilliseconds(RPManager.allPics[current_image].frameDuration);
+                    AnimTimer.Interval = TimeSpan.FromMilliseconds(RPManager.allPics[current_image_pos].frameDuration);
                     AnimTimer.Start();
                     switch (RPManager.allPics[index].align)
                     {
@@ -658,6 +687,7 @@ namespace MOPS
                             image.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
+                    Smart_Stretch();
                 }
             }
             else
@@ -672,8 +702,8 @@ namespace MOPS
 
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            image.Source = RPManager.allPics[current_image].animation[anim_ind];
-            if (RPManager.allPics[current_image].animation.Length == anim_ind + 1) anim_ind = 0;
+            image.Source = RPManager.allPics[current_image_pos].animation[anim_ind];
+            if (RPManager.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
         }
 

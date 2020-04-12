@@ -180,7 +180,11 @@ namespace MOPS
             RPManager.allSongs[elem.Ind].enabled = false;
             for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
             {
-                if (MainWindow.enabled_songs[i].Ind == elem.Ind) MainWindow.enabled_songs.RemoveAt(i);
+                if (MainWindow.enabled_songs[i].Ind == elem.Ind)
+                {
+                    MainWindow.enabled_songs.RemoveAt(i);
+                    break;
+                }
             }
         }
 
@@ -219,23 +223,35 @@ namespace MOPS
             RPManager.allPics[elem.Ind].enabled = false;
             for (int i = 0; i < MainWindow.enabled_images.Count; i++)
             {
-                if (MainWindow.enabled_images[i].Ind == elem.Ind) MainWindow.enabled_images.RemoveAt(i);
+                if (MainWindow.enabled_images[i].Ind == elem.Ind)
+                {
+                    MainWindow.enabled_images.RemoveAt(i);
+                    if (MainWindow.enabled_images.Count == 0) main.ImageChange(-1);
+                    else if (i == main.current_image_pos) main.ImageChange(i - 1);
+                    else if (i < main.current_image_pos) main.current_image_pos--;
+                    break;
+                }
             }
         }
 
         private void Add_Enabled_Image(setdata elem)
         {
             rdata copy = new rdata { Name = elem.Name, Ind = elem.Ind };
-            if (MainWindow.enabled_images.Count == 0) MainWindow.enabled_images.Add(copy);
+            if (MainWindow.enabled_images.Count == 0)
+            {
+                MainWindow.enabled_images.Add(copy);
+                main.ImageChange(0);
+            }
             else if (MainWindow.enabled_images.Last().Ind < elem.Ind) MainWindow.enabled_images.Add(copy);
             else for (int i = 0; i < MainWindow.enabled_images.Count; i++)
-            {
+                {
                     if (MainWindow.enabled_images[i].Ind > elem.Ind)
                     {
                         MainWindow.enabled_images.Insert(i, copy);
+                        if (i <= main.current_image_pos) main.current_image_pos++;
                         break;
                     }
-            }
+                }
             RPManager.allPics[elem.Ind].enabled = true;
         }
 
@@ -271,12 +287,13 @@ namespace MOPS
                 }
                 images_listbox.Items.Refresh();
             }
+            if (main.current_image_pos == -1) main.ImageChange(0);
             stat_update();
         }
 
         private void disabelAll_button_Click(object sender, RoutedEventArgs e)
         {
-            if (tabControl1.SelectedIndex == 0)
+            if (tabControl1.SelectedIndex == 0) //FOR SONGS
             {
                 foreach (setdata el in song_names)
                 {
@@ -289,7 +306,7 @@ namespace MOPS
                 songs_listbox.Items.Refresh();
             }
 
-            else
+            else                               //FOR IMAGES
             {
                 foreach (setdata el in images_names)
                 {
@@ -300,6 +317,7 @@ namespace MOPS
                     }
                 }
                 images_listbox.Items.Refresh();
+                main.ImageChange(-1);
             }
             stat_update();
         }
@@ -340,6 +358,8 @@ namespace MOPS
                     }
                 }
                 images_listbox.Items.Refresh();
+                if (MainWindow.enabled_images.Count == 0) main.ImageChange(-1);
+                else if (main.current_image_pos == -1) main.ImageChange(0);
             }
             stat_update();
         }
