@@ -91,11 +91,23 @@ namespace MOPS
         }
 
         public static string status = "Loader Idle";
-
+        /// <summary>
+        /// Collection of loaded Resource Packs
+        /// </summary>
         public static RP[] ResPacks = new RP[0];
+        /// <summary>
+        /// Collection of all loaded songs
+        /// </summary>
         public static Songs[] allSongs = new Songs[0];
+        /// <summary>
+        /// Collection of all loaded images
+        /// </summary>
         public static Pics[] allPics = new Pics[0];
-
+        /// <summary>
+        /// Loads and parses a single resource pack in .zip format
+        /// </summary>
+        /// <param name="target_path"></param>
+        /// <returns></returns>
         public static bool SupremeReader(string target_path)
         {
             XDocument info_xml = new XDocument();
