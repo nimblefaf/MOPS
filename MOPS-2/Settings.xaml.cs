@@ -54,7 +54,7 @@ namespace MOPS
         private void hide_button_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();
-            main.Visibility = Visibility.Visible;
+            main.Focus();
         }
 
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
