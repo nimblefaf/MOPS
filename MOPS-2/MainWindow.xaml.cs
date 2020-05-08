@@ -9,13 +9,12 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Threading;
 using System.IO;
-using Un4seen.Bass;
 using System.Drawing;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -23,17 +22,9 @@ using System.Diagnostics;
 
 namespace MOPS
 {
-    public struct Palette
-    {
-        public string name;
-        public Brush brush;
-
-        public Palette(string f1, Brush f2)
-        {
-            name = f1; brush = f2;
-        }
-    }
-
+    /// <summary>
+    /// Template for the contents of images&songs listboxes
+    /// </summary>
     public class rdata
     {
         public string Name { get; set; }
@@ -46,89 +37,36 @@ namespace MOPS
     public partial class MainWindow : Window
     {
         Random rnd = new Random();
-
         Audio Player = new Audio();
 
         public DispatcherTimer Timer = new DispatcherTimer(DispatcherPriority.Send);
         public DispatcherTimer AnimTimer = new DispatcherTimer(DispatcherPriority.Render);
+        public DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
         double Correction;
         public double beat_length = 0;
         public double buildup_beat_len = 0;
-
-        public static Palette[] hues =
-        {
-            new Palette("Black", (SolidColorBrush)new BrushConverter().ConvertFromString("#000000")),
-            new Palette("Brick", (SolidColorBrush)new BrushConverter().ConvertFromString("#550000")),
-            new Palette("Crimson", (SolidColorBrush)new BrushConverter().ConvertFromString("#aa0000")),
-            new Palette("Red", (SolidColorBrush)new BrushConverter().ConvertFromString("#ff0000")),
-            new Palette("Turtle", (SolidColorBrush)new BrushConverter().ConvertFromString("#005500")),
-            new Palette("Sludge", (SolidColorBrush)new BrushConverter().ConvertFromString("#555500")),
-            new Palette("Brown", (SolidColorBrush)new BrushConverter().ConvertFromString("#aa5500")),
-            new Palette("Orange", (SolidColorBrush)new BrushConverter().ConvertFromString("#ff5500")),
-            new Palette("Green", (SolidColorBrush)new BrushConverter().ConvertFromString("#00aa00")),
-            new Palette("Grass", (SolidColorBrush)new BrushConverter().ConvertFromString("#55aa00")),
-            new Palette("Maize", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaaa00")),
-            new Palette("Citrus", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffaa00")),
-            new Palette("Lime", (SolidColorBrush)new BrushConverter().ConvertFromString("#00ff00")),
-            new Palette("Leaf", (SolidColorBrush)new BrushConverter().ConvertFromString("#55ff00")),
-            new Palette("Chartreuse", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaff00")),
-            new Palette("Yellow", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffff00")),
-            new Palette("Midnight", (SolidColorBrush)new BrushConverter().ConvertFromString("#000055")),
-            new Palette("Plum", (SolidColorBrush)new BrushConverter().ConvertFromString("#550055")),
-            new Palette("Pomegranate", (SolidColorBrush)new BrushConverter().ConvertFromString("#aa0055")),
-            new Palette("Rose", (SolidColorBrush)new BrushConverter().ConvertFromString("#ff0055")),
-            new Palette("Swamp", (SolidColorBrush)new BrushConverter().ConvertFromString("#005555")),
-            new Palette("Dust", (SolidColorBrush)new BrushConverter().ConvertFromString("#555555")),
-            new Palette("Dirt", (SolidColorBrush)new BrushConverter().ConvertFromString("#aa5555")),
-            new Palette("Blossom", (SolidColorBrush)new BrushConverter().ConvertFromString("#ff5555")),
-            new Palette("Sea", (SolidColorBrush)new BrushConverter().ConvertFromString("#00aa55")),
-            new Palette("Ill", (SolidColorBrush)new BrushConverter().ConvertFromString("#55aa55")),
-            new Palette("Haze", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaaa55")),
-            new Palette("Peach", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffaa55")),
-            new Palette("Spring", (SolidColorBrush)new BrushConverter().ConvertFromString("#00ff55")),
-            new Palette("Mantis", (SolidColorBrush)new BrushConverter().ConvertFromString("#55ff55")),
-            new Palette("Brilliant", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaff55")),
-            new Palette("Canary", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffff55")),
-            new Palette("Navy", (SolidColorBrush)new BrushConverter().ConvertFromString("#0000aa")),
-            new Palette("Grape", (SolidColorBrush)new BrushConverter().ConvertFromString("#5500aa")),
-            new Palette("Mauve", (SolidColorBrush)new BrushConverter().ConvertFromString("#aa00aa")),
-            new Palette("Purple", (SolidColorBrush)new BrushConverter().ConvertFromString("#ff00aa")),
-            new Palette("Cornflower", (SolidColorBrush)new BrushConverter().ConvertFromString("#0055aa")),
-            new Palette("Deep", (SolidColorBrush)new BrushConverter().ConvertFromString("#5555aa")),
-            new Palette("Lilac", (SolidColorBrush)new BrushConverter().ConvertFromString("#aa55aa")),
-            new Palette("Lavender", (SolidColorBrush)new BrushConverter().ConvertFromString("#ff55aa")),
-            new Palette("Aqua", (SolidColorBrush)new BrushConverter().ConvertFromString("#00aaaa")),
-            new Palette("Steel", (SolidColorBrush)new BrushConverter().ConvertFromString("#55aaaa")),
-            new Palette("Grey", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaaaaa")),
-            new Palette("Pink", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffaaaa")),
-            new Palette("Bay", (SolidColorBrush)new BrushConverter().ConvertFromString("#00ffaa")),
-            new Palette("Marina", (SolidColorBrush)new BrushConverter().ConvertFromString("#55ffaa")),
-            new Palette("Tornado", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaffaa")),
-            new Palette("Saltine", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffffaa")),
-            new Palette("Blue", (SolidColorBrush)new BrushConverter().ConvertFromString("#0000ff")),
-            new Palette("Twilight", (SolidColorBrush)new BrushConverter().ConvertFromString("#5500ff")),
-            new Palette("Orchid", (SolidColorBrush)new BrushConverter().ConvertFromString("#aa00ff")),
-            new Palette("Magenta", (SolidColorBrush)new BrushConverter().ConvertFromString("#ff00ff")),
-            new Palette("Azure", (SolidColorBrush)new BrushConverter().ConvertFromString("#0055ff")),
-            new Palette("Liberty", (SolidColorBrush)new BrushConverter().ConvertFromString("#5555ff")),
-            new Palette("Royalty", (SolidColorBrush)new BrushConverter().ConvertFromString("#aa55ff")),
-            new Palette("Thistle", (SolidColorBrush)new BrushConverter().ConvertFromString("#ff55ff")),
-            new Palette("Ocean", (SolidColorBrush)new BrushConverter().ConvertFromString("#00aaff")),
-            new Palette("Sky", (SolidColorBrush)new BrushConverter().ConvertFromString("#55aaff")),
-            new Palette("Periwinkle", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaaaff")),
-            new Palette("Carnation", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffaaff")),
-            new Palette("Cyan", (SolidColorBrush)new BrushConverter().ConvertFromString("#00ffff")),
-            new Palette("Turquoise", (SolidColorBrush)new BrushConverter().ConvertFromString("#55ffff")),
-            new Palette("Powder", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaffff")),
-            new Palette("White", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffffff"))
-        };
+        public static Hues.Palette[] hues = Hues.hues_normal;
 
         public static Settings set = new Settings();
 
         public bool muted = false;
-        public bool full_auto_mode = true;
-        public bool buildup_enabled = true;
         public int muted_volume;
+
+        public bool full_auto_mode = true;
+        public bool buildup_enabled = true; // Need to redo it in a 3-mode trigger (to add "play once" option)
+        /// <summary>
+        /// Quality of blur, from 0 to 3. Zero for stretching a single image, 1-3 for moving copies of image to the center.
+        /// </summary>
+        public int blur_quality = -1;
+        /// <summary>
+        /// Duration of blur animation. From 0 to 3. [appr. from 1s to 0.3s]
+        /// </summary>
+        public double blur_decay = 1;
+        /// <summary>
+        /// How far away blur goes, from 0 to 3.
+        /// </summary>
+        public int blur_amount = 0;
+        public bool blackouted = false;
 
         public int current_song = 0;
         public int current_image_pos = 55;
@@ -138,8 +76,13 @@ namespace MOPS
         private string build_rhythm;
         public int rhythm_pos = 0;
         public int b_rhythm_pos = 0;
-
+        /// <summary>
+        /// List of enabled songs displayed in songs_listbox.
+        /// </summary>
         public static ObservableCollection<rdata> enabled_songs = new ObservableCollection<rdata>();
+        /// <summary>
+        /// List of enabled images displayed in images_listbox.
+        /// </summary>
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
         public MainWindow()
@@ -155,6 +98,7 @@ namespace MOPS
 
             Timer.Tick += new EventHandler(Timer_Tick);
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
+            ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
             
             Player.SetReference(this);
             set.SetReference(this);
@@ -162,12 +106,68 @@ namespace MOPS
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            Init_Animations();
+
             set.Owner = this;
             timeline_color_change();
             Settings.rp_names.Add(new setdata() { Name = RPManager.ResPacks[0].name, State = true });
             set.stat_update();
 
             songs_listbox.SelectedIndex = current_song;
+        }
+        private Storyboard SB_Blackout = new Storyboard();
+        private DoubleAnimation Blackout = new DoubleAnimation();
+        private Storyboard SB_Blackout_Short = new Storyboard();
+        private DoubleAnimation Blackout_Short = new DoubleAnimation();
+        private ThicknessAnimation Blackout_Blur = new ThicknessAnimation();
+
+        private Storyboard SB = new Storyboard();
+        private DoubleAnimation VerticalBlur_Simple = new DoubleAnimation();
+        private ThicknessAnimation HorizontalBlur_Simple = new ThicknessAnimation();
+
+
+        
+        private void Init_Animations()
+        {
+            Blackout_Rectangle.Opacity = 0;
+
+            Blackout_Short.BeginTime = new TimeSpan(0);
+            Blackout_Short.From = 0;
+            Blackout_Short.To = 1;
+            Blackout_Short.Duration = TimeSpan.FromSeconds(0.2);
+            Blackout_Short.FillBehavior = FillBehavior.Stop;
+            SB_Blackout_Short.FillBehavior = FillBehavior.Stop;
+            Storyboard.SetTargetProperty(Blackout_Short, new PropertyPath(OpacityProperty));
+            SB_Blackout_Short.Children.Add(Blackout_Short);
+            Storyboard.SetTarget(Blackout_Short, Blackout_Rectangle);
+
+            
+            Blackout.BeginTime = new TimeSpan(0);
+            Blackout.FillBehavior = FillBehavior.Stop;
+            Blackout.From = 0;
+            Blackout.To = 1;
+            Blackout.Duration = new Duration(TimeSpan.FromSeconds(0.15));
+            Blackout.Completed += delegate (object sender, EventArgs e)
+            {
+                Blackout_Rectangle.Opacity = 1;
+                blackouted = true;
+            };
+            Storyboard.SetTargetProperty(Blackout, new PropertyPath(OpacityProperty));
+            SB_Blackout.Children.Add(Blackout);
+            Storyboard.SetTarget(Blackout, Blackout_Rectangle);
+            SB_Blackout.FillBehavior = FillBehavior.Stop;
+
+            VerticalBlur_Simple.BeginTime = new TimeSpan(0);
+            Storyboard.SetTargetProperty(VerticalBlur_Simple, new PropertyPath(HeightProperty));
+            
+            //CODE BELOW FOR SOME REASON STOPS THE THREAD WITHOUT THROWING AN EXCEPTION
+            //VerticalBlur_Simple.From = image.Height + 20; 
+            //VerticalBlur_Simple.To = image.Height;
+            //VerticalBlur_Simple.To = image.Margin;
+            //VerticalBlur_Simple.From = new Thickness(image.Margin.Left, image.Margin.Top + 25, image.Margin.Right, image.Margin.Bottom + 25);
+            VerticalBlur_Simple.Duration = TimeSpan.FromSeconds(1);
+            SB.Children.Add(VerticalBlur_Simple);
+            Storyboard.SetTarget(VerticalBlur_Simple, image);
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -316,6 +316,7 @@ namespace MOPS
 
         private void TimeLine_Move()
         {
+            //Message_textBlock.Text = Convert.ToString(Blackout_Rectangle.Opacity) + " " + blackouted;
             beat(timeline_label.Content.ToString()[2]);
             timeline_label.Content = timeline_label.Content.ToString().Remove(2, 1);
             TimelineLenghtFill();
@@ -325,6 +326,13 @@ namespace MOPS
 
         private void beat(char c)
         {
+            if (c != '.') SB.Stop();
+            if (Blackout_Rectangle.Opacity != 0 & c != '.')
+            {
+                SB_Blackout.Stop();
+                blackouted = false;
+                Blackout_Rectangle.Opacity = 0;
+            }
             switch (c)
             {
                 case 'o':
@@ -336,7 +344,7 @@ namespace MOPS
                 case '-':
                     timeline_noblur();
                     break;
-                case '‑'://thank to tylup for that one
+                case '‑'://YES THATS A DIFFERENT ONE. Thanks to tylup RP.
                     timeline_noblur();
                     break;
                 case ':':
@@ -345,6 +353,12 @@ namespace MOPS
                 case '*':
                     timeline_image_change();
                     break;
+                case '|':
+                    timeline_blackout_short();
+                    break;
+                case '+':
+                    timeline_blackout();
+                    break;
             }
         }
 
@@ -352,11 +366,13 @@ namespace MOPS
         private void timeline_x()
         {
             timeline_noblur();
+            timeline_blur_vert();
         }
         // Horizontal blur (bass)
         private void timeline_o()
         {
             timeline_noblur();
+            timeline_blur_hor();
         }
 
         // For '-' in the timeline
@@ -368,7 +384,7 @@ namespace MOPS
         // '+'
         private void timeline_blackout()
         {
-
+            SB_Blackout.Begin();
         }
         // '¤'
         private void timeline_whiteout()
@@ -378,7 +394,14 @@ namespace MOPS
         // '|'
         private void timeline_blackout_short()
         {
-
+            Blackout_Rectangle.Opacity = 1;
+            timeline_noblur();
+            ShortBlackoutTimer.Start();
+        }
+        private void ShortBlackoutTimer_Tick(object sender, EventArgs e)
+        {
+            Blackout_Rectangle.Opacity = 0;
+            ShortBlackoutTimer.Stop();
         }
         // ':'
         public void timeline_color_change()
@@ -410,10 +433,20 @@ namespace MOPS
                 ImageChange(i);
             }
         }
+
+
+        
+        
+
         // 'X' Vertical blur only
         private void timeline_blur_vert()
         {
-
+            switch (blur_quality)
+            {
+                case 0:
+                    SB.Begin();
+                    break;
+            }
         }
 
         // 'O' Vertical blur only
@@ -556,6 +589,11 @@ namespace MOPS
 
         private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (Blackout_Rectangle.Opacity != 0)
+            {
+                SB_Blackout.Stop();
+                Blackout_Rectangle.Opacity = 0;
+            }
             if (songs_listbox.SelectedIndex != -1)
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
@@ -597,6 +635,7 @@ namespace MOPS
                     Timer.Interval = TimeSpan.FromSeconds(buildup_beat_len);
                     buildup_beat_len = Audio.GetTimeOfStream(Player.Stream_B) / build_rhythm.Length;
                 }
+                ShortBlackoutTimer.Interval = Timer.Interval;
 
                 Player.Play();
                 TimeLine_Move();
@@ -726,6 +765,5 @@ namespace MOPS
         {
             e.Handled = true;
         }
-
     }
 }
