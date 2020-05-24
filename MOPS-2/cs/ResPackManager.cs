@@ -9,8 +9,8 @@ using System.IO.Compression;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.ComponentModel;
 
 namespace MOPS
 {
@@ -56,7 +56,7 @@ namespace MOPS
 
     public class RPManager
     {
-        static string RemoveDiacritics(string text) //Because German names are suffering
+        static string RemoveDiacritics(string text) //Because German names are suffering and 'ä' can break everything
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
@@ -73,7 +73,7 @@ namespace MOPS
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
 
-        public static int get_rp_of_song(int ind)
+        public int get_rp_of_song(int ind)
         {
             for (int i = ResPacks.Length - 1; i >= 0; i--)
             {
@@ -81,7 +81,7 @@ namespace MOPS
             }
             return -1;
         }
-        public static int get_rp_of_image(int ind)
+        public int get_rp_of_image(int ind)
         {
             for (int i = ResPacks.Length - 1; i >= 0; i--)
             {
@@ -94,21 +94,22 @@ namespace MOPS
         /// <summary>
         /// Collection of loaded Resource Packs
         /// </summary>
-        public static RP[] ResPacks = new RP[0];
+        public RP[] ResPacks = new RP[0];
         /// <summary>
         /// Collection of all loaded songs
         /// </summary>
-        public static Songs[] allSongs = new Songs[0];
+        public Songs[] allSongs = new Songs[0];
         /// <summary>
         /// Collection of all loaded images
         /// </summary>
-        public static Pics[] allPics = new Pics[0];
+        public Pics[] allPics = new Pics[0];
+
         /// <summary>
         /// Loads and parses a single resource pack in .zip format
         /// </summary>
         /// <param name="target_path"></param>
         /// <returns></returns>
-        public static bool SupremeReader(string target_path)
+        public string SupremeReader(string target_path, BackgroundWorker worker, DoWorkEventArgs e)
         {
             XDocument info_xml = new XDocument();
             XmlDocument songs_xml = new XmlDocument();
@@ -123,7 +124,7 @@ namespace MOPS
                 CheckCharacters = false
             };
 
-            MainWindow.set.Status_textBlock.Text = "Loading ZIP...";
+            //MainWindow.set.Status_textBlock.Text = "Loading ZIP...";
             using (FileStream zipToOpen = new FileStream(target_path, FileMode.Open))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
@@ -197,7 +198,7 @@ namespace MOPS
 
             if (info_xml.Root != null)
             {
-                MainWindow.set.Status_textBlock.Text = "Parsing data...";
+                //MainWindow.set.Status_textBlock.Text = "Parsing data...";
                 Array.Resize(ref ResPacks, ResPacks.Length + 1);
 
                 ResPacks[ResPacks.Length - 1].name = info_xml.XPathSelectElement("//info/name").Value;
@@ -308,17 +309,17 @@ namespace MOPS
                     ResPacks[ResPacks.Length - 1].pics_count = allPics.Length - ResPacks[ResPacks.Length - 1].pics_start;
                 }
                 else ResPacks[ResPacks.Length - 1].pics_count = 0;
-                MainWindow.set.Status_textBlock.Text = "Loaded";
+                //MainWindow.set.Status_textBlock.Text = "Loaded";
                 PicsBuffer.Clear();
                 SongsBuffer.Clear();
-                return true;
+                return "Succesful";
             }
             else
             {
-                MainWindow.set.Status_textBlock.Text = "info.xml not found";
+                //MainWindow.set.Status_textBlock.Text = "info.xml not found";
                 PicsBuffer.Clear();
                 SongsBuffer.Clear();
-                return false;
+                return "NoInfo";
             }
         }
     }
