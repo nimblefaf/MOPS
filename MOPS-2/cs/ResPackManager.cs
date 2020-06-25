@@ -234,6 +234,7 @@ namespace MOPS
                             if (childnode.Name == "rhythm")
                             {
                                 allSongs[allSongs.Length - 1].rhythm = childnode.InnerText;
+                                allSongs[allSongs.Length - 1].rhythm.Replace("\n", "");
                             }
                             if (childnode.Name == "buildup")
                             {
@@ -243,6 +244,7 @@ namespace MOPS
                             if (childnode.Name == "buildupRhythm")
                             {
                                 allSongs[allSongs.Length - 1].buildup_rhythm = childnode.InnerText;
+                                allSongs[allSongs.Length - 1].buildup_rhythm.Replace("\n", "");
                             }
                         }
                     }

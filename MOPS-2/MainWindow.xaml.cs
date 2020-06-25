@@ -370,7 +370,8 @@ namespace MOPS
 
         private void TimelineLenghtFill()
         {
-            if (timeline_label.Content.ToString().Length < 150) timeline_label.Content = timeline_label.Content.ToString() + loop_rhythm;
+            if (timeline_label.Content.ToString().Length < 250)
+                timeline_label.Content = timeline_label.Content.ToString() + loop_rhythm;
         }
 
         private void TimeLine_Move()
@@ -679,7 +680,7 @@ namespace MOPS
                     Player.Play_With_Buildup();
                     build_rhythm = RPM.allSongs[i].buildup_rhythm;
                     int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
-                    if (build_rhythm == null)
+                    if (build_rhythm == null) //In case there is buildup music without beat string
                     {
                         build_rhythm = new string('.', expected_size);
                     }
@@ -687,7 +688,8 @@ namespace MOPS
                     {
                         build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
                     }
-                    timeline_label.Content = build_rhythm + timeline_label.Content;
+                    if (timeline_label.Content.ToString().Length < 250) timeline_label.Content = build_rhythm + timeline_label.Content;
+                    else timeline_label.Content = build_rhythm;
                     rhythm_pos -= expected_size;
                 }
                 else Player.Play_Without_Buildup();
