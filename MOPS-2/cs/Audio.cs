@@ -152,7 +152,8 @@ namespace MOPS
             Bass.BASS_StreamFree(Stream_B);
             Bass.BASS_StreamFree(Stream_L);
 
-            ////Uncomment this in case of unsolvable memory leak. Will create a small pause before new song is played.
+            ////Uncomment this in case of unsolvable memory leak.
+            ////The whole BASS module will be freed, creating a small pause before new song is played
             //Bass.BASS_Free();
             //InitDefaultDevice = false;
         }

@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -18,6 +19,7 @@ using System.IO;
 using System.Drawing;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.ComponentModel;
 
 
 namespace MOPS
@@ -38,7 +40,7 @@ namespace MOPS
     {
         Random rnd = new Random();
         Audio Player = new Audio();
-
+        
         public DispatcherTimer Timer = new DispatcherTimer(DispatcherPriority.Send);
         public DispatcherTimer AnimTimer = new DispatcherTimer(DispatcherPriority.Render);
         public DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
@@ -48,6 +50,7 @@ namespace MOPS
         public static Hues.Palette[] hues = Hues.hues_normal;
 
         public static Settings set = new Settings();
+        public RPManager RPM = new RPManager();
 
         public bool muted = false;
         public int muted_volume;
@@ -85,16 +88,13 @@ namespace MOPS
         /// </summary>
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
+        private BackgroundWorker backgroundWorker;
+
         public MainWindow()
         {
             InitializeComponent();
-            RPManager.SupremeReader("Packs/Defaults_v5.0.zip");
-            for (int i = 0; i < RPManager.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = RPManager.allSongs[i].title, Ind = i });
-            songs_listbox.ItemsSource = enabled_songs;
-
-            for (int i = 0; i < RPManager.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPManager.allPics[i].name, Ind = i });
-            images_listbox.ItemsSource = enabled_images;
-            ImageChange(current_image_pos);
+            //RPManager.SupremeReader("Packs/Defaults_v5.0.zip", backgroundWorker, new DoWorkEventArgs);
+            
 
             Timer.Tick += new EventHandler(Timer_Tick);
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
@@ -102,19 +102,78 @@ namespace MOPS
             
             Player.SetReference(this);
             set.SetReference(this);
+            
+
+            backgroundWorker = new BackgroundWorker();
+            backgroundWorker.RunWorkerCompleted +=
+                new RunWorkerCompletedEventHandler(load_completed);
+            backgroundWorker.DoWork +=
+                new DoWorkEventHandler(load_dowork);
+        }
+
+        private void load_dowork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            e.Result = RPM.SupremeReader((string)e.Argument, worker, e);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Init_Animations();
-
             set.Owner = this;
+            Init_Animations();
+ 
             timeline_color_change();
-            Settings.rp_names.Add(new setdata() { Name = RPManager.ResPacks[0].name, State = true });
-            set.stat_update();
 
-            songs_listbox.SelectedIndex = current_song;
+            
         }
+
+        private void First_Load(object sender, MouseButtonEventArgs e)
+        {
+            Cursor = Cursors.Wait;
+            InfoBlock.Text = "Initializing...";
+            InfoBlock.Cursor = Cursors.Wait;
+            backgroundWorker.RunWorkerAsync("Packs/Defaults_v5.0.zip");
+        }
+
+        private void load_completed(object sender, RunWorkerCompletedEventArgs e)
+        {
+            foreach (Pics elem in (Pics[])e.Result)
+            {
+                Array.Resize(ref RPM.allPics, RPM.allPics.Length + 1);
+                RPM.allPics[RPM.allPics.Length - 1] = elem;
+            }
+
+            //for (int i = 0; i < RPM.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = RPM.allSongs[i].title, Ind = i });
+            //songs_listbox.ItemsSource = enabled_songs;
+
+            //for (int i = 0; i < RPM.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPM.allPics[i].name, Ind = i });
+            //images_listbox.ItemsSource = enabled_images;
+
+            set.add_last_rp();
+            songs_listbox.ItemsSource = enabled_songs;
+            images_listbox.ItemsSource = enabled_images;
+
+            //ImageChange(0);
+            //songs_listbox.SelectedIndex = 0;
+
+            full_auto_be.IsEnabled = true;
+            images_be.IsEnabled = true;
+            next_image_be.IsEnabled = true;
+            prev_image_be.IsEnabled = true;
+
+            next_song_be.IsEnabled = true;
+            prev_song_be.IsEnabled = true;
+            songs_be.IsEnabled = true;
+
+            Cursor = Cursors.Arrow;
+            //InfoBlock.Text = "Loaded";
+
+            LightsWarning.Visibility = Visibility.Hidden;
+            InfoBlock.Visibility = Visibility.Hidden;
+
+            
+        }
+
         private Storyboard SB_Blackout = new Storyboard();
         private DoubleAnimation Blackout = new DoubleAnimation();
         private Storyboard SB_Blackout_Short = new Storyboard();
@@ -316,7 +375,7 @@ namespace MOPS
 
         private void TimeLine_Move()
         {
-            //Message_textBlock.Text = Convert.ToString(Blackout_Rectangle.Opacity) + " " + blackouted;
+            //Message_textBlock.Text = Width + "/" + Height;
             beat(timeline_label.Content.ToString()[2]);
             timeline_label.Content = timeline_label.Content.ToString().Remove(2, 1);
             TimelineLenghtFill();
@@ -530,21 +589,20 @@ namespace MOPS
         {
             if (WindowState != WindowState.Maximized)
             {
-                set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
-                set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
+                set.Top = Top + (Height / 2) - (set.Height / 2);
+                set.Left = Left + (Width / 2) - (set.Width / 2);
             }
-            //if (Width / Height > 2) image.Stretch = Stretch.Uniform;
-            //else image.Stretch = Stretch.UniformToFill;
             Smart_Stretch();
         }
         private void Window_StateChanged(object sender, EventArgs e)
         {
-            if (this.WindowState == WindowState.Normal)
+            Smart_Stretch();
+            if (WindowState == WindowState.Normal)
             {
-                set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
-                set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
+                set.Top = Top + (Height / 2) - (set.Height / 2);
+                set.Left = Left + (Width / 2) - (set.Width / 2);
             }
-            if (this.WindowState == WindowState.Maximized)
+            if (WindowState == WindowState.Maximized)
             {
                 set.Top = (SystemParameters.MaximizedPrimaryScreenHeight / 2) - (set.Height / 2);
                 set.Left = (SystemParameters.MaximizedPrimaryScreenWidth / 2) - (set.Width / 2);
@@ -552,13 +610,23 @@ namespace MOPS
         }
         private void Window_LocationChanged(object sender, EventArgs e)
         {
-            set.Top = this.Top + (this.Height / 2) - (set.Height / 2);
-            set.Left = this.Left + (this.Width / 2) - (set.Width / 2);
+            set.Top = Top + (Height / 2) - (set.Height / 2);
+            set.Left = Left + (Width / 2) - (set.Width / 2);
         }
         private void Smart_Stretch()
         {
-            if (Width / Height > image.ActualWidth / image.ActualHeight) image.Stretch = Stretch.Uniform;
-            else image.Stretch = Stretch.UniformToFill;
+            if (WindowState == WindowState.Maximized)
+            {
+                if (SystemParameters.MaximizedPrimaryScreenWidth / SystemParameters.MaximizedPrimaryScreenHeight > image.ActualWidth / image.ActualHeight)
+                    image.Stretch = Stretch.Uniform;
+                else image.Stretch = Stretch.UniformToFill;
+            }
+            else
+            {
+                if (Width / Height > image.ActualWidth / image.ActualHeight) image.Stretch = Stretch.Uniform;
+                else image.Stretch = Stretch.UniformToFill;
+            }
+                
         }
 
 
@@ -597,19 +665,19 @@ namespace MOPS
             if (songs_listbox.SelectedIndex != -1)
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
-                Player.loop_mem = RPManager.allSongs[i].buffer;
-                loop_rhythm = RPManager.allSongs[i].rhythm;
-                song_label.Content = RPManager.allSongs[i].title.ToUpper();
-                timeline_label.Content = RPManager.allSongs[i].rhythm;
+                Player.loop_mem = RPM.allSongs[i].buffer;
+                loop_rhythm = RPM.allSongs[i].rhythm;
+                song_label.Content = RPM.allSongs[i].title.ToUpper();
+                timeline_label.Content = RPM.allSongs[i].rhythm;
                 current_song = songs_listbox.SelectedIndex;
 
                 rhythm_pos = 0;
                 b_rhythm_pos = 0;
-                if (RPManager.allSongs[i].buildup_buffer != null & buildup_enabled)
+                if (RPM.allSongs[i].buildup_buffer != null & buildup_enabled)
                 {
-                    Player.build_mem = RPManager.allSongs[i].buildup_buffer;
+                    Player.build_mem = RPM.allSongs[i].buildup_buffer;
                     Player.Play_With_Buildup();
-                    build_rhythm = RPManager.allSongs[i].buildup_rhythm;
+                    build_rhythm = RPM.allSongs[i].buildup_rhythm;
                     int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
                     if (build_rhythm == null)
                     {
@@ -630,7 +698,7 @@ namespace MOPS
                 
                 TimelineLenghtFill();
                 Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
-                if (RPManager.allSongs[i].buildup_buffer != null & buildup_enabled)
+                if (RPM.allSongs[i].buildup_buffer != null & buildup_enabled)
                 {
                     Timer.Interval = TimeSpan.FromSeconds(buildup_beat_len);
                     buildup_beat_len = Audio.GetTimeOfStream(Player.Stream_B) / build_rhythm.Length;
@@ -690,12 +758,12 @@ namespace MOPS
             if (p != -1)
             {
                 int index = enabled_images[p].Ind;
-                image.Source = RPManager.allPics[index].pic;
-                if (RPManager.allPics[index].animation == null)
+                image.Source = RPM.allPics[index].pic;
+                if (RPM.allPics[index].animation == null)
                 {
                     AnimTimer.Stop();
-                    character_label.Content = RPManager.allPics[index].fullname.ToUpper();
-                    switch (RPManager.allPics[index].align)
+                    character_label.Content = RPM.allPics[index].fullname.ToUpper();
+                    switch (RPM.allPics[index].align)
                     {
                         case "left":
                             image.HorizontalAlignment = HorizontalAlignment.Left;
@@ -712,9 +780,9 @@ namespace MOPS
                 else
                 {
                     anim_ind = 1;
-                    AnimTimer.Interval = TimeSpan.FromMilliseconds(RPManager.allPics[current_image_pos].frameDuration);
+                    AnimTimer.Interval = TimeSpan.FromMilliseconds(RPM.allPics[current_image_pos].frameDuration);
                     AnimTimer.Start();
-                    switch (RPManager.allPics[index].align)
+                    switch (RPM.allPics[index].align)
                     {
                         case "left":
                             image.HorizontalAlignment = HorizontalAlignment.Left;
@@ -726,7 +794,7 @@ namespace MOPS
                             image.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
-                    Smart_Stretch();
+                    //Smart_Stretch();
                 }
             }
             else
@@ -739,10 +807,15 @@ namespace MOPS
             }
         }
 
+        private void image_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            Smart_Stretch();
+        }
+
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            image.Source = RPManager.allPics[current_image_pos].animation[anim_ind];
-            if (RPManager.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
+            image.Source = RPM.allPics[current_image_pos].animation[anim_ind];
+            if (RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
         }
 
@@ -765,5 +838,7 @@ namespace MOPS
         {
             e.Handled = true;
         }
+
+        
     }
 }
