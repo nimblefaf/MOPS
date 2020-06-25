@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -107,7 +108,13 @@ namespace MOPS
             backgroundWorker.RunWorkerCompleted +=
                 new RunWorkerCompletedEventHandler(load_completed);
             backgroundWorker.DoWork +=
-                new DoWorkEventHandler(set.load_dowork);
+                new DoWorkEventHandler(load_dowork);
+        }
+
+        private void load_dowork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            e.Result = RPM.SupremeReader((string)e.Argument, worker, e);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -124,25 +131,45 @@ namespace MOPS
         {
             Cursor = Cursors.Wait;
             InfoBlock.Text = "Initializing...";
+            InfoBlock.Cursor = Cursors.Wait;
             backgroundWorker.RunWorkerAsync("Packs/Defaults_v5.0.zip");
         }
 
         private void load_completed(object sender, RunWorkerCompletedEventArgs e)
         {
-            for (int i = 0; i < RPM.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = RPM.allSongs[i].title, Ind = i });
-            songs_listbox.ItemsSource = enabled_songs;
+            foreach (Pics elem in (Pics[])e.Result)
+            {
+                Array.Resize(ref RPM.allPics, RPM.allPics.Length + 1);
+                RPM.allPics[RPM.allPics.Length - 1] = elem;
+            }
 
-            for (int i = 0; i < RPM.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPM.allPics[i].name, Ind = i });
+            //for (int i = 0; i < RPM.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = RPM.allSongs[i].title, Ind = i });
+            //songs_listbox.ItemsSource = enabled_songs;
+
+            //for (int i = 0; i < RPM.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPM.allPics[i].name, Ind = i });
+            //images_listbox.ItemsSource = enabled_images;
+
+            set.add_last_rp();
+            songs_listbox.ItemsSource = enabled_songs;
             images_listbox.ItemsSource = enabled_images;
 
             //ImageChange(0);
             //songs_listbox.SelectedIndex = 0;
 
+            full_auto_be.IsEnabled = true;
+            images_be.IsEnabled = true;
             next_image_be.IsEnabled = true;
             prev_image_be.IsEnabled = true;
+
             next_song_be.IsEnabled = true;
             prev_song_be.IsEnabled = true;
+            songs_be.IsEnabled = true;
+
             Cursor = Cursors.Arrow;
+            //InfoBlock.Text = "Loaded";
+
+            LightsWarning.Visibility = Visibility.Hidden;
+            InfoBlock.Visibility = Visibility.Hidden;
 
             
         }
@@ -767,7 +794,7 @@ namespace MOPS
                             image.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
-                    Smart_Stretch();
+                    //Smart_Stretch();
                 }
             }
             else
@@ -778,6 +805,11 @@ namespace MOPS
                     character_label.Content = "NONE";
                 }
             }
+        }
+
+        private void image_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            Smart_Stretch();
         }
 
         private void AnimTimer_Tick(object sender, EventArgs e)
@@ -807,6 +839,6 @@ namespace MOPS
             e.Handled = true;
         }
 
-
+        
     }
 }

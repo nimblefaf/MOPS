@@ -105,7 +105,6 @@ namespace MOPS
 
         public void load_rp()
         {
-            load_rp_button.IsEnabled = false;
             OpenFileDialog openFile = new OpenFileDialog
             {
                 DefaultExt = ".zip",
@@ -113,6 +112,7 @@ namespace MOPS
             };
             if (openFile.ShowDialog() == true)
             {
+                load_rp_button.IsEnabled = false;
                 backgroundWorker.RunWorkerAsync(openFile.FileName);
             }
         }
@@ -125,19 +125,29 @@ namespace MOPS
         private void load_completed(object sender, RunWorkerCompletedEventArgs e)
         {
             load_rp_button.IsEnabled = true;
-            if (e.Result.ToString() == "Succesful")
+            if (e.Result.ToString() != null)
             {
-                rp_names.Add(new setdata() { Name = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].name, State = true });
-
-                if (main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].songs_count > 0)
-                    for (int i = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].songs_start; i < main.RPM.allSongs.Length; i++)
-                        MainWindow.enabled_songs.Add(new rdata() { Name = main.RPM.allSongs[i].title, Ind = i });
-                if (main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].pics_count > 0)
-                    for (int i = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].pics_start; i < main.RPM.allPics.Length; i++)
-                        MainWindow.enabled_images.Add(new rdata() { Name = main.RPM.allPics[i].name, Ind = i });
-
-                stat_update();
+                foreach (Pics elem in (Pics[])e.Result)
+                {
+                    Array.Resize(ref main.RPM.allPics, main.RPM.allPics.Length + 1);
+                    main.RPM.allPics[main.RPM.allPics.Length - 1] = elem;
+                }
+                add_last_rp();
             }
+        }
+
+        public void add_last_rp()
+        {
+            rp_names.Add(new setdata() { Name = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].name, State = true });
+
+            if (main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].songs_count > 0)
+                for (int i = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].songs_start; i < main.RPM.allSongs.Length; i++)
+                    MainWindow.enabled_songs.Add(new rdata() { Name = main.RPM.allSongs[i].title, Ind = i });
+            if (main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].pics_count > 0)
+                for (int i = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].pics_start; i < main.RPM.allPics.Length; i++)
+                    MainWindow.enabled_images.Add(new rdata() { Name = main.RPM.allPics[i].name, Ind = i });
+
+            stat_update();
         }
 
         public void stat_update()
