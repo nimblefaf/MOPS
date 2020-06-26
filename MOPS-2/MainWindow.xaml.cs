@@ -56,6 +56,7 @@ namespace MOPS
         public int muted_volume;
 
         public bool full_auto_mode = true;
+        public bool RAMEaterMode = true;
         public bool buildup_enabled = true; // Need to redo it in a 3-mode trigger (to add "play once" option)
         /// <summary>
         /// Quality of blur, from 0 to 3. Zero for stretching a single image, 1-3 for moving copies of image to the center.
@@ -593,7 +594,7 @@ namespace MOPS
                 set.Top = Top + (Height / 2) - (set.Height / 2);
                 set.Left = Left + (Width / 2) - (set.Width / 2);
             }
-            Smart_Stretch();
+            if (RPM.allPics.Length != 0) Smart_Stretch();
         }
         private void Window_StateChanged(object sender, EventArgs e)
         {
@@ -618,16 +619,15 @@ namespace MOPS
         {
             if (WindowState == WindowState.Maximized)
             {
-                if (SystemParameters.MaximizedPrimaryScreenWidth / SystemParameters.MaximizedPrimaryScreenHeight > image.ActualWidth / image.ActualHeight)
+                if (SystemParameters.MaximizedPrimaryScreenWidth / SystemParameters.MaximizedPrimaryScreenHeight > RPM.allPics[current_image_pos].pic.Width / RPM.allPics[current_image_pos].pic.Height)
                     image.Stretch = Stretch.Uniform;
                 else image.Stretch = Stretch.UniformToFill;
             }
             else
             {
-                if (Width / Height > image.ActualWidth / image.ActualHeight) image.Stretch = Stretch.Uniform;
+                if (Width / Height > RPM.allPics[current_image_pos].pic.Width / RPM.allPics[current_image_pos].pic.Height) image.Stretch = Stretch.Uniform;
                 else image.Stretch = Stretch.UniformToFill;
             }
-                
         }
 
 
