@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.ComponentModel;
 
@@ -38,7 +39,9 @@ namespace MOPS
         public string source_other; 
         public string align;
         public BitmapImage pic;
+        public BitmapSource invertedPic;
         public BitmapImage[] animation;
+        public BitmapSource[] invertedAnimation;
         public int frameDuration;
         public bool enabled;
     }
@@ -72,6 +75,56 @@ namespace MOPS
             }
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        private BitmapSource InvertPic(BitmapSource ImageToInvert)
+        {
+            Color[] ColorArray = new Color[2] { Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255) };
+            BitmapPalette WhitePalette = new BitmapPalette(ColorArray);
+            if (ImageToInvert == null) return null;
+            if (ImageToInvert.Format == PixelFormats.Indexed1)
+            {
+                int stride = (ImageToInvert.PixelWidth * ImageToInvert.Format.BitsPerPixel + 7) / 8;
+                int length = stride * ImageToInvert.PixelHeight;
+                byte[] data = new byte[length];
+                ImageToInvert.CopyPixels(data, stride, 0);
+                return BitmapSource.Create(ImageToInvert.PixelWidth, ImageToInvert.PixelHeight, ImageToInvert.DpiX, ImageToInvert.DpiY, PixelFormats.Indexed1, WhitePalette, data, stride);
+            }
+            else
+            {
+                if (ImageToInvert.Format != PixelFormats.Bgra32)
+                {
+                    FormatConvertedBitmap ConvertedPic = new FormatConvertedBitmap();
+                    ConvertedPic = new FormatConvertedBitmap();
+                    ConvertedPic.BeginInit();
+                    ConvertedPic.Source = ImageToInvert;
+                    ConvertedPic.DestinationFormat = PixelFormats.Bgra32;
+                    ConvertedPic.DestinationPalette = BitmapPalettes.BlackAndWhiteTransparent;
+                    ConvertedPic.EndInit();
+
+                    ImageToInvert = ConvertedPic;
+                }
+                int stride = (ImageToInvert.PixelWidth * ImageToInvert.Format.BitsPerPixel + 7) / 8;
+                int length = stride * ImageToInvert.PixelHeight;
+                byte[] data = new byte[length];
+                ImageToInvert.CopyPixels(data, stride, 0);
+
+                if (ImageToInvert.Format.BitsPerPixel != 1)
+                    for (int i = 0; i < length; i += 4)
+                    {
+                        data[i] = (byte)(255 - data[i]); //R
+                        data[i + 1] = (byte)(255 - data[i + 1]); //G
+                        data[i + 2] = (byte)(255 - data[i + 2]); //B
+                                                                 //data[i + 3] = (byte)(255 - data[i + 3]); //A
+                    }
+
+                return BitmapSource.Create(
+                    ImageToInvert.PixelWidth, ImageToInvert.PixelHeight,
+                    ImageToInvert.DpiX, ImageToInvert.DpiY, ImageToInvert.Format,
+                    ImageToInvert.Palette, data, stride);
+            }
+
+            
         }
 
         public int get_rp_of_song(int ind)
@@ -266,6 +319,8 @@ namespace MOPS
                         else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
                             Transfer[Transfer.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
 
+                        Transfer[Transfer.Length - 1].invertedPic = InvertPic(Transfer[Transfer.Length - 1].pic);
+
                         Transfer[Transfer.Length - 1].enabled = true;
                         Transfer[Transfer.Length - 1].source = "";
                         Transfer[Transfer.Length - 1].source_other = "";
@@ -295,7 +350,9 @@ namespace MOPS
                             {
                                 Transfer[Transfer.Length - 1].frameDuration = Convert.ToInt32(childnode.InnerText);
                                 Transfer[Transfer.Length - 1].pic = PicsBuffer[node.Attributes[0].Value + "_01"];
+                                Transfer[Transfer.Length - 1].invertedPic = InvertPic(Transfer[Transfer.Length - 1].pic);
                                 Transfer[Transfer.Length - 1].animation = new BitmapImage[0];
+                                Transfer[Transfer.Length - 1].invertedAnimation = new BitmapSource[0];
                                 for (int i = 1; i < PicsBuffer.Count; i++)
                                 {
                                     string end = "";
@@ -305,6 +362,9 @@ namespace MOPS
                                     {
                                         Array.Resize(ref Transfer[Transfer.Length - 1].animation, Transfer[Transfer.Length - 1].animation.Length + 1);
                                         Transfer[Transfer.Length - 1].animation[Transfer[Transfer.Length - 1].animation.Length - 1] = PicsBuffer[node.Attributes[0].Value + end];
+
+                                        Array.Resize(ref Transfer[Transfer.Length - 1].invertedAnimation, Transfer[Transfer.Length - 1].invertedAnimation.Length + 1);
+                                        Transfer[Transfer.Length - 1].invertedAnimation[Transfer[Transfer.Length - 1].invertedAnimation.Length - 1] = InvertPic(Transfer[Transfer.Length - 1].animation[Transfer[Transfer.Length - 1].animation.Length - 1]);
                                     }
                                     else break;
                                 }
@@ -320,9 +380,11 @@ namespace MOPS
                 foreach (Pics p in Transfer)
                 {
                     p.pic.Freeze();
+                    p.invertedPic.Freeze();
                     if (p.animation != null)
                     {
                         foreach (BitmapImage i in p.animation) i.Freeze();
+                        foreach (BitmapSource i in p.invertedAnimation) i.Freeze();
                     }
                 }
                 return Transfer;

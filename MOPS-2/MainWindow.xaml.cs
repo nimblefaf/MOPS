@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -47,7 +48,9 @@ namespace MOPS
         double Correction;
         public double beat_length = 0;
         public double buildup_beat_len = 0;
+
         public static Hues.Palette[] hues = Hues.hues_normal;
+        
 
         public static Settings set = new Settings();
         public RPManager RPM = new RPManager();
@@ -55,8 +58,9 @@ namespace MOPS
         public bool muted = false;
         public int muted_volume;
 
+        public bool Colors_Inverted = false;
         public bool full_auto_mode = true;
-        public bool RAMEaterMode = true;
+        public bool LoadSoundToRAM = true;
         public bool buildup_enabled = true; // Need to redo it in a 3-mode trigger (to add "play once" option)
         /// <summary>
         /// Quality of blur, from 0 to 3. Zero for stretching a single image, 1-3 for moving copies of image to the center.
@@ -167,12 +171,12 @@ namespace MOPS
             songs_be.IsEnabled = true;
 
             Cursor = Cursors.Arrow;
-            //InfoBlock.Text = "Loaded";
+            InfoBlock.Text = "Loaded";
 
-            LightsWarning.Visibility = Visibility.Hidden;
+            //CornerBlock.Visibility = Visibility.Hidden;
             InfoBlock.Visibility = Visibility.Hidden;
 
-            
+
         }
 
         private Storyboard SB_Blackout = new Storyboard();
@@ -282,7 +286,12 @@ namespace MOPS
                     prev_image();
                     break;
                 case Key.Space:
-                    timeline_noblur();
+                    timeline_pic_and_color();
+                    break;
+                case Key.T:
+                    break;
+                case Key.N:
+                    timeline_invert();
                     break;
             }
         }
@@ -403,10 +412,13 @@ namespace MOPS
                     timeline_x();
                     break;
                 case '-':
-                    timeline_noblur();
+                    timeline_pic_and_color();
                     break;
                 case '‑'://YES THATS A DIFFERENT ONE. Thanks to tylup RP.
-                    timeline_noblur();
+                    timeline_pic_and_color();
+                    break;
+                case '~':
+                    timeline_color_change();
                     break;
                 case ':':
                     timeline_color_change();
@@ -420,24 +432,30 @@ namespace MOPS
                 case '+':
                     timeline_blackout();
                     break;
+                case 'i':
+                    timeline_invert();
+                    break;
+                case 'I':
+                    timeline_invert_w_image();
+                    break;
             }
         }
 
         // Vertical blur (snare)
         private void timeline_x()
         {
-            timeline_noblur();
+            timeline_pic_and_color();
             timeline_blur_vert();
         }
         // Horizontal blur (bass)
         private void timeline_o()
         {
-            timeline_noblur();
+            timeline_pic_and_color();
             timeline_blur_hor();
         }
 
         // For '-' in the timeline
-        private void timeline_noblur()
+        private void timeline_pic_and_color()
         {
             timeline_color_change();
             timeline_image_change();
@@ -456,7 +474,7 @@ namespace MOPS
         private void timeline_blackout_short()
         {
             Blackout_Rectangle.Opacity = 1;
-            timeline_noblur();
+            timeline_pic_and_color();
             ShortBlackoutTimer.Start();
         }
         private void ShortBlackoutTimer_Tick(object sender, EventArgs e)
@@ -471,9 +489,10 @@ namespace MOPS
             while (true)
             {
                 index = rnd.Next(0, hues.Length - 1);
-                if (Background != hues[index].brush) break;
+                if (ColorOverlap_Rectangle.Fill != hues[index].brush) break;
             }
-            Background = hues[index].brush;
+            ColorOverlap_Rectangle.Fill = hues[index].brush;
+            ColorOverlap_Rectangle.Stroke = hues[index].brush;
             color_label.Content = hues[index].name.ToUpper();
         }
         // '*'
@@ -540,16 +559,30 @@ namespace MOPS
 
         }
 
-        // 'i' Invert all colours
+        // 'i' White pic and darker background(?)
         private void timeline_invert()
         {
-
+            if (Colors_Inverted)
+            {
+                Background_Rectangle.Fill = Brushes.White;
+                Background_Rectangle.Opacity = 0.3;
+                Colors_Inverted = false;
+                if (RPM.allPics[current_image_pos].invertedAnimation == null) image.Source = RPM.allPics[current_image_pos].pic;
+            }
+            else
+            {
+                Background_Rectangle.Fill = Brushes.Black;
+                Background_Rectangle.Opacity = 0.8;
+                Colors_Inverted = true;
+                if (RPM.allPics[current_image_pos].invertedAnimation == null) image.Source = RPM.allPics[current_image_pos].invertedPic;
+            }
         }
 
         // 'I' Invert & change image
         private void timeline_invert_w_image()
         {
-
+            timeline_pic_and_color();
+            timeline_invert();
         }
 
         // 's' Horizontal slice
@@ -760,7 +793,11 @@ namespace MOPS
             if (p != -1)
             {
                 int index = enabled_images[p].Ind;
-                image.Source = RPM.allPics[index].pic;
+                if (Colors_Inverted) image.Source = RPM.allPics[index].invertedPic;
+                else image.Source = RPM.allPics[index].pic;
+
+                CornerBlock.Text = RPM.allPics[index].pic.Format.ToString();
+
                 if (RPM.allPics[index].animation == null)
                 {
                     AnimTimer.Stop();
@@ -784,6 +821,9 @@ namespace MOPS
                     anim_ind = 1;
                     AnimTimer.Interval = TimeSpan.FromMilliseconds(RPM.allPics[current_image_pos].frameDuration);
                     AnimTimer.Start();
+
+                    CornerBlock.Text = RPM.allPics[index].animation[0].Format.ToString();
+
                     switch (RPM.allPics[index].align)
                     {
                         case "left":
@@ -816,7 +856,8 @@ namespace MOPS
 
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            image.Source = RPM.allPics[current_image_pos].animation[anim_ind];
+            if (Colors_Inverted) image.Source = RPM.allPics[current_image_pos].invertedAnimation[anim_ind];
+            else image.Source = RPM.allPics[current_image_pos].animation[anim_ind];
             if (RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
         }
@@ -841,6 +882,45 @@ namespace MOPS
             e.Handled = true;
         }
 
-        
+        private BitmapSource InvertPic(BitmapSource ImageToInvert)
+        {
+            if (ImageToInvert.Format != PixelFormats.Pbgra32)
+            {
+                FormatConvertedBitmap ConvertedPic = new FormatConvertedBitmap();
+                ConvertedPic = new FormatConvertedBitmap();
+                ConvertedPic.BeginInit();
+                ConvertedPic.Source = ImageToInvert;
+                ConvertedPic.DestinationFormat = PixelFormats.Bgra32;
+                ConvertedPic.EndInit();
+
+                ImageToInvert = ConvertedPic;
+            }
+
+            // Calculate stride of source
+            int stride = (ImageToInvert.PixelWidth * ImageToInvert.Format.BitsPerPixel + 7) / 8;
+            var t = ImageToInvert.Format.Masks;
+            // Create data array to hold source pixel data
+            int length = stride * ImageToInvert.PixelHeight;
+            byte[] data = new byte[length];
+            // Copy source image pixels to the data array
+            ImageToInvert.CopyPixels(data, stride, 0);
+
+            //BitmapImage monster = (BitmapImage)BitmapImage.Create(ImageToInvert.PixelWidth, ImageToInvert.PixelHeight, ImageToInvert.DpiX, ImageToInvert.DpiY,PixelFormats.Default, BitmapPalettes.BlackAndWhiteTransparent, data, stride);
+
+            if (ImageToInvert.Format.BitsPerPixel != 1)
+                for (int i = 0; i < length; i += 4)
+                {
+                    data[i] = (byte)(255 - data[i]); //R
+                    data[i + 1] = (byte)(255 - data[i + 1]); //G
+                    data[i + 2] = (byte)(255 - data[i + 2]); //B
+                                                             //data[i + 3] = (byte)(255 - data[i + 3]); //A
+                }
+
+            // Create a new BitmapSource from the inverted pixel buffer
+            return BitmapSource.Create(
+                ImageToInvert.PixelWidth, ImageToInvert.PixelHeight,
+                ImageToInvert.DpiX, ImageToInvert.DpiY, ImageToInvert.Format,
+                ImageToInvert.Palette, data, stride);
+        }
     }
 }
