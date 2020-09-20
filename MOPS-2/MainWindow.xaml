@@ -8,9 +8,9 @@
         Title="0x40 Hues of MOPS" Height="600" Width="800" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" SizeChanged="Window_SizeChanged" StateChanged="Window_StateChanged" LocationChanged="Window_LocationChanged" MinWidth="800" MinHeight="600" KeyDown="Window_KeyDown" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" Background="White" OpacityMask="Black">
 
     <Grid>
-        <Rectangle x:Name="Background_Rectangle" Fill="White" Stroke="White" Opacity="0.3" Margin="-10"/>
-        <Rectangle x:Name="ColorOverlap_Rectangle" Fill="Red" Stroke="Red" Opacity="0.7" Margin="-10"/>
-        <Image x:Name="image" Source="Kyubey.png" Opacity="0.9" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" SourceUpdated="image_SourceUpdated" OpacityMask="#CCFFFFFF"/>
+        <Rectangle x:Name="Background_Rectangle" Fill="White" Stroke="White" Opacity="1" Margin="-10"/>
+        <Image x:Name="image" Source="Kyubey.png" Opacity="1" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" SourceUpdated="image_SourceUpdated" OpacityMask="#CCFFFFFF"/>
+        <Rectangle x:Name="ColorOverlap_Rectangle" Fill="Red" Stroke="Red" Opacity="0.5" Margin="-10"/>
         <Rectangle x:Name="Blackout_Rectangle" Fill="Black" Stroke="Black" Opacity="0" Visibility="Visible"/>
         <Label x:Name="timeline_label" Content=">." VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" FontSize="9"/>
         <Label x:Name="song_label" Content="SongName" Margin="0,0,0,13" VerticalAlignment="Bottom" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="792" FontSize="9"/>

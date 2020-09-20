@@ -50,7 +50,7 @@ namespace MOPS
         public double buildup_beat_len = 0;
 
         public static Hues.Palette[] hues = Hues.hues_normal;
-        
+        public int CurrentColorInd = 0;
 
         public static Settings set = new Settings();
         public RPManager RPM = new RPManager();
@@ -184,17 +184,18 @@ namespace MOPS
         private Storyboard SB_Blackout_Short = new Storyboard();
         private DoubleAnimation Blackout_Short = new DoubleAnimation();
         private ThicknessAnimation Blackout_Blur = new ThicknessAnimation();
+        private ColorAnimation Fade = new ColorAnimation();
 
         private Storyboard SB = new Storyboard();
         private DoubleAnimation VerticalBlur_Simple = new DoubleAnimation();
         private ThicknessAnimation HorizontalBlur_Simple = new ThicknessAnimation();
 
-
-        
         private void Init_Animations()
         {
-            Blackout_Rectangle.Opacity = 0;
+            Fade.FillBehavior = FillBehavior.HoldEnd;
+            Fade.BeginTime = TimeSpan.FromSeconds(0);
 
+            Blackout_Rectangle.Opacity = 0;
             Blackout_Short.BeginTime = new TimeSpan(0);
             Blackout_Short.From = 0;
             Blackout_Short.To = 1;
@@ -223,15 +224,16 @@ namespace MOPS
 
             VerticalBlur_Simple.BeginTime = new TimeSpan(0);
             Storyboard.SetTargetProperty(VerticalBlur_Simple, new PropertyPath(HeightProperty));
-            
+
             //CODE BELOW FOR SOME REASON STOPS THE THREAD WITHOUT THROWING AN EXCEPTION
             //VerticalBlur_Simple.From = image.Height + 20; 
             //VerticalBlur_Simple.To = image.Height;
             //VerticalBlur_Simple.To = image.Margin;
             //VerticalBlur_Simple.From = new Thickness(image.Margin.Left, image.Margin.Top + 25, image.Margin.Right, image.Margin.Bottom + 25);
-            VerticalBlur_Simple.Duration = TimeSpan.FromSeconds(1);
-            SB.Children.Add(VerticalBlur_Simple);
-            Storyboard.SetTarget(VerticalBlur_Simple, image);
+
+            //VerticalBlur_Simple.Duration = TimeSpan.FromSeconds(1);
+            //SB.Children.Add(VerticalBlur_Simple);
+            //Storyboard.SetTarget(VerticalBlur_Simple, image);
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -360,19 +362,23 @@ namespace MOPS
         private void Timer_Tick(object sender, EventArgs e)
         {
             TimeLine_Move();
-            if (rhythm_pos >= 0)
+            if (rhythm_pos > 0)
             {
-                Correction = beat_length * rhythm_pos - Player.GetPosOfStream(Player.Stream_L);
+                Correction = beat_length * (rhythm_pos-1) - Player.GetPosOfStream(Player.Stream_L);
                 if (Correction > 0 & Correction < beat_length * 1.5) Timer.Interval = TimeSpan.FromSeconds(Correction);
                 else //Jumping forward to compensate lag
                 {
                     if (rhythm_pos != 0 & Correction < 0) Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
                 }
             }
+            else if (rhythm_pos == 0)
+            {
+                Correction = beat_length;
+            }
             else
             {
                 b_rhythm_pos += 1;
-                Correction = buildup_beat_len * (build_rhythm.Length + rhythm_pos) - Player.GetPosOfStream(Player.Stream_B);
+                Correction = buildup_beat_len * (build_rhythm.Length + rhythm_pos - 1) - Player.GetPosOfStream(Player.Stream_B);
                 if (Correction > 0) Timer.Interval = TimeSpan.FromSeconds(Correction);
                 else Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
             }
@@ -396,14 +402,13 @@ namespace MOPS
 
         private void beat(char c)
         {
-            if (c != '.') SB.Stop();
             if (Blackout_Rectangle.Opacity != 0 & c != '.')
             {
                 SB_Blackout.Stop();
                 blackouted = false;
                 Blackout_Rectangle.Opacity = 0;
             }
-            switch (c)
+            if (c != '.') switch (c)
             {
                 case 'o':
                     timeline_o();
@@ -418,7 +423,7 @@ namespace MOPS
                     timeline_pic_and_color();
                     break;
                 case '~':
-                    timeline_color_change();
+                    timeline_fade();
                     break;
                 case ':':
                     timeline_color_change();
@@ -485,15 +490,9 @@ namespace MOPS
         // ':'
         public void timeline_color_change()
         {
-            int index;
-            while (true)
-            {
-                index = rnd.Next(0, hues.Length - 1);
-                if (ColorOverlap_Rectangle.Fill != hues[index].brush) break;
-            }
-            ColorOverlap_Rectangle.Fill = hues[index].brush;
-            ColorOverlap_Rectangle.Stroke = hues[index].brush;
-            color_label.Content = hues[index].name.ToUpper();
+            GetRandomHue();
+            ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+            color_label.Content = hues[CurrentColorInd].name.ToUpper();
         }
         // '*'
         private void timeline_image_change()
@@ -550,13 +549,20 @@ namespace MOPS
         // '~' Fade color
         private void timeline_fade()
         {
+            Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
+            Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
+            int Count = CountDots();
+            Fade.Duration = TimeSpan.FromSeconds((CountDots() + 1) * beat_length);
+            color_label.Content = hues[CurrentColorInd].name.ToUpper();
+            ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
 
         }
 
         // '=' Fade and change image
         private void timeline_fade_image()
         {
-
+            timeline_image_change();
+            timeline_fade();
         }
 
         // 'i' White pic and darker background(?)
@@ -574,7 +580,11 @@ namespace MOPS
                 Background_Rectangle.Fill = Brushes.Black;
                 Background_Rectangle.Opacity = 0.8;
                 Colors_Inverted = true;
-                if (RPM.allPics[current_image_pos].invertedAnimation == null) image.Source = RPM.allPics[current_image_pos].invertedPic;
+                if (RPM.allPics[current_image_pos].invertedAnimation == null)
+                {
+                    if (RPM.allPics[current_image_pos].invertedPic != null) image.Source = RPM.allPics[current_image_pos].invertedPic;
+                    else image.Source = InvertPic(RPM.allPics[current_image_pos].pic);
+                }
             }
         }
 
@@ -793,10 +803,15 @@ namespace MOPS
             if (p != -1)
             {
                 int index = enabled_images[p].Ind;
-                if (Colors_Inverted) image.Source = RPM.allPics[index].invertedPic;
+                if (Colors_Inverted)
+                {
+                    if (RPM.allPics[index].invertedPic != null) image.Source = RPM.allPics[index].invertedPic;
+                    else image.Source = InvertPic(RPM.allPics[index].pic);
+                }
                 else image.Source = RPM.allPics[index].pic;
 
-                CornerBlock.Text = RPM.allPics[index].pic.Format.ToString();
+                ////For debug:
+                //CornerBlock.Text = index + ": " + RPM.allPics[index].pic.Format.ToString();
 
                 if (RPM.allPics[index].animation == null)
                 {
@@ -821,8 +836,8 @@ namespace MOPS
                     anim_ind = 1;
                     AnimTimer.Interval = TimeSpan.FromMilliseconds(RPM.allPics[current_image_pos].frameDuration);
                     AnimTimer.Start();
-
-                    CornerBlock.Text = RPM.allPics[index].animation[0].Format.ToString();
+                    ////For debug:
+                    //CornerBlock.Text = index + ": " + RPM.allPics[index].animation[0].Format.ToString();
 
                     switch (RPM.allPics[index].align)
                     {
@@ -884,43 +899,44 @@ namespace MOPS
 
         private BitmapSource InvertPic(BitmapSource ImageToInvert)
         {
-            if (ImageToInvert.Format != PixelFormats.Pbgra32)
+            Color[] ColorArray = new Color[2] { Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255) };
+            BitmapPalette WhitePalette = new BitmapPalette(ColorArray);
+            if (ImageToInvert.Format == PixelFormats.Indexed1)
             {
-                FormatConvertedBitmap ConvertedPic = new FormatConvertedBitmap();
-                ConvertedPic = new FormatConvertedBitmap();
-                ConvertedPic.BeginInit();
-                ConvertedPic.Source = ImageToInvert;
-                ConvertedPic.DestinationFormat = PixelFormats.Bgra32;
-                ConvertedPic.EndInit();
-
-                ImageToInvert = ConvertedPic;
+                int stride = (ImageToInvert.PixelWidth * ImageToInvert.Format.BitsPerPixel + 7) / 8;
+                int length = stride * ImageToInvert.PixelHeight;
+                byte[] data = new byte[length];
+                ImageToInvert.CopyPixels(data, stride, 0);
+                return BitmapSource.Create(ImageToInvert.PixelWidth, ImageToInvert.PixelHeight, ImageToInvert.DpiX, ImageToInvert.DpiY, PixelFormats.Indexed1, WhitePalette, data, stride);
             }
+            else return ImageToInvert;
+        }
 
-            // Calculate stride of source
-            int stride = (ImageToInvert.PixelWidth * ImageToInvert.Format.BitsPerPixel + 7) / 8;
-            var t = ImageToInvert.Format.Masks;
-            // Create data array to hold source pixel data
-            int length = stride * ImageToInvert.PixelHeight;
-            byte[] data = new byte[length];
-            // Copy source image pixels to the data array
-            ImageToInvert.CopyPixels(data, stride, 0);
+        private Hues.Palette GetRandomHue()
+        {
+            CurrentColorInd = (CurrentColorInd + rnd.Next(1, hues.Length - 1)) % hues.Length;
+            return hues[CurrentColorInd];
+        }
 
-            //BitmapImage monster = (BitmapImage)BitmapImage.Create(ImageToInvert.PixelWidth, ImageToInvert.PixelHeight, ImageToInvert.DpiX, ImageToInvert.DpiY,PixelFormats.Default, BitmapPalettes.BlackAndWhiteTransparent, data, stride);
-
-            if (ImageToInvert.Format.BitsPerPixel != 1)
-                for (int i = 0; i < length; i += 4)
+        private int CountDots()
+        {
+            int Count = 0;
+            int limit = build_rhythm.Length + (loop_rhythm.Length * 3);
+            for (int i = 3; i < limit; i++)
+            {
+                if (timeline_label.Content.ToString()[i] != '.') break;
+                else
                 {
-                    data[i] = (byte)(255 - data[i]); //R
-                    data[i + 1] = (byte)(255 - data[i + 1]); //G
-                    data[i + 2] = (byte)(255 - data[i + 2]); //B
-                                                             //data[i + 3] = (byte)(255 - data[i + 3]); //A
+                    Count++;
+                    if (timeline_label.Content.ToString().Length - 1 == i) timeline_label.Content = timeline_label.Content.ToString() + loop_rhythm;
+                    if (i == limit - 1)
+                    {
+                        Count = 0;
+                        break;
+                    }
                 }
-
-            // Create a new BitmapSource from the inverted pixel buffer
-            return BitmapSource.Create(
-                ImageToInvert.PixelWidth, ImageToInvert.PixelHeight,
-                ImageToInvert.DpiX, ImageToInvert.DpiY, ImageToInvert.Format,
-                ImageToInvert.Palette, data, stride);
+            }
+            return Count;
         }
     }
 }

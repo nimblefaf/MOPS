@@ -82,14 +82,15 @@ namespace MOPS
             Color[] ColorArray = new Color[2] { Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255) };
             BitmapPalette WhitePalette = new BitmapPalette(ColorArray);
             if (ImageToInvert == null) return null;
-            if (ImageToInvert.Format == PixelFormats.Indexed1)
-            {
-                int stride = (ImageToInvert.PixelWidth * ImageToInvert.Format.BitsPerPixel + 7) / 8;
-                int length = stride * ImageToInvert.PixelHeight;
-                byte[] data = new byte[length];
-                ImageToInvert.CopyPixels(data, stride, 0);
-                return BitmapSource.Create(ImageToInvert.PixelWidth, ImageToInvert.PixelHeight, ImageToInvert.DpiX, ImageToInvert.DpiY, PixelFormats.Indexed1, WhitePalette, data, stride);
-            }
+            if (ImageToInvert.Format == PixelFormats.Indexed1) return null;
+            //if (ImageToInvert.Format == PixelFormats.Indexed1)
+            //{
+            //    int stride = (ImageToInvert.PixelWidth * ImageToInvert.Format.BitsPerPixel + 7) / 8;
+            //    int length = stride * ImageToInvert.PixelHeight;
+            //    byte[] data = new byte[length];
+            //    ImageToInvert.CopyPixels(data, stride, 0);
+            //    return BitmapSource.Create(ImageToInvert.PixelWidth, ImageToInvert.PixelHeight, ImageToInvert.DpiX, ImageToInvert.DpiY, PixelFormats.Indexed1, WhitePalette, data, stride);
+            //}
             else
             {
                 if (ImageToInvert.Format != PixelFormats.Bgra32)
@@ -380,7 +381,7 @@ namespace MOPS
                 foreach (Pics p in Transfer)
                 {
                     p.pic.Freeze();
-                    p.invertedPic.Freeze();
+                    if (p.invertedPic != null) p.invertedPic.Freeze();
                     if (p.animation != null)
                     {
                         foreach (BitmapImage i in p.animation) i.Freeze();
