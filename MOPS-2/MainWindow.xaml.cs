@@ -49,6 +49,9 @@ namespace MOPS
         public double beat_length = 0;
         public double buildup_beat_len = 0;
 
+        public Label[] allLabels;
+        public TextBlock[] allTextBlocks;
+
         public static Hues.Palette[] hues = Hues.hues_normal;
         public int CurrentColorInd = 0;
 
@@ -65,15 +68,15 @@ namespace MOPS
         /// <summary>
         /// Quality of blur, from 0 to 3. Zero for stretching a single image, 1-3 for moving copies of image to the center.
         /// </summary>
-        public int blur_quality = -1;
+        public int blur_quality = 1;
         /// <summary>
         /// Duration of blur animation. From 0 to 3. [appr. from 1s to 0.3s]
         /// </summary>
-        public double blur_decay = 1;
+        public double blur_decay = 0.2;
         /// <summary>
-        /// How far away blur goes, from 0 to 3.
+        /// How far away blur goes in WPF dots.
         /// </summary>
-        public int blur_amount = 0;
+        public int blur_Amount = 25;
         public bool blackouted = false;
 
         public int current_song = 0;
@@ -100,7 +103,6 @@ namespace MOPS
             InitializeComponent();
             //RPManager.SupremeReader("Packs/Defaults_v5.0.zip", backgroundWorker, new DoWorkEventArgs);
             
-
             Timer.Tick += new EventHandler(Timer_Tick);
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
             ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
@@ -126,10 +128,9 @@ namespace MOPS
         {
             set.Owner = this;
             Init_Animations();
+            Init_UI();
  
             timeline_color_change();
-
-            
         }
 
         private void First_Load(object sender, MouseButtonEventArgs e)
@@ -173,11 +174,25 @@ namespace MOPS
             Cursor = Cursors.Arrow;
             InfoBlock.Text = "Loaded";
 
-            //CornerBlock.Visibility = Visibility.Hidden;
+            CornerBlock.Visibility = Visibility.Hidden;
             InfoBlock.Visibility = Visibility.Hidden;
 
 
         }
+
+        private void Init_UI()
+        {
+            allLabels = new Label[] {timeline_label, character_label, color_label, song_label, volume_label };
+            allTextBlocks = new TextBlock[] { Message_textBlock, CornerBlock, full_auto_be, images_be, next_image_be, next_song_be, prev_image_be, prev_song_be, songs_be};
+        }
+
+        private Storyboard XAnimSmallSB = new Storyboard();
+        private Storyboard YAnimSmallSB = new Storyboard();
+        private Image[] blur_imgset_v8 = new Image[8];
+        private ThicknessAnimation[] XAnimSmall = new ThicknessAnimation[8];
+        private ThicknessAnimation[] YAnimSmall = new ThicknessAnimation[8];
+        private Image[] blur_imgset_v14 = new Image[14];
+        private Image[] blur_imgset_v26 = new Image[26];
 
         private Storyboard SB_Blackout = new Storyboard();
         private DoubleAnimation Blackout = new DoubleAnimation();
@@ -192,6 +207,55 @@ namespace MOPS
 
         private void Init_Animations()
         {
+            blur_imgset_v8 = new Image[] { image1, image2, image3, image4, image5, image6, image7, image8 };
+            for (int i = 0; i < XAnimSmall.Length; i++)
+            {
+                double factor = 0.25 * (i / 2);
+                if (i % 2 == 0) factor *= -1;
+                XAnimSmall[i] = new ThicknessAnimation();
+                XAnimSmall[i].DecelerationRatio = 0.1;
+                XAnimSmall[i].Duration = TimeSpan.FromSeconds(blur_decay);
+                XAnimSmall[i].To = new Thickness(0, 0, 0, 0);
+                XAnimSmall[i].From = new Thickness(-(blur_Amount * factor), 0, blur_Amount * factor, 0);
+                XAnimSmall[i].BeginTime = TimeSpan.FromSeconds(0);
+                Storyboard.SetTargetProperty(XAnimSmall[i], new PropertyPath(MarginProperty));
+                XAnimSmallSB.Children.Add(XAnimSmall[i]);
+                Storyboard.SetTarget(XAnimSmall[i], blur_imgset_v8[i]);
+
+                YAnimSmall[i] = new ThicknessAnimation();
+                XAnimSmall[i].DecelerationRatio = 0.1;
+                YAnimSmall[i].Duration = TimeSpan.FromSeconds(blur_decay);
+                YAnimSmall[i].To = new Thickness(0, 0, 0, 0);
+                YAnimSmall[i].From = new Thickness(0, -(blur_Amount * factor), 0, blur_Amount * factor);
+                YAnimSmall[i].BeginTime = TimeSpan.FromSeconds(0);
+                Storyboard.SetTargetProperty(YAnimSmall[i], new PropertyPath(MarginProperty));
+                YAnimSmallSB.Children.Add(YAnimSmall[i]);
+                Storyboard.SetTarget(YAnimSmall[i], blur_imgset_v8[i]);
+            }
+            XAnimSmallSB.Completed += delegate (object sender, EventArgs e)
+            {
+                foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Hidden;
+                image0.Opacity = 1;
+            };
+            YAnimSmallSB.Completed += delegate (object sender, EventArgs e)
+            {
+                foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Hidden;
+                image0.Opacity = 1;
+            };
+            XAnimSmallSB.DecelerationRatio = 0.1;
+            YAnimSmallSB.DecelerationRatio = 0.1;
+            XAnimSmallSB.FillBehavior = FillBehavior.Stop;
+            YAnimSmallSB.FillBehavior = FillBehavior.Stop;
+
+
+            blur_imgset_v14 = new Image[]
+            { image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14 };
+            blur_imgset_v26 = new Image[]
+            {
+                image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14,
+                image15, image16, image17, image18, image19, image20, image21, image22, image23, image24, image25, image26
+            };
+
             Fade.FillBehavior = FillBehavior.HoldEnd;
             Fade.BeginTime = TimeSpan.FromSeconds(0);
 
@@ -224,16 +288,6 @@ namespace MOPS
 
             VerticalBlur_Simple.BeginTime = new TimeSpan(0);
             Storyboard.SetTargetProperty(VerticalBlur_Simple, new PropertyPath(HeightProperty));
-
-            //CODE BELOW FOR SOME REASON STOPS THE THREAD WITHOUT THROWING AN EXCEPTION
-            //VerticalBlur_Simple.From = image.Height + 20; 
-            //VerticalBlur_Simple.To = image.Height;
-            //VerticalBlur_Simple.To = image.Margin;
-            //VerticalBlur_Simple.From = new Thickness(image.Margin.Left, image.Margin.Top + 25, image.Margin.Right, image.Margin.Bottom + 25);
-
-            //VerticalBlur_Simple.Duration = TimeSpan.FromSeconds(1);
-            //SB.Children.Add(VerticalBlur_Simple);
-            //Storyboard.SetTarget(VerticalBlur_Simple, image);
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -383,7 +437,7 @@ namespace MOPS
                 else Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
             }
         }
-
+        /// <summary> Check if displayed rhythm is too short and fills it if neccessary </summary>
         private void TimelineLenghtFill()
         {
             if (timeline_label.Content.ToString().Length < 250)
@@ -399,7 +453,7 @@ namespace MOPS
             rhythm_pos += 1;
             if (rhythm_pos == loop_rhythm.Length) rhythm_pos = 0;
         }
-
+        /// <summary> Plays the event according to char </summary>
         private void beat(char c)
         {
             if (Blackout_Rectangle.Opacity != 0 & c != '.')
@@ -409,41 +463,47 @@ namespace MOPS
                 Blackout_Rectangle.Opacity = 0;
             }
             if (c != '.') switch (c)
-            {
-                case 'o':
-                    timeline_o();
-                    break;
-                case 'x':
-                    timeline_x();
-                    break;
-                case '-':
-                    timeline_pic_and_color();
-                    break;
-                case '‑'://YES THATS A DIFFERENT ONE. Thanks to tylup RP.
-                    timeline_pic_and_color();
-                    break;
-                case '~':
-                    timeline_fade();
-                    break;
-                case ':':
-                    timeline_color_change();
-                    break;
-                case '*':
-                    timeline_image_change();
-                    break;
-                case '|':
-                    timeline_blackout_short();
-                    break;
-                case '+':
-                    timeline_blackout();
-                    break;
-                case 'i':
-                    timeline_invert();
-                    break;
-                case 'I':
-                    timeline_invert_w_image();
-                    break;
-            }
+                {
+                    case 'o':
+                        timeline_o();
+                        break;
+                    case 'O':
+                        timeline_blur_hor();
+                        break;
+                    case 'x':
+                        timeline_x();
+                        break;
+                    case 'X':
+                        timeline_blur_vert();
+                        break;
+                    case '-':
+                        timeline_pic_and_color();
+                        break;
+                    case '‑'://YES THATS A DIFFERENT ONE. Thanks to tylup RP.
+                        timeline_pic_and_color();
+                        break;
+                    case '~':
+                        timeline_fade();
+                        break;
+                    case ':':
+                        timeline_color_change();
+                        break;
+                    case '*':
+                        timeline_image_change();
+                        break;
+                    case '|':
+                        timeline_blackout_short();
+                        break;
+                    case '+':
+                        timeline_blackout();
+                        break;
+                    case 'i':
+                        timeline_invert();
+                        break;
+                    case 'I':
+                        timeline_invert_w_image();
+                        break;
+                }
         }
 
         // Vertical blur (snare)
@@ -522,8 +582,10 @@ namespace MOPS
         {
             switch (blur_quality)
             {
-                case 0:
-                    SB.Begin();
+                case 1:
+                    foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
+                    image0.Opacity = 0.3;
+                    XAnimSmallSB.Begin();
                     break;
             }
         }
@@ -531,7 +593,14 @@ namespace MOPS
         // 'O' Vertical blur only
         private void timeline_blur_hor()
         {
-
+            switch (blur_quality)
+            {
+                case 1:
+                    foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
+                    image0.Opacity = 0.3;
+                    YAnimSmallSB.Begin();
+                    break;
+            }
         }
 
         // ')' Trippy cirle in
@@ -565,7 +634,7 @@ namespace MOPS
             timeline_fade();
         }
 
-        // 'i' White pic and darker background(?)
+        /// <summary> 'i' White pic and darker background(?) </summary>
         private void timeline_invert()
         {
             if (Colors_Inverted)
@@ -573,7 +642,9 @@ namespace MOPS
                 Background_Rectangle.Fill = Brushes.White;
                 Background_Rectangle.Opacity = 0.3;
                 Colors_Inverted = false;
-                if (RPM.allPics[current_image_pos].invertedAnimation == null) image.Source = RPM.allPics[current_image_pos].pic;
+                if (RPM.allPics[current_image_pos].invertedAnimation == null) image0.Source = RPM.allPics[current_image_pos].pic;
+                foreach (Label l in allLabels) l.Foreground = Brushes.Black;
+                foreach (TextBlock tb in allTextBlocks) tb.Foreground = Brushes.Black;
             }
             else
             {
@@ -582,9 +653,11 @@ namespace MOPS
                 Colors_Inverted = true;
                 if (RPM.allPics[current_image_pos].invertedAnimation == null)
                 {
-                    if (RPM.allPics[current_image_pos].invertedPic != null) image.Source = RPM.allPics[current_image_pos].invertedPic;
-                    else image.Source = InvertPic(RPM.allPics[current_image_pos].pic);
+                    if (RPM.allPics[current_image_pos].invertedPic != null) image0.Source = RPM.allPics[current_image_pos].invertedPic;
+                    else image0.Source = InvertPic(RPM.allPics[current_image_pos].pic);
                 }
+                foreach (Label l in allLabels) l.Foreground = Brushes.White;
+                foreach (TextBlock tb in allTextBlocks) tb.Foreground = Brushes.White;
             }
         }
 
@@ -663,14 +736,15 @@ namespace MOPS
             if (WindowState == WindowState.Maximized)
             {
                 if (SystemParameters.MaximizedPrimaryScreenWidth / SystemParameters.MaximizedPrimaryScreenHeight > RPM.allPics[current_image_pos].pic.Width / RPM.allPics[current_image_pos].pic.Height)
-                    image.Stretch = Stretch.Uniform;
-                else image.Stretch = Stretch.UniformToFill;
+                    image0.Stretch = Stretch.Uniform;
+                else image0.Stretch = Stretch.UniformToFill;
             }
             else
             {
-                if (Width / Height > RPM.allPics[current_image_pos].pic.Width / RPM.allPics[current_image_pos].pic.Height) image.Stretch = Stretch.Uniform;
-                else image.Stretch = Stretch.UniformToFill;
+                if (Width / Height > RPM.allPics[current_image_pos].pic.Width / RPM.allPics[current_image_pos].pic.Height) image0.Stretch = Stretch.Uniform;
+                else image0.Stretch = Stretch.UniformToFill;
             }
+            foreach (Image img in blur_imgset_v26) img.Stretch = image0.Stretch;
         }
 
 
@@ -701,6 +775,10 @@ namespace MOPS
 
         private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (Colors_Inverted)
+            {
+                timeline_invert();
+            }
             if (Blackout_Rectangle.Opacity != 0)
             {
                 SB_Blackout.Stop();
@@ -799,16 +877,20 @@ namespace MOPS
 
         public void ImageChange(int p)
         {
+            XAnimSmallSB.Stop();
+            YAnimSmallSB.Stop();
             current_image_pos = p;
             if (p != -1)
             {
                 int index = enabled_images[p].Ind;
                 if (Colors_Inverted)
                 {
-                    if (RPM.allPics[index].invertedPic != null) image.Source = RPM.allPics[index].invertedPic;
-                    else image.Source = InvertPic(RPM.allPics[index].pic);
+                    if (RPM.allPics[index].invertedPic != null) image0.Source = RPM.allPics[index].invertedPic;
+                    else image0.Source = InvertPic(RPM.allPics[index].pic);
                 }
-                else image.Source = RPM.allPics[index].pic;
+                else image0.Source = RPM.allPics[index].pic;
+
+                foreach (Image img in blur_imgset_v26) img.Source = image0.Source;
 
                 ////For debug:
                 //CornerBlock.Text = index + ": " + RPM.allPics[index].pic.Format.ToString();
@@ -820,15 +902,16 @@ namespace MOPS
                     switch (RPM.allPics[index].align)
                     {
                         case "left":
-                            image.HorizontalAlignment = HorizontalAlignment.Left;
+                            image0.HorizontalAlignment = HorizontalAlignment.Left;
                             break;
                         case "center":
-                            image.HorizontalAlignment = HorizontalAlignment.Center;
+                            image0.HorizontalAlignment = HorizontalAlignment.Center;
                             break;
                         case "right":
-                            image.HorizontalAlignment = HorizontalAlignment.Right;
+                            image0.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
+                    foreach (Image img in blur_imgset_v26) img.HorizontalAlignment = image0.HorizontalAlignment;
                     Smart_Stretch();
                 }
                 else
@@ -842,15 +925,16 @@ namespace MOPS
                     switch (RPM.allPics[index].align)
                     {
                         case "left":
-                            image.HorizontalAlignment = HorizontalAlignment.Left;
+                            image0.HorizontalAlignment = HorizontalAlignment.Left;
                             break;
                         case "center":
-                            image.HorizontalAlignment = HorizontalAlignment.Center;
+                            image0.HorizontalAlignment = HorizontalAlignment.Center;
                             break;
                         case "right":
-                            image.HorizontalAlignment = HorizontalAlignment.Right;
+                            image0.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
+                    foreach (Image img in blur_imgset_v26) img.HorizontalAlignment = image0.HorizontalAlignment;
                     //Smart_Stretch();
                 }
             }
@@ -858,23 +942,25 @@ namespace MOPS
             {
                 if (enabled_images.Count == 0)
                 {
-                    image.Source = null;
+                    image0.Source = null;
                     character_label.Content = "NONE";
                 }
             }
         }
-
+        
         private void image_SourceUpdated(object sender, DataTransferEventArgs e)
         {
             Smart_Stretch();
+            CornerBlock.Text = "UPD!";
         }
 
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            if (Colors_Inverted) image.Source = RPM.allPics[current_image_pos].invertedAnimation[anim_ind];
-            else image.Source = RPM.allPics[current_image_pos].animation[anim_ind];
+            if (Colors_Inverted) image0.Source = RPM.allPics[current_image_pos].invertedAnimation[anim_ind];
+            else image0.Source = RPM.allPics[current_image_pos].animation[anim_ind];
             if (RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
+            foreach (Image img in blur_imgset_v26) img.Source = image0.Source;
         }
 
         private void Images_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
