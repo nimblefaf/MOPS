@@ -128,7 +128,7 @@ namespace MOPS
             
         }
 
-        public int get_rp_of_song(int ind)
+        public int Get_rp_of_song(int ind)
         {
             for (int i = ResPacks.Length - 1; i >= 0; i--)
             {
@@ -136,7 +136,7 @@ namespace MOPS
             }
             return -1;
         }
-        public int get_rp_of_image(int ind)
+        public int Get_rp_of_image(int ind)
         {
             for (int i = ResPacks.Length - 1; i >= 0; i--)
             {

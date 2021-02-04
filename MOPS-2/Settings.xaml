@@ -36,7 +36,7 @@
                     <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" VerticalAlignment="Top" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="195,0,0,0" FontSize="10"/>
                     <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="190" Height="23"/>
                     <TextBox x:Name="rp_description_textbox" Margin="195,39,0,7" Text="&lt;no description&gt;" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True"/>
-                    <TabControl x:Name="tabControl1" HorizontalAlignment="Left" Margin="195,1,0,10" Width="395" Grid.Row="1">
+                    <TabControl x:Name="ResTabControl" HorizontalAlignment="Left" Margin="195,1,0,10" Width="395" Grid.Row="1">
                         <TabItem x:Name="Songs_tab" Header="Songs: &lt;&gt;" Width="200">
                             <Grid Background="#FFE5E5E5">
                                 <ListBox x:Name="songs_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Background="#FFE2E2E2">
@@ -94,6 +94,12 @@
             </TabItem>
             <TabItem Header="OPTIONS" Cursor="Hand" FontSize="10" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" Width="150" Height="25">
                 <Grid Background="#FFE5E5E5" Cursor="Arrow" Height="398" VerticalAlignment="Bottom">
+                    <TextBlock x:Name="OTB_functionality" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Functionality" VerticalAlignment="Top" FontSize="16"/>
+                    <TextBlock x:Name="OTB_playBuildups" HorizontalAlignment="Left" Margin="10,39,0,0" TextWrapping="Wrap" Text="Play buildups" VerticalAlignment="Top"/>
+                    <Button x:Name="OB_buildOff" Content="OFF" HorizontalAlignment="Left" Margin="10,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOffButton_Click" Width="46"/>
+                    <Button x:Name="OB_buildOn" Content="ON" HorizontalAlignment="Left" Margin="129,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOnButton_Click" Width="33"/>
+                    <Button x:Name="OB_buildOnce" Content="ONCE" HorizontalAlignment="Left" Margin="61,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOnceButton_Click" Width="63"/>
+
                 </Grid>
             </TabItem>
             <TabItem Header="INFO" Cursor="Hand" FontSize="10" FontFamily="/MOPS-2;component/fonts/#Pet Me 128" IsSelected="True" RenderTransformOrigin="0.5,0.5" Margin="-2,-2,-73,-1" Height="25">

@@ -23,6 +23,24 @@ namespace MOPS
         public bool State { get; set; }
         public int Ind { get; set; }
     }
+    /// <summary>
+    ///     The selected hue blend mode for drawing the image.
+    /// </summary>
+    public enum BlendMode
+    {
+        /// <summary>
+        /// Image is alpha-blended over the hue.
+        /// </summary>
+        Plain = 0,
+        /// <summary>
+        /// Image is alpha-blended over the hue at 70% opacity.
+        /// </summary>
+        Alpha = 1,
+        /// <summary>
+        /// Image is alpha-blended over a white background.The hue is blended over the image with "hard light" mode at 70% opacity.
+        /// </summary>
+        HardLight = 2
+    }
 
     /// <summary>
     /// Логика взаимодействия для Window1.xaml
@@ -34,7 +52,7 @@ namespace MOPS
         public static ObservableCollection<setdata> images_names = new ObservableCollection<setdata>();
         MainWindow main;
 
-        private BackgroundWorker backgroundWorker;
+        private BackgroundWorker backgroundLoader;
 
         public Settings()
         {
@@ -42,10 +60,10 @@ namespace MOPS
             respack_listbox.ItemsSource = rp_names;
             songs_listbox.ItemsSource = song_names;
             images_listbox.ItemsSource = images_names;
-            backgroundWorker = new BackgroundWorker();
-            backgroundWorker.RunWorkerCompleted +=
+            backgroundLoader = new BackgroundWorker();
+            backgroundLoader.RunWorkerCompleted +=
                 new RunWorkerCompletedEventHandler(load_completed);
-            backgroundWorker.DoWork +=
+            backgroundLoader.DoWork +=
                 new DoWorkEventHandler(load_dowork);
         }
 
@@ -95,15 +113,10 @@ namespace MOPS
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            //TO DO: Resize the window for "Editor"
         }
 
         private void load_rp_button_Click(object sender, RoutedEventArgs e)
-        {
-            load_rp();
-        }
-
-        public void load_rp()
         {
             OpenFileDialog openFile = new OpenFileDialog
             {
@@ -113,7 +126,7 @@ namespace MOPS
             if (openFile.ShowDialog() == true)
             {
                 load_rp_button.IsEnabled = false;
-                backgroundWorker.RunWorkerAsync(openFile.FileName);
+                backgroundLoader.RunWorkerAsync(openFile.FileName);
             }
         }
 
@@ -149,7 +162,9 @@ namespace MOPS
 
             stat_update();
         }
-
+        /// <summary>
+        /// Updates data in "total songs" and "total images" labels
+        /// </summary>
         public void stat_update()
         {
             ImagesNumber_label.Content = MainWindow.enabled_images.Count() + "/" + main.RPM.allPics.Length;
@@ -297,7 +312,7 @@ namespace MOPS
 
         private void enableAll_button_Click(object sender, RoutedEventArgs e)
         {
-            if (tabControl1.SelectedIndex == 0)
+            if (ResTabControl.SelectedIndex == 0) //for songs
             {
                 foreach (setdata el in song_names)
                 {
@@ -310,7 +325,7 @@ namespace MOPS
                 songs_listbox.Items.Refresh();
             }
 
-            else
+            else                                  //for images
             {
                 foreach (setdata el in images_names)
                 {
@@ -328,7 +343,7 @@ namespace MOPS
 
         private void disabelAll_button_Click(object sender, RoutedEventArgs e)
         {
-            if (tabControl1.SelectedIndex == 0) //FOR SONGS
+            if (ResTabControl.SelectedIndex == 0) //FOR SONGS
             {
                 foreach (setdata el in song_names)
                 {
@@ -359,7 +374,7 @@ namespace MOPS
 
         private void invert_button_Click(object sender, RoutedEventArgs e)
         {
-            if (tabControl1.SelectedIndex == 0)
+            if (ResTabControl.SelectedIndex == 0) //for songs
             {
                 foreach (setdata el in song_names)
                 {
@@ -377,7 +392,7 @@ namespace MOPS
                 songs_listbox.Items.Refresh();
             }
 
-            else
+            else                                // for images
             {
                 foreach (setdata el in images_names)
                 {
@@ -397,6 +412,21 @@ namespace MOPS
                 else if (main.current_image_pos == -1) main.ImageChange(0);
             }
             stat_update();
+        }
+
+        private void OB_buildOnButton_Click(object sender, RoutedEventArgs e)
+        {
+            main.buildup_enabled = true;
+        }
+
+        private void OB_buildOffButton_Click(object sender, RoutedEventArgs e)
+        {
+            main.buildup_enabled = false;
+        }
+
+        private void OB_buildOnceButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -39,6 +39,8 @@ namespace MOPS
         long build_len;
         long loop_len;
 
+
+
         GCHandle point_B = new GCHandle();
         GCHandle point_L = new GCHandle();
 
@@ -71,7 +73,7 @@ namespace MOPS
                 point_L = GCHandle.Alloc(loop_mem, GCHandleType.Pinned);
 
                 Stream_B = Bass.BASS_StreamCreateFile(point_B.AddrOfPinnedObject(), 0, build_mem.LongLength, BASSFlag.BASS_STREAM_DECODE);
-                build_len = Bass.BASS_ChannelGetLength(Stream_B);
+                build_len = Bass.BASS_ChannelGetLength(Stream_B, BASSMode.BASS_POS_BYTES);
 
                 Stream_L = Bass.BASS_StreamCreateFile(point_L.AddrOfPinnedObject(), 0, loop_mem.LongLength, BASSFlag.BASS_STREAM_DECODE);
                 loop_len = Bass.BASS_ChannelGetLength(Stream_L);

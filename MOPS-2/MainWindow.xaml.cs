@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +20,7 @@ using System.Drawing;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Globalization;
 
 
 namespace MOPS
@@ -41,13 +41,15 @@ namespace MOPS
     {
         Random rnd = new Random();
         Audio Player = new Audio();
+
+        //Stopwatch TMP_tester = new Stopwatch();
         
+        //public Timer TTimer = new Timer(new TimerCallback);
         public DispatcherTimer Timer = new DispatcherTimer(DispatcherPriority.Send);
         public DispatcherTimer AnimTimer = new DispatcherTimer(DispatcherPriority.Render);
         public DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
         double Correction;
         public double beat_length = 0;
-        public double buildup_beat_len = 0;
 
         public Label[] allLabels;
         public TextBlock[] allTextBlocks;
@@ -72,7 +74,7 @@ namespace MOPS
         /// <summary>
         /// Duration of blur animation. From 0 to 3. [appr. from 1s to 0.3s]
         /// </summary>
-        public double blur_decay = 0.2;
+        public double blur_decay = 0.15;
         /// <summary>
         /// How far away blur goes in WPF dots.
         /// </summary>
@@ -84,9 +86,9 @@ namespace MOPS
         private int anim_ind = 0;
 
         private string loop_rhythm;
-        private string build_rhythm;
-        public int rhythm_pos = 0;
-        public int b_rhythm_pos = 0;
+        private string build_rhythm = "";
+        public int rhythm_pos = 1;
+        public int b_rhythm_pos = 1;
         /// <summary>
         /// List of enabled songs displayed in songs_listbox.
         /// </summary>
@@ -96,12 +98,11 @@ namespace MOPS
         /// </summary>
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
-        private BackgroundWorker backgroundWorker;
-
+        private BackgroundWorker backgroundLoader;
+        private BackgroundWorker backgroundBeater;
         public MainWindow()
         {
             InitializeComponent();
-            //RPManager.SupremeReader("Packs/Defaults_v5.0.zip", backgroundWorker, new DoWorkEventArgs);
             
             Timer.Tick += new EventHandler(Timer_Tick);
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
@@ -109,36 +110,25 @@ namespace MOPS
             
             Player.SetReference(this);
             set.SetReference(this);
-            
 
-            backgroundWorker = new BackgroundWorker();
-            backgroundWorker.RunWorkerCompleted +=
-                new RunWorkerCompletedEventHandler(load_completed);
-            backgroundWorker.DoWork +=
+            backgroundLoader = new BackgroundWorker();
+            backgroundLoader.DoWork +=
                 new DoWorkEventHandler(load_dowork);
+            backgroundLoader.RunWorkerCompleted +=
+                new RunWorkerCompletedEventHandler(load_completed);
+
+            backgroundBeater = new BackgroundWorker();
+            backgroundBeater.DoWork +=
+                new DoWorkEventHandler(beat_hor_dowork);
+
+            CornerBlock.Foreground = Brushes.Red;
+            timeline_label.Foreground = Brushes.Red;
         }
 
         private void load_dowork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             e.Result = RPM.SupremeReader((string)e.Argument, worker, e);
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            set.Owner = this;
-            Init_Animations();
-            Init_UI();
- 
-            timeline_color_change();
-        }
-
-        private void First_Load(object sender, MouseButtonEventArgs e)
-        {
-            Cursor = Cursors.Wait;
-            InfoBlock.Text = "Initializing...";
-            InfoBlock.Cursor = Cursors.Wait;
-            backgroundWorker.RunWorkerAsync("Packs/Defaults_v5.0.zip");
         }
 
         private void load_completed(object sender, RunWorkerCompletedEventArgs e)
@@ -172,13 +162,35 @@ namespace MOPS
             songs_be.IsEnabled = true;
 
             Cursor = Cursors.Arrow;
+            InfoBlock.Cursor = Cursors.Arrow;
             InfoBlock.Text = "Loaded";
 
-            CornerBlock.Visibility = Visibility.Hidden;
+            //CornerBlock.Visibility = Visibility.Hidden;
             InfoBlock.Visibility = Visibility.Hidden;
-
-
         }
+
+        private void beat_hor_dowork(object sender, DoWorkEventArgs e)
+        {
+            timeline_blur_hor();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            set.Owner = this;
+            Init_Animations();
+            Init_UI();
+ 
+            timeline_color_change();
+        }
+
+        private void First_Load(object sender, MouseButtonEventArgs e)
+        {
+            Cursor = Cursors.Wait;
+            InfoBlock.Text = "Initializing...";
+            InfoBlock.Cursor = Cursors.Wait;
+            backgroundLoader.RunWorkerAsync("Packs/Defaults_v5.0.zip");
+        }
+
 
         private void Init_UI()
         {
@@ -415,38 +427,32 @@ namespace MOPS
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            TimeLine_Move();
-            if (rhythm_pos > 0)
+            if (rhythm_pos >= 0)
             {
-                Correction = beat_length * (rhythm_pos-1) - Player.GetPosOfStream(Player.Stream_L);
-                if (Correction > 0 & Correction < beat_length * 1.5) Timer.Interval = TimeSpan.FromSeconds(Correction);
-                else //Jumping forward to compensate lag
-                {
-                    if (rhythm_pos != 0 & Correction < 0) Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
-                }
-            }
-            else if (rhythm_pos == 0)
-            {
-                Correction = beat_length;
+                if (rhythm_pos != 1) Correction = beat_length * (rhythm_pos - 1) - Player.GetPosOfStream(Player.Stream_L);
+                if (Correction > 0) Timer.Interval = TimeSpan.FromSeconds(Correction);
+                else if (rhythm_pos > 2) Timer.Interval = TimeSpan.FromTicks(10);
             }
             else
             {
                 b_rhythm_pos += 1;
-                Correction = buildup_beat_len * (build_rhythm.Length + rhythm_pos - 1) - Player.GetPosOfStream(Player.Stream_B);
+                Correction = beat_length * (build_rhythm.Length + rhythm_pos) - Player.GetPosOfStream(Player.Stream_B);
                 if (Correction > 0) Timer.Interval = TimeSpan.FromSeconds(Correction);
-                else Timer.Interval = TimeSpan.FromMilliseconds(0.0001);
+                else Timer.Interval = TimeSpan.FromTicks(10);
             }
+            TimeLine_Move(); //THIS MUST BE _AFTER_ THE TIMER.INTERVAL IS CORRECTED
+            CornerBlock.Text = rhythm_pos.ToString();
         }
         /// <summary> Check if displayed rhythm is too short and fills it if neccessary </summary>
         private void TimelineLenghtFill()
         {
             if (timeline_label.Content.ToString().Length < 250)
-                timeline_label.Content = timeline_label.Content.ToString() + loop_rhythm;
+                timeline_label.Content = timeline_label.Content = string.Concat(timeline_label.Content.ToString(), loop_rhythm);
         }
 
         private void TimeLine_Move()
         {
-            //Message_textBlock.Text = Width + "/" + Height;
+            //CornerBlock.Text = rhythm_pos.ToString();
             beat(timeline_label.Content.ToString()[2]);
             timeline_label.Content = timeline_label.Content.ToString().Remove(2, 1);
             TimelineLenghtFill();
@@ -502,6 +508,9 @@ namespace MOPS
                         break;
                     case 'I':
                         timeline_invert_w_image();
+                        break;
+                    case '=':
+                        timeline_fade_image();
                         break;
                 }
         }
@@ -620,11 +629,9 @@ namespace MOPS
         {
             Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
             Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
-            int Count = CountDots();
             Fade.Duration = TimeSpan.FromSeconds((CountDots() + 1) * beat_length);
             color_label.Content = hues[CurrentColorInd].name.ToUpper();
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
-
         }
 
         // '=' Fade and change image
@@ -793,8 +800,8 @@ namespace MOPS
                 timeline_label.Content = RPM.allSongs[i].rhythm;
                 current_song = songs_listbox.SelectedIndex;
 
-                rhythm_pos = 0;
-                b_rhythm_pos = 0;
+                rhythm_pos = 1;
+                b_rhythm_pos = 1;
                 if (RPM.allSongs[i].buildup_buffer != null & buildup_enabled)
                 {
                     Player.build_mem = RPM.allSongs[i].buildup_buffer;
@@ -809,9 +816,9 @@ namespace MOPS
                     {
                         build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
                     }
-                    if (timeline_label.Content.ToString().Length < 250) timeline_label.Content = build_rhythm + timeline_label.Content;
+                    if (timeline_label.Content.ToString().Length < 250) timeline_label.Content = string.Concat(build_rhythm, timeline_label.Content);
                     else timeline_label.Content = build_rhythm;
-                    rhythm_pos -= expected_size;
+                    rhythm_pos = -expected_size;
                 }
                 else Player.Play_Without_Buildup();
 
@@ -820,12 +827,9 @@ namespace MOPS
                 beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
                 
                 TimelineLenghtFill();
-                Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
-                if (RPM.allSongs[i].buildup_buffer != null & buildup_enabled)
-                {
-                    Timer.Interval = TimeSpan.FromSeconds(buildup_beat_len);
-                    buildup_beat_len = Audio.GetTimeOfStream(Player.Stream_B) / build_rhythm.Length;
-                }
+                //Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
+                Timer.Interval = TimeSpan.FromSeconds(beat_length);
+
                 ShortBlackoutTimer.Interval = Timer.Interval;
 
                 Player.Play();

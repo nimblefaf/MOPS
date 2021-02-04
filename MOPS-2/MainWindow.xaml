@@ -9,8 +9,8 @@
 
     <Grid>
         <Rectangle x:Name="Background_Rectangle" Fill="White" Stroke="White" Opacity="1" Margin="-10"/>
-        <Rectangle x:Name="ColorOverlap_Rectangle" Fill="Red" Stroke="Red" Opacity="0.7" Margin="-10"/>
-        <Image x:Name="image0" Source="Kyubey.png" Opacity="0.7" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" SourceUpdated="image_SourceUpdated"/>
+        <Rectangle x:Name="ColorOverlap_Rectangle" Fill="Red" Stroke="Red" Opacity="0.65" Margin="-10"/>
+        <Image x:Name="image0" Source="Kyubey.png" Opacity="0.65" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" SourceUpdated="image_SourceUpdated" RenderOptions.EdgeMode="Aliased"/>
         <Image x:Name="image1" Source="Kyubey.png" Opacity="0.3" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" Visibility="Hidden"/>
         <Image x:Name="image2" Source="Kyubey.png" Opacity="0.3" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" Visibility="Hidden"/>
         <Image x:Name="image3" Source="Kyubey.png" Opacity="0.3" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" Visibility="Hidden"/>
