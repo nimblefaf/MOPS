@@ -62,11 +62,11 @@ namespace MOPS
 
         public bool muted = false;
         public int muted_volume;
-
         public bool Colors_Inverted = false;
+
         public bool full_auto_mode = true;
         public bool LoadSoundToRAM = true;
-        public bool buildup_enabled = true; // Need to redo it in a 3-mode trigger (to add "play once" option)
+
         /// <summary>
         /// Quality of blur, from 0 to 3. Zero for stretching a single image, 1-3 for moving copies of image to the center.
         /// </summary>
@@ -121,8 +121,9 @@ namespace MOPS
             backgroundBeater.DoWork +=
                 new DoWorkEventHandler(beat_hor_dowork);
 
-            CornerBlock.Foreground = Brushes.Red;
-            timeline_label.Foreground = Brushes.Red;
+            //For Debug
+            //CornerBlock.Foreground = Brushes.Red;
+            //timeline_label.Foreground = Brushes.Red;
         }
 
         private void load_dowork(object sender, DoWorkEventArgs e)
@@ -165,7 +166,7 @@ namespace MOPS
             InfoBlock.Cursor = Cursors.Arrow;
             InfoBlock.Text = "Loaded";
 
-            //CornerBlock.Visibility = Visibility.Hidden;
+            CornerBlock.Visibility = Visibility.Hidden;
             InfoBlock.Visibility = Visibility.Hidden;
         }
 
@@ -441,7 +442,7 @@ namespace MOPS
                 else Timer.Interval = TimeSpan.FromTicks(10);
             }
             TimeLine_Move(); //THIS MUST BE _AFTER_ THE TIMER.INTERVAL IS CORRECTED
-            CornerBlock.Text = rhythm_pos.ToString();
+            //CornerBlock.Text = rhythm_pos.ToString();
         }
         /// <summary> Check if displayed rhythm is too short and fills it if neccessary </summary>
         private void TimelineLenghtFill()
@@ -802,8 +803,9 @@ namespace MOPS
 
                 rhythm_pos = 1;
                 b_rhythm_pos = 1;
-                if (RPM.allSongs[i].buildup_buffer != null & buildup_enabled)
+                if (RPM.allSongs[i].buildup_buffer != null & (set.buildUpMode == BuildUpMode.On | (set.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
                 {
+                    if (set.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
                     Player.build_mem = RPM.allSongs[i].buildup_buffer;
                     Player.Play_With_Buildup();
                     build_rhythm = RPM.allSongs[i].buildup_rhythm;

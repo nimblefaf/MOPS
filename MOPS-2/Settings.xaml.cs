@@ -42,6 +42,13 @@ namespace MOPS
         HardLight = 2
     }
 
+    public enum BuildUpMode
+    {
+        Off = 0,
+        On = 1,
+        Once = 2
+    }
+
     /// <summary>
     /// Логика взаимодействия для Window1.xaml
     /// </summary>
@@ -53,6 +60,7 @@ namespace MOPS
         MainWindow main;
 
         private BackgroundWorker backgroundLoader;
+        public BuildUpMode buildUpMode;
 
         public Settings()
         {
@@ -65,6 +73,10 @@ namespace MOPS
                 new RunWorkerCompletedEventHandler(load_completed);
             backgroundLoader.DoWork +=
                 new DoWorkEventHandler(load_dowork);
+
+            buildUpMode = BuildUpMode.On;
+
+            Options_UI_Update();
         }
 
         public void SetReference(MainWindow window)
@@ -416,17 +428,44 @@ namespace MOPS
 
         private void OB_buildOnButton_Click(object sender, RoutedEventArgs e)
         {
-            main.buildup_enabled = true;
+            if (buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.RPM.allSongs.Length; i++) main.RPM.allSongs[i].buildup_played = false;
+            buildUpMode = BuildUpMode.On;
+            OB_buildOn.Background = Brushes.White;
+            OB_buildOff.Background = Brushes.LightGray;
+            OB_buildOnce.Background = Brushes.LightGray;
         }
 
         private void OB_buildOffButton_Click(object sender, RoutedEventArgs e)
         {
-            main.buildup_enabled = false;
+            if (buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.RPM.allSongs.Length; i++) main.RPM.allSongs[i].buildup_played = false;
+            buildUpMode = BuildUpMode.Off;
+            OB_buildOff.Background = Brushes.White;
+            OB_buildOn.Background = Brushes.LightGray;
+            OB_buildOnce.Background = Brushes.LightGray;
         }
 
         private void OB_buildOnceButton_Click(object sender, RoutedEventArgs e)
         {
+            buildUpMode = BuildUpMode.Once;
+            OB_buildOnce.Background = Brushes.White;
+            OB_buildOff.Background = Brushes.LightGray;
+            OB_buildOn.Background = Brushes.LightGray;
+        }
 
+        private void Options_UI_Update()
+        {
+            switch (buildUpMode)
+            {
+                case BuildUpMode.On:
+                    OB_buildOn.Background = Brushes.White;
+                    break;
+                case BuildUpMode.Off:
+                    OB_buildOff.Background = Brushes.White;
+                    break;
+                case BuildUpMode.Once:
+                    OB_buildOnce.Background = Brushes.White;
+                    break;
+            }
         }
     }
 }

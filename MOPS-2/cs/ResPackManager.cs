@@ -56,6 +56,7 @@ namespace MOPS
         public byte[] buffer;
         public byte[] buildup_buffer;
         public bool enabled;
+        public bool buildup_played;
     }
 
     public class RPManager
@@ -275,6 +276,7 @@ namespace MOPS
                         Array.Resize(ref allSongs, allSongs.Length + 1);
                         allSongs[allSongs.Length - 1].buffer = SongsBuffer[node.Attributes[0].Value + ".mp3"];
                         allSongs[allSongs.Length - 1].enabled = true;
+                        allSongs[allSongs.Length - 1].buildup_played = false;
                         foreach (XmlNode childnode in node)
                         {
                             if (childnode.Name == "title")
