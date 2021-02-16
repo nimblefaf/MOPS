@@ -9,10 +9,10 @@ using System.Windows;
 // связанные со сборкой.
 [assembly: AssemblyTitle("MOPS-2")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyConfiguration("Alpha")]
+[assembly: AssemblyCompany("Waifu Inc.")]
 [assembly: AssemblyProduct("MOPS-2")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2017")]
+[assembly: AssemblyCopyright("Copyright © Kettler")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

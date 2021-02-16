@@ -567,19 +567,13 @@ namespace MOPS
         // '*'
         private void timeline_image_change()
         {
-            if (full_auto_mode)
+            if (full_auto_mode & enabled_images.Count != 1)
             {
-                int i;
                 if (enabled_images.Count != 0)
                 {
-                    while (true)
-                    {
-                        i = rnd.Next(0, enabled_images.Count - 1);
-                        if (images_listbox.SelectedIndex != i) break;
-                    }
+                    ImageChange((current_image_pos + rnd.Next(1, enabled_images.Count - 1)) % enabled_images.Count);
                 }
-                else i = -1;
-                ImageChange(i);
+                else ImageChange(-1);
             }
         }
 
@@ -590,7 +584,7 @@ namespace MOPS
         // 'X' Vertical blur only
         private void timeline_blur_vert()
         {
-            switch (blur_quality)
+            if (enabled_images.Count != 0) switch (blur_quality)
             {
                 case 1:
                     foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
@@ -603,7 +597,7 @@ namespace MOPS
         // 'O' Vertical blur only
         private void timeline_blur_hor()
         {
-            switch (blur_quality)
+            if (enabled_images.Count != 0) switch (blur_quality)
             {
                 case 1:
                     foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
@@ -1006,7 +1000,7 @@ namespace MOPS
 
         private Hues.Palette GetRandomHue()
         {
-            CurrentColorInd = (CurrentColorInd + rnd.Next(1, hues.Length - 1)) % hues.Length;
+            CurrentColorInd = (CurrentColorInd + rnd.Next(1, hues.Length - 2)) % hues.Length;
             return hues[CurrentColorInd];
         }
 
