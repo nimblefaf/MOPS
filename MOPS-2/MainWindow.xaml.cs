@@ -789,48 +789,54 @@ namespace MOPS
             if (songs_listbox.SelectedIndex != -1)
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
-                Player.loop_mem = RPM.allSongs[i].buffer;
-                loop_rhythm = RPM.allSongs[i].rhythm;
-                song_label.Content = RPM.allSongs[i].title.ToUpper();
-                timeline_label.Content = RPM.allSongs[i].rhythm;
-                current_song = songs_listbox.SelectedIndex;
-
-                rhythm_pos = 1;
-                b_rhythm_pos = 1;
-                if (RPM.allSongs[i].buildup_buffer != null & (set.buildUpMode == BuildUpMode.On | (set.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
+                //Player.loop_mem = RPM.allSongs[i].buffer; //OOD
+                Player.loop_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].filename);
+                if (Player.loop_mem.Length != 0)
                 {
-                    if (set.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
-                    Player.build_mem = RPM.allSongs[i].buildup_buffer;
-                    Player.Play_With_Buildup();
-                    build_rhythm = RPM.allSongs[i].buildup_rhythm;
-                    int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
-                    if (build_rhythm == null) //In case there is buildup music without beat string
+                    loop_rhythm = RPM.allSongs[i].rhythm;
+                    song_label.Content = RPM.allSongs[i].title.ToUpper();
+                    timeline_label.Content = RPM.allSongs[i].rhythm;
+                    current_song = songs_listbox.SelectedIndex;
+
+                    rhythm_pos = 1;
+                    b_rhythm_pos = 1;
+                    if (RPM.allSongs[i].buildup_filename != null & (set.buildUpMode == BuildUpMode.On | (set.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
                     {
-                        build_rhythm = new string('.', expected_size);
+                        if (set.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
+                        //Player.build_mem = RPM.allSongs[i].buildup_buffer; //OOD
+                        Player.build_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].buildup_filename);
+                        Player.Play_With_Buildup();
+                        build_rhythm = RPM.allSongs[i].buildup_rhythm;
+                        int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
+                        if (build_rhythm == null) //In case there is buildup music without beat string
+                        {
+                            build_rhythm = new string('.', expected_size);
+                        }
+                        else if (build_rhythm.Length < expected_size)
+                        {
+                            build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
+                        }
+                        if (timeline_label.Content.ToString().Length < 250) timeline_label.Content = string.Concat(build_rhythm, timeline_label.Content);
+                        else timeline_label.Content = build_rhythm;
+                        rhythm_pos = -expected_size;
                     }
-                    else if (build_rhythm.Length < expected_size)
-                    {
-                        build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
-                    }
-                    if (timeline_label.Content.ToString().Length < 250) timeline_label.Content = string.Concat(build_rhythm, timeline_label.Content);
-                    else timeline_label.Content = build_rhythm;
-                    rhythm_pos = -expected_size;
+                    else Player.Play_Without_Buildup();
+
+                    timeline_label.Content = ">>" + timeline_label.Content;
+
+                    beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
+
+                    TimelineLenghtFill();
+                    //Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
+                    Timer.Interval = TimeSpan.FromSeconds(beat_length);
+
+                    ShortBlackoutTimer.Interval = Timer.Interval;
+
+                    Player.Play();
+                    TimeLine_Move();
+                    Timer.Start();
                 }
-                else Player.Play_Without_Buildup();
-
-                timeline_label.Content = ">>" + timeline_label.Content;
-
-                beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
-                
-                TimelineLenghtFill();
-                //Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
-                Timer.Interval = TimeSpan.FromSeconds(beat_length);
-
-                ShortBlackoutTimer.Interval = Timer.Interval;
-
-                Player.Play();
-                TimeLine_Move();
-                Timer.Start();
+                else StopSong();
             }
             else
             {

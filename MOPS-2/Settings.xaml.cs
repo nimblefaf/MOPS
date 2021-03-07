@@ -452,7 +452,7 @@ namespace MOPS
             OB_buildOn.Background = Brushes.LightGray;
         }
 
-        private void Options_UI_Update()
+        private void Options_UI_Update() //to update UI after loading settings (will be usefull later)
         {
             switch (buildUpMode)
             {

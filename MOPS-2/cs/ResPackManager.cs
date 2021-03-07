@@ -22,6 +22,7 @@ namespace MOPS
         public string author;
         public string description;
         public string link;
+        public string path;
         public int pics_start;
         public int pics_count;
         public int songs_start;
@@ -49,18 +50,54 @@ namespace MOPS
     public struct Songs
     {
         public string title;
+        public string filename;
         public string source;
         public string rhythm;
         public string buildup_filename;
         public string buildup_rhythm;
-        public byte[] buffer;
-        public byte[] buildup_buffer;
+        //public byte[] buffer; //OOD
+        //public byte[] buildup_buffer; //OOD
         public bool enabled;
         public bool buildup_played;
     }
 
     public class RPManager
     {
+        public byte[] GetAudioFromZip(string RP_path, string filename)
+        {
+            byte[] res = new byte[0];
+            try
+            {
+                using (FileStream zipToOpen = new FileStream(RP_path, FileMode.Open))
+                {
+                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
+                    {
+                        foreach (ZipArchiveEntry entry in archive.Entries.Where(e => e.FullName.Contains(filename)))
+                        {
+                            using (var stream = entry.Open())
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+                                memoryStream.Position = 0;
+                                using (BinaryReader br = new BinaryReader(memoryStream))
+                                {
+                                    res = br.ReadBytes((int)memoryStream.Length);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                MessageBox.Show("Oops, error occured!\n" + e.Message);
+            }
+
+            return res;
+        }
+
+
         static string RemoveDiacritics(string text) //Because German names are suffering and 'ä' can break everything
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
@@ -266,6 +303,7 @@ namespace MOPS
                 ResPacks[ResPacks.Length - 1].songs_start = allSongs.Length;
                 ResPacks[ResPacks.Length - 1].pics_start = allPics.Length;
                 ResPacks[ResPacks.Length - 1].enabled = true;
+                ResPacks[ResPacks.Length - 1].path = target_path;
 
                 if (songs_xml.HasChildNodes)
                 {
@@ -274,7 +312,8 @@ namespace MOPS
                     {
                         if (node.NodeType == XmlNodeType.Comment) continue;
                         Array.Resize(ref allSongs, allSongs.Length + 1);
-                        allSongs[allSongs.Length - 1].buffer = SongsBuffer[node.Attributes[0].Value + ".mp3"];
+                        //allSongs[allSongs.Length - 1].buffer = SongsBuffer[node.Attributes[0].Value + ".mp3"]; //OOD
+                        allSongs[allSongs.Length - 1].filename = node.Attributes[0].Value + ".mp3";
                         allSongs[allSongs.Length - 1].enabled = true;
                         allSongs[allSongs.Length - 1].buildup_played = false;
                         foreach (XmlNode childnode in node)
@@ -294,8 +333,8 @@ namespace MOPS
                             }
                             if (childnode.Name == "buildup")
                             {
-                                allSongs[allSongs.Length - 1].buildup_filename = childnode.InnerText;
-                                allSongs[allSongs.Length - 1].buildup_buffer = SongsBuffer[childnode.InnerText + ".mp3"];
+                                allSongs[allSongs.Length - 1].buildup_filename = childnode.InnerText + ".mp3";
+                                //allSongs[allSongs.Length - 1].buildup_buffer = SongsBuffer[childnode.InnerText + ".mp3"]; //OOD
                             }
                             if (childnode.Name == "buildupRhythm")
                             {
