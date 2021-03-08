@@ -159,6 +159,7 @@ namespace MOPS
                 }
                 add_last_rp();
             }
+            GC.Collect();
         }
 
         public void add_last_rp()

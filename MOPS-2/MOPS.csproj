@@ -68,6 +68,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="cs\hues.cs" />
+    <Compile Include="cs\PicConverter.cs" />
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
@@ -81,7 +82,6 @@
     </Compile>
     <Compile Include="cs\Audio.cs" />
     <Compile Include="cs\ResPackManager.cs" />
-    <Compile Include="cs\Vars.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

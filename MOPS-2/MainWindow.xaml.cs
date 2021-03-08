@@ -41,6 +41,7 @@ namespace MOPS
     {
         Random rnd = new Random();
         Audio Player = new Audio();
+        
 
         //Stopwatch TMP_tester = new Stopwatch();
         
@@ -168,6 +169,8 @@ namespace MOPS
 
             CornerBlock.Visibility = Visibility.Hidden;
             InfoBlock.Visibility = Visibility.Hidden;
+
+            GC.Collect();
         }
 
         private void beat_hor_dowork(object sender, DoWorkEventArgs e)
@@ -656,7 +659,7 @@ namespace MOPS
                 if (RPM.allPics[current_image_pos].invertedAnimation == null)
                 {
                     if (RPM.allPics[current_image_pos].invertedPic != null) image0.Source = RPM.allPics[current_image_pos].invertedPic;
-                    else image0.Source = InvertPic(RPM.allPics[current_image_pos].pic);
+                    else image0.Source = RPM.picConverter.InvertPic(RPM.allPics[current_image_pos].pic);
                 }
                 foreach (Label l in allLabels) l.Foreground = Brushes.White;
                 foreach (TextBlock tb in allTextBlocks) tb.Foreground = Brushes.White;
@@ -892,7 +895,7 @@ namespace MOPS
                 if (Colors_Inverted)
                 {
                     if (RPM.allPics[index].invertedPic != null) image0.Source = RPM.allPics[index].invertedPic;
-                    else image0.Source = InvertPic(RPM.allPics[index].pic);
+                    else image0.Source = RPM.picConverter.InvertPic(RPM.allPics[index].pic);
                 }
                 else image0.Source = RPM.allPics[index].pic;
 
@@ -987,21 +990,6 @@ namespace MOPS
         private void Songs_listbox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
-        }
-
-        private BitmapSource InvertPic(BitmapSource ImageToInvert)
-        {
-            Color[] ColorArray = new Color[2] { Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255) };
-            BitmapPalette WhitePalette = new BitmapPalette(ColorArray);
-            if (ImageToInvert.Format == PixelFormats.Indexed1)
-            {
-                int stride = (ImageToInvert.PixelWidth * ImageToInvert.Format.BitsPerPixel + 7) / 8;
-                int length = stride * ImageToInvert.PixelHeight;
-                byte[] data = new byte[length];
-                ImageToInvert.CopyPixels(data, stride, 0);
-                return BitmapSource.Create(ImageToInvert.PixelWidth, ImageToInvert.PixelHeight, ImageToInvert.DpiX, ImageToInvert.DpiY, PixelFormats.Indexed1, WhitePalette, data, stride);
-            }
-            else return ImageToInvert;
         }
 
         private Hues.Palette GetRandomHue()
