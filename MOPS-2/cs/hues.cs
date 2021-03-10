@@ -8,12 +8,17 @@ namespace MOPS
         public struct Palette
         {
             public string name;
-            public Brush brush;
+            public SolidColorBrush brush;
 
-            public Palette(string f1, Brush f2)
+            public Palette(string f1, SolidColorBrush f2)
             {
                 name = f1; brush = f2;
             }
+        }
+
+        public static SolidColorBrush NegativeColor(SolidColorBrush clr)
+        {
+            return new SolidColorBrush(Color.FromRgb((byte)(255 - clr.Color.R), (byte)(255 - clr.Color.G), (byte)(255 - clr.Color.B) ));
         }
 
         public static Palette[] hues_normal =

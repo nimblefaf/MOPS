@@ -564,8 +564,9 @@ namespace MOPS
         public void timeline_color_change()
         {
             GetRandomHue();
-            ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
-            color_label.Content = hues[CurrentColorInd].name.ToUpper();
+            if (Colors_Inverted) ColorOverlap_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
+            else ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+            color_label.Content = hues[CurrentColorInd].name.ToUpper(); 
         }
         // '*'
         private void timeline_image_change()
@@ -626,7 +627,8 @@ namespace MOPS
         private void timeline_fade()
         {
             Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
-            Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
+            if (Colors_Inverted) Fade.To =Hues.NegativeColor(((SolidColorBrush)GetRandomHue().brush)).Color;
+            else Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
             Fade.Duration = TimeSpan.FromSeconds((CountDots() + 1) * beat_length);
             color_label.Content = hues[CurrentColorInd].name.ToUpper();
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
@@ -646,16 +648,20 @@ namespace MOPS
             {
                 Background_Rectangle.Fill = Brushes.White;
                 Background_Rectangle.Opacity = 0.3;
-                Colors_Inverted = false;
+                ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+                
                 if (RPM.allPics[current_image_pos].invertedAnimation == null) image0.Source = RPM.allPics[current_image_pos].pic;
                 foreach (Label l in allLabels) l.Foreground = Brushes.Black;
                 foreach (TextBlock tb in allTextBlocks) tb.Foreground = Brushes.Black;
+
+                Colors_Inverted = false;
             }
             else
             {
                 Background_Rectangle.Fill = Brushes.Black;
                 Background_Rectangle.Opacity = 0.8;
-                Colors_Inverted = true;
+                ColorOverlap_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
+                
                 if (RPM.allPics[current_image_pos].invertedAnimation == null)
                 {
                     if (RPM.allPics[current_image_pos].invertedPic != null) image0.Source = RPM.allPics[current_image_pos].invertedPic;
@@ -663,6 +669,8 @@ namespace MOPS
                 }
                 foreach (Label l in allLabels) l.Foreground = Brushes.White;
                 foreach (TextBlock tb in allTextBlocks) tb.Foreground = Brushes.White;
+
+                Colors_Inverted = true;
             }
         }
 
