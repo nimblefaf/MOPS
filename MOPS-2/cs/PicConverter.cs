@@ -28,61 +28,32 @@ namespace MOPS
             Color.FromArgb(208, 255, 255, 255), Color.FromArgb(224, 255, 255, 255), Color.FromArgb(240, 255, 255, 255), Color.FromArgb(255, 255, 255, 255)
         };
 
-
-        private class PixelManager : IEquatable<PixelManager> //For counting BGRA32 pixels
+        /// <summary>
+        /// Returns 'true' if Bgra32-formated image has only two colors
+        /// </summary>
+        /// <param name="img"></param>
+        /// <returns></returns>
+        private static bool IsImageBinaryColored(BitmapSource img)
         {
-            public byte a = 0;
-            public byte r = 0;
-            public byte g = 0;
-            public byte b = 0;
-            public int count = 1;
-
-            public PixelManager(byte r, byte g, byte b, byte a)
+            List<Color> pxls = new List<Color>();
+            // Calculate stride of source
+            int stride = (img.PixelWidth * img.Format.BitsPerPixel + 7) / 8;
+            // Create data array to hold source pixel data
+            int length = stride * img.PixelHeight;
+            byte[] data = new byte[length];
+            // Copy source image pixels to the data array
+            img.CopyPixels(data, stride, 0);
+            for (int i = 0; i < length; i += 4)
             {
-                this.a = a;
-                this.r = r;
-                this.g = g;
-                this.b = b;
-            }
-
-            public bool Equals(PixelManager val)
-            {
-                return this.r == val.r & this.g == val.g & this.b == val.b & this.a == val.a;
-            }
-
-            public static int PixelCounter(BitmapSource img)
-            {
-                List<PixelManager> pxls = new List<PixelManager>();
-                // Calculate stride of source
-                int stride = (img.PixelWidth * img.Format.BitsPerPixel + 7) / 8;
-                // Create data array to hold source pixel data
-                int length = stride * img.PixelHeight;
-                byte[] data = new byte[length];
-                // Copy source image pixels to the data array
-                img.CopyPixels(data, stride, 0);
-                for (int i = 0; i < length; i += 4)
+                Color n = Color.FromArgb(data[i + 3], data[i], data[i + 1], data[i + 2]);
+                if (pxls.Count == 0) pxls.Add(n);
+                else if (!pxls.Contains(n))
                 {
-                    PixelManager n = new PixelManager(data[i], data[i + 1], data[i + 2], data[i + 3]);
-                    if (pxls.Count == 0) pxls.Add(n);
-                    else if (!pxls.Contains(n))
-                    {
-                        pxls.Add(n);
-                        if (pxls.Count == 10) break;
-                    }
-                    else
-                    {
-                        for (int j = 0; j < pxls.Count; j++)
-                        {
-                            if (pxls[j].Equals(n))
-                            {
-                                pxls[j].count++;
-                                break;
-                            }
-                        }
-                    }
+                    pxls.Add(n);
+                    if (pxls.Count > 2) return false;
                 }
-                return pxls.Count;
             }
+            return true;
         }
 
         public BitmapSource ImageOptimize(BitmapSource img)
@@ -90,8 +61,8 @@ namespace MOPS
             if (img == null) return img;
             if (img.Format == PixelFormats.Bgra32)
             {
-                if (PixelManager.PixelCounter(img) == 2) return Bgra32_to_ind1(img);
-                else if (PixelManager.PixelCounter(img) > 2) return Bgra32_to_ind4(img);
+                if (IsImageBinaryColored(img)) return Bgra32_to_ind1(img);
+                else return Bgra32_to_ind4(img);
             }
             return img;
         }
@@ -102,12 +73,12 @@ namespace MOPS
             BitmapSource[] result = new BitmapSource[arr.Length];
             if (arr[0].Format == PixelFormats.Bgra32)
             {
-                if (PixelManager.PixelCounter(arr[0]) == 2)
+                if (IsImageBinaryColored(arr[0]))
                 {
                     for (int i = 0; i < arr.Length; i++) result[i] = Bgra32_to_ind1(arr[i]);
                     return result;
                 }
-                else if (PixelManager.PixelCounter(arr[0]) > 2)
+                else
                 {
                     for (int i = 0; i < arr.Length; i++) result[i] = Bgra32_to_ind4(arr[i]);
                     return result;
