@@ -174,8 +174,10 @@ namespace MOPS
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
                 {
+                    int ProgressCount = 0;
                     foreach (ZipArchiveEntry entry in archive.Entries)
                     {
+                        ProgressCount++;
                         if (entry.FullName.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
                         {
                             if (entry.Name.ToLower() == "info.xml")
@@ -237,6 +239,8 @@ namespace MOPS
                                 PicsBuffer.Add(name, pic);
                             }
                         }
+                        int percentComplete = (int)((float)ProgressCount / (float)archive.Entries.Count * 100);
+                        if (worker.WorkerReportsProgress) worker.ReportProgress(percentComplete);
                     }
                 }
             }

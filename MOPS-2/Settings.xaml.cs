@@ -73,6 +73,8 @@ namespace MOPS
                 new RunWorkerCompletedEventHandler(load_completed);
             backgroundLoader.DoWork +=
                 new DoWorkEventHandler(load_dowork);
+            backgroundLoader.ProgressChanged +=
+                new ProgressChangedEventHandler(BGWorker_ProgressChanged);
 
             buildUpMode = BuildUpMode.On;
 
@@ -145,6 +147,7 @@ namespace MOPS
         public void load_dowork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
+            worker.WorkerReportsProgress = true;
             e.Result = main.RPM.SupremeReader((string)e.Argument, worker, e);
         }
         private void load_completed(object sender, RunWorkerCompletedEventArgs e)
@@ -159,8 +162,14 @@ namespace MOPS
                 }
                 add_last_rp();
             }
+            ProgBar.Value = 0;
             GC.Collect();
         }
+        void BGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            ProgBar.Value = e.ProgressPercentage;
+        }
+
 
         public void add_last_rp()
         {
