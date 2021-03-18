@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -55,7 +51,9 @@ namespace MOPS
         public Label[] allLabels;
         public TextBlock[] allTextBlocks;
 
-        public static Hues.Palette[] hues = Hues.hues_normal;
+
+        public Hues.Palette[] hues;
+
         public int CurrentColorInd = 0;
 
         public static Settings set = new Settings();
@@ -111,6 +109,19 @@ namespace MOPS
             
             Player.SetReference(this);
             set.SetReference(this);
+
+            switch ((ColorSet)Properties.Settings.Default.colorSet)
+            {
+                case ColorSet.Normal:
+                    hues = Hues.hues_normal;
+                    break;
+                case ColorSet.Pastel:
+                    hues = Hues.hues_pastel;
+                    break;
+                case ColorSet.Weed:
+                    hues = Hues.hues_weed;
+                    break;
+            }
 
             backgroundLoader = new BackgroundWorker();
             backgroundLoader.DoWork +=
@@ -811,9 +822,9 @@ namespace MOPS
 
                     rhythm_pos = 1;
                     b_rhythm_pos = 1;
-                    if (RPM.allSongs[i].buildup_filename != null & (set.buildUpMode == BuildUpMode.On | (set.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
+                    if (RPM.allSongs[i].buildup_filename != null & ( (BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.On | ( (BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
                     {
-                        if (set.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
+                        if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
                         //Player.build_mem = RPM.allSongs[i].buildup_buffer; //OOD
                         Player.build_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].buildup_filename);
                         Player.Play_With_Buildup();
@@ -1025,6 +1036,11 @@ namespace MOPS
                 }
             }
             return Count;
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Properties.Settings.Default.Save();
         }
     }
 }

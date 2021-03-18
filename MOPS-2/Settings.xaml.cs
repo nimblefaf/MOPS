@@ -49,6 +49,13 @@ namespace MOPS
         Once = 2
     }
 
+    public enum ColorSet
+    {
+        Normal = 0,
+        Pastel = 1,
+        Weed = 2
+    }
+
     /// <summary>
     /// Логика взаимодействия для Window1.xaml
     /// </summary>
@@ -60,7 +67,6 @@ namespace MOPS
         MainWindow main;
 
         private BackgroundWorker backgroundLoader;
-        public BuildUpMode buildUpMode;
 
         public Settings()
         {
@@ -75,8 +81,6 @@ namespace MOPS
                 new DoWorkEventHandler(load_dowork);
             backgroundLoader.ProgressChanged +=
                 new ProgressChangedEventHandler(BGWorker_ProgressChanged);
-
-            buildUpMode = BuildUpMode.On;
 
             Options_UI_Update();
         }
@@ -438,8 +442,8 @@ namespace MOPS
 
         private void OB_buildOnButton_Click(object sender, RoutedEventArgs e)
         {
-            if (buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.RPM.allSongs.Length; i++) main.RPM.allSongs[i].buildup_played = false;
-            buildUpMode = BuildUpMode.On;
+            if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.RPM.allSongs.Length; i++) main.RPM.allSongs[i].buildup_played = false;
+            Properties.Settings.Default.buildUpMode = (int)BuildUpMode.On;
             OB_buildOn.Background = Brushes.White;
             OB_buildOff.Background = Brushes.LightGray;
             OB_buildOnce.Background = Brushes.LightGray;
@@ -447,8 +451,8 @@ namespace MOPS
 
         private void OB_buildOffButton_Click(object sender, RoutedEventArgs e)
         {
-            if (buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.RPM.allSongs.Length; i++) main.RPM.allSongs[i].buildup_played = false;
-            buildUpMode = BuildUpMode.Off;
+            if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.RPM.allSongs.Length; i++) main.RPM.allSongs[i].buildup_played = false;
+            Properties.Settings.Default.buildUpMode = (int)BuildUpMode.Off;
             OB_buildOff.Background = Brushes.White;
             OB_buildOn.Background = Brushes.LightGray;
             OB_buildOnce.Background = Brushes.LightGray;
@@ -456,15 +460,15 @@ namespace MOPS
 
         private void OB_buildOnceButton_Click(object sender, RoutedEventArgs e)
         {
-            buildUpMode = BuildUpMode.Once;
+            Properties.Settings.Default.buildUpMode = (int)BuildUpMode.Once;
             OB_buildOnce.Background = Brushes.White;
             OB_buildOff.Background = Brushes.LightGray;
             OB_buildOn.Background = Brushes.LightGray;
         }
 
-        private void Options_UI_Update() //to update UI after loading settings (will be usefull later)
+        private void Options_UI_Update() //to update UI after loading settings
         {
-            switch (buildUpMode)
+            switch ((BuildUpMode)Properties.Settings.Default.buildUpMode)
             {
                 case BuildUpMode.On:
                     OB_buildOn.Background = Brushes.White;
@@ -476,6 +480,45 @@ namespace MOPS
                     OB_buildOnce.Background = Brushes.White;
                     break;
             }
+            switch ((ColorSet)Properties.Settings.Default.colorSet)
+            {
+                case ColorSet.Normal:
+                    OB_colorNormal.Background = Brushes.White;
+                    break;
+                case ColorSet.Pastel:
+                    OB_colorPastel.Background = Brushes.White;
+                    break;
+                case ColorSet.Weed:
+                    OB_colorWeed.Background = Brushes.White;
+                    break;
+            }
+        }
+
+        private void OB_colorNormal_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.colorSet = (int)ColorSet.Normal;
+            main.hues = Hues.hues_normal;
+            OB_colorNormal.Background = Brushes.White;
+            OB_colorPastel.Background = Brushes.LightGray;
+            OB_colorWeed.Background = Brushes.LightGray;
+        }
+
+        private void OB_colorPastel_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.colorSet = (int)ColorSet.Pastel;
+            main.hues = Hues.hues_pastel;
+            OB_colorNormal.Background = Brushes.LightGray;
+            OB_colorPastel.Background = Brushes.White;
+            OB_colorWeed.Background = Brushes.LightGray;
+        }
+
+        private void OB_colorWeed_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.colorSet = (int)ColorSet.Weed;
+            main.hues = Hues.hues_weed;
+            OB_colorNormal.Background = Brushes.LightGray;
+            OB_colorPastel.Background = Brushes.LightGray;
+            OB_colorWeed.Background = Brushes.White;
         }
     }
 }
