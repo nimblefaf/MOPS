@@ -55,6 +55,7 @@ namespace MOPS
         public Hues.Palette[] hues;
 
         public int CurrentColorInd = 0;
+        public double MainImageOpacity;
 
         public static Settings set = new Settings();
         public RPManager RPM = new RPManager();
@@ -64,7 +65,6 @@ namespace MOPS
         public bool Colors_Inverted = false;
 
         public bool full_auto_mode = true;
-        public bool LoadSoundToRAM = true;
 
         /// <summary>
         /// Quality of blur, from 0 to 3. Zero for stretching a single image, 1-3 for moving copies of image to the center.
@@ -98,7 +98,6 @@ namespace MOPS
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
         private BackgroundWorker backgroundLoader;
-        private BackgroundWorker backgroundBeater;
         public MainWindow()
         {
             InitializeComponent();
@@ -122,16 +121,14 @@ namespace MOPS
                     hues = Hues.hues_weed;
                     break;
             }
+            if (Properties.Settings.Default.blendMode == 0) MainImageOpacity = 1;
+            else MainImageOpacity = 0.7;
 
             backgroundLoader = new BackgroundWorker();
             backgroundLoader.DoWork +=
                 new DoWorkEventHandler(load_dowork);
             backgroundLoader.RunWorkerCompleted +=
                 new RunWorkerCompletedEventHandler(load_completed);
-
-            backgroundBeater = new BackgroundWorker();
-            backgroundBeater.DoWork +=
-                new DoWorkEventHandler(beat_hor_dowork);
 
             //For Debug
             //CornerBlock.Foreground = Brushes.Red;
@@ -184,17 +181,13 @@ namespace MOPS
             GC.Collect();
         }
 
-        private void beat_hor_dowork(object sender, DoWorkEventArgs e)
-        {
-            timeline_blur_hor();
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             set.Owner = this;
-            Init_Animations();
+            Init_Animations();      
             Init_UI();
- 
+            set.ColorBlend_UI_Update();
+
             timeline_color_change();
         }
 
@@ -202,6 +195,7 @@ namespace MOPS
         {
             Cursor = Cursors.Wait;
             InfoBlock.Text = "Initializing...";
+            InfoBlock.IsEnabled = false;
             InfoBlock.Cursor = Cursors.Wait;
             backgroundLoader.RunWorkerAsync("Packs/Defaults_v5.0.zip");
         }
@@ -219,7 +213,7 @@ namespace MOPS
         private ThicknessAnimation[] XAnimSmall = new ThicknessAnimation[8];
         private ThicknessAnimation[] YAnimSmall = new ThicknessAnimation[8];
         private Image[] blur_imgset_v14 = new Image[14];
-        private Image[] blur_imgset_v26 = new Image[26];
+        public Image[] blur_imgset_v26 = new Image[26];
 
         private Storyboard SB_Blackout = new Storyboard();
         private DoubleAnimation Blackout = new DoubleAnimation();
@@ -235,9 +229,9 @@ namespace MOPS
         private void Init_Animations()
         {
             blur_imgset_v8 = new Image[] { image1, image2, image3, image4, image5, image6, image7, image8 };
-            for (int i = 0; i < XAnimSmall.Length; i++)
+            for (int i = 0; i < blur_imgset_v8.Length; i++)
             {
-                double factor = 0.25 * (i / 2);
+                double factor = 0.20 * (i + 2 / 2);
                 if (i % 2 == 0) factor *= -1;
                 XAnimSmall[i] = new ThicknessAnimation();
                 XAnimSmall[i].DecelerationRatio = 0.1;
@@ -262,12 +256,12 @@ namespace MOPS
             XAnimSmallSB.Completed += delegate (object sender, EventArgs e)
             {
                 foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Hidden;
-                image0.Opacity = 1;
+                image0.Opacity = MainImageOpacity;
             };
             YAnimSmallSB.Completed += delegate (object sender, EventArgs e)
             {
                 foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Hidden;
-                image0.Opacity = 1;
+                image0.Opacity = MainImageOpacity;
             };
             XAnimSmallSB.DecelerationRatio = 0.1;
             YAnimSmallSB.DecelerationRatio = 0.1;
@@ -575,8 +569,16 @@ namespace MOPS
         public void timeline_color_change()
         {
             GetRandomHue();
-            if (Colors_Inverted) ColorOverlap_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
-            else ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+            if (Colors_Inverted)
+            {
+                ColorOverlap_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
+                HardLight_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
+            }
+            else
+            {
+                ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+                HardLight_Rectangle.Fill = hues[CurrentColorInd].brush;
+            }
             color_label.Content = hues[CurrentColorInd].name.ToUpper(); 
         }
         // '*'
@@ -603,7 +605,7 @@ namespace MOPS
             {
                 case 1:
                     foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
-                    image0.Opacity = 0.3;
+                    image0.Opacity = MainImageOpacity / 2;
                     XAnimSmallSB.Begin();
                     break;
             }
@@ -616,7 +618,7 @@ namespace MOPS
             {
                 case 1:
                     foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
-                    image0.Opacity = 0.3;
+                    image0.Opacity = MainImageOpacity / 2;
                     YAnimSmallSB.Begin();
                     break;
             }
@@ -643,6 +645,7 @@ namespace MOPS
             Fade.Duration = TimeSpan.FromSeconds((CountDots() + 1) * beat_length);
             color_label.Content = hues[CurrentColorInd].name.ToUpper();
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
+            HardLight_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
         }
 
         // '=' Fade and change image
@@ -660,7 +663,9 @@ namespace MOPS
                 Background_Rectangle.Fill = Brushes.White;
                 Background_Rectangle.Opacity = 0.3;
                 ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
-                
+                HardLight_Rectangle.Fill = hues[CurrentColorInd].brush;
+
+
                 if (RPM.allPics[current_image_pos].invertedAnimation == null) image0.Source = RPM.allPics[current_image_pos].pic;
                 foreach (Label l in allLabels) l.Foreground = Brushes.Black;
                 foreach (TextBlock tb in allTextBlocks) tb.Foreground = Brushes.Black;
@@ -672,7 +677,8 @@ namespace MOPS
                 Background_Rectangle.Fill = Brushes.Black;
                 Background_Rectangle.Opacity = 0.8;
                 ColorOverlap_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
-                
+                HardLight_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
+
                 if (RPM.allPics[current_image_pos].invertedAnimation == null)
                 {
                     if (RPM.allPics[current_image_pos].invertedPic != null) image0.Source = RPM.allPics[current_image_pos].invertedPic;
@@ -907,6 +913,7 @@ namespace MOPS
         {
             XAnimSmallSB.Stop();
             YAnimSmallSB.Stop();
+            image0.Opacity = MainImageOpacity;
             current_image_pos = p;
             if (p != -1)
             {

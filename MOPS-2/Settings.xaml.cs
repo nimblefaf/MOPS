@@ -492,6 +492,18 @@ namespace MOPS
                     OB_colorWeed.Background = Brushes.White;
                     break;
             }
+            switch ((BlendMode)Properties.Settings.Default.blendMode)
+            {
+                case BlendMode.Plain:
+                    OB_colorBlend_Plain.Background = Brushes.White;
+                    break;
+                case BlendMode.Alpha:
+                    OB_colorBlend_Alpha.Background = Brushes.White;
+                    break;
+                case BlendMode.HardLight:
+                    OB_colorBlend_HardLight.Background = Brushes.White;
+                    break;
+            }
         }
 
         private void OB_colorNormal_Click(object sender, RoutedEventArgs e)
@@ -519,6 +531,65 @@ namespace MOPS
             OB_colorNormal.Background = Brushes.LightGray;
             OB_colorPastel.Background = Brushes.LightGray;
             OB_colorWeed.Background = Brushes.White;
+        }
+
+        private void OB_colorBlend_Plain_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blendMode = (int)BlendMode.Plain;
+            ColorBlend_UI_Update();
+            OB_colorBlend_Plain.Background = Brushes.White;
+            OB_colorBlend_Alpha.Background = Brushes.LightGray;
+            OB_colorBlend_HardLight.Background = Brushes.LightGray;
+        }
+
+        private void OB_colorBlend_Alpha_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blendMode = (int)BlendMode.Alpha;
+            ColorBlend_UI_Update();
+            OB_colorBlend_Plain.Background = Brushes.LightGray;
+            OB_colorBlend_Alpha.Background = Brushes.White;
+            OB_colorBlend_HardLight.Background = Brushes.LightGray;
+        }
+
+        private void OB_colorBlend_HardLight_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blendMode = (int)BlendMode.HardLight;
+            ColorBlend_UI_Update();
+            OB_colorBlend_Plain.Background = Brushes.LightGray;
+            OB_colorBlend_Alpha.Background = Brushes.LightGray;
+            OB_colorBlend_HardLight.Background = Brushes.White;
+        }
+
+        public void ColorBlend_UI_Update()
+        {
+            switch ((BlendMode)Properties.Settings.Default.blendMode)
+            {
+                case BlendMode.Plain:
+                    main.image0.Opacity = 1;
+                    main.MainImageOpacity = 1;
+                    main.ColorOverlap_Rectangle.Visibility = Visibility.Visible;
+                    main.HardLight_Rectangle.Visibility = Visibility.Hidden;
+                    foreach (Image img in main.blur_imgset_v26) img.Opacity = 0.4;
+                    break;
+                case BlendMode.Alpha:
+                    main.image0.Opacity = 0.7;
+                    main.MainImageOpacity = 0.7;
+                    main.ColorOverlap_Rectangle.Visibility = Visibility.Visible;
+                    main.HardLight_Rectangle.Visibility = Visibility.Hidden;
+                    for (int i = 0; i < main.blur_imgset_v26.Length; i++)
+                        main.blur_imgset_v26[i].Opacity = (0.35 / 13) * (i + 2 / 2);
+                    break;
+                case BlendMode.HardLight:
+                    main.image0.Opacity = 1;
+                    main.MainImageOpacity = 1;
+                    main.ColorOverlap_Rectangle.Visibility = Visibility.Hidden;
+                    main.HardLight_Rectangle.Visibility = Visibility.Visible;
+                    //for (int i = 0; i < main.blur_imgset_v26.Length; i++)
+                    //    main.blur_imgset_v26[i].Opacity = (0.35 / 13) * (i + 2 / 2);
+                    foreach (Image img in main.blur_imgset_v26) img.Opacity = 0.4;
+                    break;
+            }
+
         }
     }
 }
