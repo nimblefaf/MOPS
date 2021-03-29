@@ -18,7 +18,6 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Globalization;
 
-
 namespace MOPS
 {
     /// <summary>
@@ -43,14 +42,16 @@ namespace MOPS
         
         //public Timer TTimer = new Timer(new TimerCallback);
         public DispatcherTimer Timer = new DispatcherTimer(DispatcherPriority.Send);
-        public DispatcherTimer AnimTimer = new DispatcherTimer(DispatcherPriority.Render);
-        public DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
+        DispatcherTimer AnimTimer = new DispatcherTimer(DispatcherPriority.Render);
+        DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
         double Correction;
         public double beat_length = 0;
 
         public Label[] allLabels;
         public TextBlock[] allTextBlocks;
 
+        Shaders.InvertColorEffect invertColorEffect = new Shaders.InvertColorEffect();
+        public Shaders.ColorBlend_HardLightEffect HardLightEffect = new Shaders.ColorBlend_HardLightEffect();
 
         public Hues.Palette[] hues;
 
@@ -88,6 +89,7 @@ namespace MOPS
         private string build_rhythm = "";
         public int rhythm_pos = 1;
         public int b_rhythm_pos = 1;
+
         /// <summary>
         /// List of enabled songs displayed in songs_listbox.
         /// </summary>
@@ -101,11 +103,11 @@ namespace MOPS
         public MainWindow()
         {
             InitializeComponent();
-            
+
             Timer.Tick += new EventHandler(Timer_Tick);
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
             ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
-            
+
             Player.SetReference(this);
             set.SetReference(this);
 
@@ -129,7 +131,6 @@ namespace MOPS
                 new DoWorkEventHandler(load_dowork);
             backgroundLoader.RunWorkerCompleted +=
                 new RunWorkerCompletedEventHandler(load_completed);
-
             //For Debug
             //CornerBlock.Foreground = Brushes.Red;
             //timeline_label.Foreground = Brushes.Red;
@@ -185,7 +186,6 @@ namespace MOPS
         {
             set.Owner = this;
             Init_Animations();      
-            Init_UI();
             set.ColorBlend_UI_Update();
 
             timeline_color_change();
@@ -198,13 +198,6 @@ namespace MOPS
             InfoBlock.IsEnabled = false;
             InfoBlock.Cursor = Cursors.Wait;
             backgroundLoader.RunWorkerAsync("Packs/Defaults_v5.0.zip");
-        }
-
-
-        private void Init_UI()
-        {
-            allLabels = new Label[] {timeline_label, character_label, color_label, song_label, volume_label };
-            allTextBlocks = new TextBlock[] { Message_textBlock, CornerBlock, full_auto_be, images_be, next_image_be, next_song_be, prev_image_be, prev_song_be, songs_be};
         }
 
         private Storyboard XAnimSmallSB = new Storyboard();
@@ -220,11 +213,15 @@ namespace MOPS
         private Storyboard SB_Blackout_Short = new Storyboard();
         private DoubleAnimation Blackout_Short = new DoubleAnimation();
         private ThicknessAnimation Blackout_Blur = new ThicknessAnimation();
-        private ColorAnimation Fade = new ColorAnimation();
+        public ColorAnimation Fade = new ColorAnimation();
+        private Storyboard SB_FadeColor_HardLight = new Storyboard();
+        private ByteAnimation[] FadeByteAnims = new ByteAnimation[3];
 
         private Storyboard SB = new Storyboard();
         private DoubleAnimation VerticalBlur_Simple = new DoubleAnimation();
         private ThicknessAnimation HorizontalBlur_Simple = new ThicknessAnimation();
+
+        private Storyboard SB_Fade = new Storyboard();
 
         private void Init_Animations()
         {
@@ -309,6 +306,11 @@ namespace MOPS
 
             VerticalBlur_Simple.BeginTime = new TimeSpan(0);
             Storyboard.SetTargetProperty(VerticalBlur_Simple, new PropertyPath(HeightProperty));
+
+            Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
+            Storyboard.SetTarget(Fade, ImageGrid);
+            SB_Fade.Children.Add(Fade);
+            SB_Fade.FillBehavior = FillBehavior.Stop;
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
@@ -364,8 +366,6 @@ namespace MOPS
                     break;
                 case Key.Space:
                     timeline_pic_and_color();
-                    break;
-                case Key.T:
                     break;
                 case Key.N:
                     timeline_invert();
@@ -524,6 +524,8 @@ namespace MOPS
                 }
         }
 
+        #region Timeline events
+
         // Vertical blur (snare)
         private void timeline_x()
         {
@@ -569,16 +571,9 @@ namespace MOPS
         public void timeline_color_change()
         {
             GetRandomHue();
-            if (Colors_Inverted)
-            {
-                ColorOverlap_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
-                HardLight_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
-            }
-            else
-            {
-                ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
-                HardLight_Rectangle.Fill = hues[CurrentColorInd].brush;
-            }
+            
+            ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+            HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
             color_label.Content = hues[CurrentColorInd].name.ToUpper(); 
         }
         // '*'
@@ -639,13 +634,20 @@ namespace MOPS
         // '~' Fade color
         private void timeline_fade()
         {
-            Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
-            if (Colors_Inverted) Fade.To =Hues.NegativeColor(((SolidColorBrush)GetRandomHue().brush)).Color;
-            else Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
             Fade.Duration = TimeSpan.FromSeconds((CountDots() + 1) * beat_length);
+            if ((BlendMode)Properties.Settings.Default.blendMode == BlendMode.HardLight)
+            {
+                Fade.From = HardLightEffect.Blend;
+                Fade.To = Color.FromArgb(179, ((SolidColorBrush)GetRandomHue().brush).Color.R, ((SolidColorBrush)GetRandomHue().brush).Color.G, ((SolidColorBrush)GetRandomHue().brush).Color.B);
+                SB_Fade.Begin();
+            }
+            else
+            {
+                Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
+                Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
+            }
             color_label.Content = hues[CurrentColorInd].name.ToUpper();
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
-            HardLight_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
         }
 
         // '=' Fade and change image
@@ -655,37 +657,18 @@ namespace MOPS
             timeline_fade();
         }
 
-        /// <summary> 'i' White pic and darker background(?) </summary>
+        /// <summary> 'i' - inverts colors of the window </summary>
         private void timeline_invert()
         {
             if (Colors_Inverted)
             {
-                Background_Rectangle.Fill = Brushes.White;
-                Background_Rectangle.Opacity = 0.3;
-                ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
-                HardLight_Rectangle.Fill = hues[CurrentColorInd].brush;
-
-
-                if (RPM.allPics[current_image_pos].invertedAnimation == null) image0.Source = RPM.allPics[current_image_pos].pic;
-                foreach (Label l in allLabels) l.Foreground = Brushes.Black;
-                foreach (TextBlock tb in allTextBlocks) tb.Foreground = Brushes.Black;
+                Effect = null;
 
                 Colors_Inverted = false;
             }
             else
             {
-                Background_Rectangle.Fill = Brushes.Black;
-                Background_Rectangle.Opacity = 0.8;
-                ColorOverlap_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
-                HardLight_Rectangle.Fill = Hues.NegativeColor(hues[CurrentColorInd].brush);
-
-                if (RPM.allPics[current_image_pos].invertedAnimation == null)
-                {
-                    if (RPM.allPics[current_image_pos].invertedPic != null) image0.Source = RPM.allPics[current_image_pos].invertedPic;
-                    else image0.Source = RPM.picConverter.InvertPic(RPM.allPics[current_image_pos].pic);
-                }
-                foreach (Label l in allLabels) l.Foreground = Brushes.White;
-                foreach (TextBlock tb in allTextBlocks) tb.Foreground = Brushes.White;
+                Effect = invertColorEffect;
 
                 Colors_Inverted = true;
             }
@@ -729,6 +712,7 @@ namespace MOPS
 
         }
 
+        #endregion
 
         //
         // Settings Window Position Controls
@@ -918,12 +902,7 @@ namespace MOPS
             if (p != -1)
             {
                 int index = enabled_images[p].Ind;
-                if (Colors_Inverted)
-                {
-                    if (RPM.allPics[index].invertedPic != null) image0.Source = RPM.allPics[index].invertedPic;
-                    else image0.Source = RPM.picConverter.InvertPic(RPM.allPics[index].pic);
-                }
-                else image0.Source = RPM.allPics[index].pic;
+                image0.Source = RPM.allPics[index].pic;
 
                 foreach (Image img in blur_imgset_v26) img.Source = image0.Source;
 
@@ -986,13 +965,11 @@ namespace MOPS
         private void image_SourceUpdated(object sender, DataTransferEventArgs e)
         {
             Smart_Stretch();
-            CornerBlock.Text = "UPD!";
         }
 
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            if (Colors_Inverted) image0.Source = RPM.allPics[current_image_pos].invertedAnimation[anim_ind];
-            else image0.Source = RPM.allPics[current_image_pos].animation[anim_ind];
+            image0.Source = RPM.allPics[current_image_pos].animation[anim_ind];
             if (RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
             foreach (Image img in blur_imgset_v26) img.Source = image0.Source;
@@ -1049,5 +1026,6 @@ namespace MOPS
         {
             Properties.Settings.Default.Save();
         }
+        
     }
 }

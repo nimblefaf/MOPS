@@ -16,11 +16,6 @@ namespace MOPS
             }
         }
 
-        public static SolidColorBrush NegativeColor(SolidColorBrush clr)
-        {
-            return new SolidColorBrush(Color.FromRgb((byte)(255 - clr.Color.R), (byte)(255 - clr.Color.G), (byte)(255 - clr.Color.B) ));
-        }
-
         public static Palette[] hues_normal =
         {
             new Palette("Black", (SolidColorBrush)new BrushConverter().ConvertFromString("#000000")),

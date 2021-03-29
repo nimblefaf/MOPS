@@ -9,7 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
@@ -568,14 +568,14 @@ namespace MOPS
                     main.image0.Opacity = 1;
                     main.MainImageOpacity = 1;
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Visible;
-                    main.HardLight_Rectangle.Visibility = Visibility.Hidden;
+                    main.ImageGrid.Effect = null;
                     foreach (Image img in main.blur_imgset_v26) img.Opacity = 0.4;
                     break;
                 case BlendMode.Alpha:
                     main.image0.Opacity = 0.7;
                     main.MainImageOpacity = 0.7;
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Visible;
-                    main.HardLight_Rectangle.Visibility = Visibility.Hidden;
+                    main.ImageGrid.Effect = null;
                     for (int i = 0; i < main.blur_imgset_v26.Length; i++)
                         main.blur_imgset_v26[i].Opacity = (0.35 / 13) * (i + 2 / 2);
                     break;
@@ -583,9 +583,8 @@ namespace MOPS
                     main.image0.Opacity = 1;
                     main.MainImageOpacity = 1;
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Hidden;
-                    main.HardLight_Rectangle.Visibility = Visibility.Visible;
-                    //for (int i = 0; i < main.blur_imgset_v26.Length; i++)
-                    //    main.blur_imgset_v26[i].Opacity = (0.35 / 13) * (i + 2 / 2);
+                    main.ImageGrid.Effect = main.HardLightEffect;
+                    Storyboard.SetTargetProperty(main.Fade, new PropertyPath("Effect.Blend"));
                     foreach (Image img in main.blur_imgset_v26) img.Opacity = 0.4;
                     break;
             }

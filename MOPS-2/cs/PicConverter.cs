@@ -7,11 +7,9 @@ namespace MOPS
 {
     public class PicConverter
     {
-        static Color[] White2 = new Color[2] { Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255) };
         static Color[] Black2 = new Color[2] { Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 0, 0, 0) };
 
         //static Color[] Black4 = new Color[4] { Color.FromArgb(0, 0, 0, 0), Color.FromArgb(96, 0, 0, 0), Color.FromArgb(192, 0, 0, 0), Color.FromArgb(255, 0, 0, 0) };
-        static Color[] White4 = new Color[4] { Color.FromArgb(0, 0, 0, 0), Color.FromArgb(255, 255, 255, 255), Color.FromArgb(255, 255, 255, 255), Color.FromArgb(255, 255, 255, 255) };
 
         static Color[] Black16 = new Color[16]
         {
@@ -19,13 +17,6 @@ namespace MOPS
             Color.FromArgb(80, 0, 0, 0), Color.FromArgb(96, 0, 0, 0), Color.FromArgb(112, 0, 0, 0), Color.FromArgb(128, 0, 0, 0),
             Color.FromArgb(144, 0, 0, 0), Color.FromArgb(160, 0, 0, 0), Color.FromArgb(176, 0, 0, 0), Color.FromArgb(192, 0, 0, 0),
             Color.FromArgb(208, 0, 0, 0), Color.FromArgb(224, 0, 0, 0), Color.FromArgb(240, 0, 0, 0), Color.FromArgb(255, 0, 0, 0)
-        };
-        static Color[] White16 = new Color[16]
-        {
-            Color.FromArgb(0, 255, 255, 255), Color.FromArgb(32, 255, 255, 255), Color.FromArgb(48, 255, 255, 255), Color.FromArgb(64, 255, 255, 255),
-            Color.FromArgb(80, 255, 255, 255), Color.FromArgb(96, 255, 255, 255), Color.FromArgb(112, 255, 255, 255), Color.FromArgb(128, 255, 255, 255),
-            Color.FromArgb(144, 255, 255, 255), Color.FromArgb(160, 255, 255, 255), Color.FromArgb(176, 255, 255, 255), Color.FromArgb(192, 255, 255, 255),
-            Color.FromArgb(208, 255, 255, 255), Color.FromArgb(224, 255, 255, 255), Color.FromArgb(240, 255, 255, 255), Color.FromArgb(255, 255, 255, 255)
         };
 
         /// <summary>
@@ -160,70 +151,6 @@ namespace MOPS
             }
             BitmapSource result = BitmapSource.Create(img.PixelWidth, img.PixelHeight, img.DpiX, img.DpiY, PixelFormats.Indexed4, new BitmapPalette(Black16), TData, TarStride);
             return result;
-        }
-
-
-        public BitmapSource InvertPic(BitmapSource img)
-        {
-            if (img == null) return img;
-            if (img.Format == PixelFormats.Indexed1) return Ind1ToWhite(img);
-            else if (img.Format == PixelFormats.Indexed2) return Ind2ToWhite(img);
-            else if (img.Format == PixelFormats.Indexed4) return Ind4ToWhite(img);
-            else
-            {
-                if (img.Format != PixelFormats.Bgra32)
-                {
-                    FormatConvertedBitmap ConvertedPic = new FormatConvertedBitmap();
-                    ConvertedPic.BeginInit();
-                    ConvertedPic.Source = img;
-                    ConvertedPic.DestinationFormat = PixelFormats.Bgra32;
-                    ConvertedPic.DestinationPalette = BitmapPalettes.BlackAndWhiteTransparent;
-                    ConvertedPic.EndInit();
-
-                    img = ConvertedPic;
-                }
-                int stride = (img.PixelWidth * img.Format.BitsPerPixel + 7) / 8;
-                int length = stride * img.PixelHeight;
-                byte[] data = new byte[length];
-                img.CopyPixels(data, stride, 0);
-
-                if (img.Format.BitsPerPixel != 1)
-                    for (int i = 0; i < length; i += 4)
-                    {
-                        data[i] = (byte)(255 - data[i]); //R
-                        data[i + 1] = (byte)(255 - data[i + 1]); //G
-                        data[i + 2] = (byte)(255 - data[i + 2]); //B
-                                                                 //data[i + 3] = (byte)(255 - data[i + 3]); //A
-                    }
-                return BitmapSource.Create(img.PixelWidth, img.PixelHeight, img.DpiX, img.DpiY, img.Format, img.Palette, data, stride);
-            }
-        }
-
-        private BitmapSource Ind1ToWhite(BitmapSource img)
-        {
-            int stride = (img.PixelWidth * img.Format.BitsPerPixel + 7) / 8;
-            int length = stride * img.PixelHeight;
-            byte[] data = new byte[length];
-            img.CopyPixels(data, stride, 0);
-            return BitmapSource.Create(img.PixelWidth, img.PixelHeight, img.DpiX, img.DpiY, PixelFormats.Indexed1, new BitmapPalette(White2), data, stride);
-        }
-
-        private BitmapSource Ind2ToWhite(BitmapSource img)
-        {
-            int stride = (img.PixelWidth * img.Format.BitsPerPixel + 7) / 8;
-            int length = stride * img.PixelHeight;
-            byte[] data = new byte[length];
-            img.CopyPixels(data, stride, 0);
-            return BitmapSource.Create(img.PixelWidth, img.PixelHeight, img.DpiX, img.DpiY, PixelFormats.Indexed2, new BitmapPalette(White4), data, stride);
-        }
-
-        private BitmapSource Ind4ToWhite(BitmapSource img)
-        {
-            int stride = (img.PixelWidth * img.Format.BitsPerPixel + 7) / 8;
-            int length = stride * img.PixelHeight;
-            byte[] data = new byte[length];
-            img.CopyPixels(data, stride, 0);
-            return BitmapSource.Create(img.PixelWidth, img.PixelHeight, img.DpiX, img.DpiY, PixelFormats.Indexed4, new BitmapPalette(White16), data, stride);
         }
     }
 }

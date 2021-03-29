@@ -67,8 +67,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="effects\ColorBlend_HardLightEffect.cs" />
     <Compile Include="cs\hues.cs" />
     <Compile Include="cs\PicConverter.cs" />
+    <Compile Include="effects\InvertColorEffect.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
@@ -116,6 +118,12 @@
     <Resource Include="fonts\PetMe64.ttf" />
     <Resource Include="fonts\PetMe.ttf" />
     <Resource Include="fonts\PetMe128.ttf" />
+    <Resource Include="effects\ColorBlend_HardLightEffect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="effects\InvertColorEffect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

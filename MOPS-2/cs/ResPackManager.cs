@@ -40,9 +40,7 @@ namespace MOPS
         public string source_other; 
         public string align;
         public BitmapSource pic;
-        public BitmapSource invertedPic;
         public BitmapSource[] animation;
-        public BitmapSource[] invertedAnimation;
         public int frameDuration;
         public bool enabled;
     }
@@ -316,7 +314,6 @@ namespace MOPS
                             Transfer[Transfer.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
 
                         Transfer[Transfer.Length - 1].pic = picConverter.ImageOptimize(Transfer[Transfer.Length - 1].pic);
-                        Transfer[Transfer.Length - 1].invertedPic = picConverter.InvertPic(Transfer[Transfer.Length - 1].pic);
 
                         Transfer[Transfer.Length - 1].enabled = true;
                         Transfer[Transfer.Length - 1].source = "";
@@ -348,9 +345,7 @@ namespace MOPS
                                 Transfer[Transfer.Length - 1].frameDuration = Convert.ToInt32(childnode.InnerText);
                                 Transfer[Transfer.Length - 1].pic = PicsBuffer[node.Attributes[0].Value + "_01"];
                                 Transfer[Transfer.Length - 1].pic = picConverter.ImageOptimize(Transfer[Transfer.Length - 1].pic);
-                                Transfer[Transfer.Length - 1].invertedPic = picConverter.InvertPic(Transfer[Transfer.Length - 1].pic);
                                 Transfer[Transfer.Length - 1].animation = new BitmapImage[0];
-                                Transfer[Transfer.Length - 1].invertedAnimation = new BitmapSource[0];
                                 for (int i = 1; i < PicsBuffer.Count; i++)
                                 {
                                     string end = "";
@@ -364,11 +359,6 @@ namespace MOPS
                                     else break;
                                 }
                                 Transfer[Transfer.Length - 1].animation = picConverter.ImageArrayOptimize(Transfer[Transfer.Length - 1].animation);
-                                for (int i = 0; i < Transfer[Transfer.Length - 1].animation.Length; i++)
-                                {
-                                    Array.Resize(ref Transfer[Transfer.Length - 1].invertedAnimation, Transfer[Transfer.Length - 1].invertedAnimation.Length + 1);
-                                    Transfer[Transfer.Length - 1].invertedAnimation[i] = picConverter.InvertPic(Transfer[Transfer.Length - 1].animation[i]);
-                                }
                             }
                         }
                     }
@@ -381,11 +371,9 @@ namespace MOPS
                 foreach (Pics p in Transfer)
                 {
                     p.pic.Freeze();
-                    if (p.invertedPic != null) p.invertedPic.Freeze();
                     if (p.animation != null)
                     {
                         foreach (BitmapSource i in p.animation) i.Freeze();
-                        foreach (BitmapSource i in p.invertedAnimation) i.Freeze();
                     }
                 }
                 return Transfer;
