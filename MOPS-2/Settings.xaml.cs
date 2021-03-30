@@ -569,15 +569,12 @@ namespace MOPS
                     main.MainImageOpacity = 1;
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Visible;
                     main.ImageGrid.Effect = null;
-                    foreach (Image img in main.blur_imgset_v26) img.Opacity = 0.4;
                     break;
                 case BlendMode.Alpha:
                     main.image0.Opacity = 0.7;
                     main.MainImageOpacity = 0.7;
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Visible;
                     main.ImageGrid.Effect = null;
-                    for (int i = 0; i < main.blur_imgset_v26.Length; i++)
-                        main.blur_imgset_v26[i].Opacity = (0.35 / 13) * (i + 2 / 2);
                     break;
                 case BlendMode.HardLight:
                     main.image0.Opacity = 1;
@@ -585,7 +582,6 @@ namespace MOPS
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Hidden;
                     main.ImageGrid.Effect = main.HardLightEffect;
                     Storyboard.SetTargetProperty(main.Fade, new PropertyPath("Effect.Blend"));
-                    foreach (Image img in main.blur_imgset_v26) img.Opacity = 0.4;
                     break;
             }
 

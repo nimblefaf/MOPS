@@ -70,6 +70,12 @@
     <Compile Include="effects\ColorBlend_HardLightEffect.cs" />
     <Compile Include="cs\hues.cs" />
     <Compile Include="cs\PicConverter.cs" />
+    <Compile Include="effects\HuesXBlur14Effect.cs" />
+    <Compile Include="effects\HuesXBlur26Effect.cs" />
+    <Compile Include="effects\HuesXBlur8Effect.cs" />
+    <Compile Include="effects\HuesYBlur14Effect.cs" />
+    <Compile Include="effects\HuesYBlur26Effect.cs" />
+    <Compile Include="effects\HuesYBlur8Effect.cs" />
     <Compile Include="effects\InvertColorEffect.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.xaml.cs">
@@ -133,6 +139,24 @@
     <Content Include="Packs\Xmas.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="effects\HuesXBlur14Effect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="effects\HuesXBlur26Effect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="effects\HuesXBlur8Effect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="effects\HuesYBlur14Effect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="effects\HuesYBlur26Effect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="effects\HuesYBlur8Effect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -159,7 +183,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Kyubey2.ico" />
-    <Resource Include="loop_Moan.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -52,6 +52,8 @@ namespace MOPS
 
         Shaders.InvertColorEffect invertColorEffect = new Shaders.InvertColorEffect();
         public Shaders.ColorBlend_HardLightEffect HardLightEffect = new Shaders.ColorBlend_HardLightEffect();
+        Shaders.HuesYBlur8Effect YBlur8 = new Shaders.HuesYBlur8Effect();
+        Shaders.HuesXBlur8Effect XBlur8 = new Shaders.HuesXBlur8Effect();
 
         public Hues.Palette[] hues;
 
@@ -200,13 +202,8 @@ namespace MOPS
             backgroundLoader.RunWorkerAsync("Packs/Defaults_v5.0.zip");
         }
 
-        private Storyboard XAnimSmallSB = new Storyboard();
-        private Storyboard YAnimSmallSB = new Storyboard();
-        private Image[] blur_imgset_v8 = new Image[8];
-        private ThicknessAnimation[] XAnimSmall = new ThicknessAnimation[8];
-        private ThicknessAnimation[] YAnimSmall = new ThicknessAnimation[8];
-        private Image[] blur_imgset_v14 = new Image[14];
-        public Image[] blur_imgset_v26 = new Image[26];
+        private Storyboard BlurAnimSB = new Storyboard();
+        private DoubleAnimation BlurAnim = new DoubleAnimation();
 
         private Storyboard SB_Blackout = new Storyboard();
         private DoubleAnimation Blackout = new DoubleAnimation();
@@ -214,65 +211,18 @@ namespace MOPS
         private DoubleAnimation Blackout_Short = new DoubleAnimation();
         private ThicknessAnimation Blackout_Blur = new ThicknessAnimation();
         public ColorAnimation Fade = new ColorAnimation();
-        private Storyboard SB_FadeColor_HardLight = new Storyboard();
-        private ByteAnimation[] FadeByteAnims = new ByteAnimation[3];
-
-        private Storyboard SB = new Storyboard();
-        private DoubleAnimation VerticalBlur_Simple = new DoubleAnimation();
-        private ThicknessAnimation HorizontalBlur_Simple = new ThicknessAnimation();
 
         private Storyboard SB_Fade = new Storyboard();
 
         private void Init_Animations()
         {
-            blur_imgset_v8 = new Image[] { image1, image2, image3, image4, image5, image6, image7, image8 };
-            for (int i = 0; i < blur_imgset_v8.Length; i++)
-            {
-                double factor = 0.20 * (i + 2 / 2);
-                if (i % 2 == 0) factor *= -1;
-                XAnimSmall[i] = new ThicknessAnimation();
-                XAnimSmall[i].DecelerationRatio = 0.1;
-                XAnimSmall[i].Duration = TimeSpan.FromSeconds(blur_decay);
-                XAnimSmall[i].To = new Thickness(0, 0, 0, 0);
-                XAnimSmall[i].From = new Thickness(-(blur_Amount * factor), 0, blur_Amount * factor, 0);
-                XAnimSmall[i].BeginTime = TimeSpan.FromSeconds(0);
-                Storyboard.SetTargetProperty(XAnimSmall[i], new PropertyPath(MarginProperty));
-                XAnimSmallSB.Children.Add(XAnimSmall[i]);
-                Storyboard.SetTarget(XAnimSmall[i], blur_imgset_v8[i]);
-
-                YAnimSmall[i] = new ThicknessAnimation();
-                XAnimSmall[i].DecelerationRatio = 0.1;
-                YAnimSmall[i].Duration = TimeSpan.FromSeconds(blur_decay);
-                YAnimSmall[i].To = new Thickness(0, 0, 0, 0);
-                YAnimSmall[i].From = new Thickness(0, -(blur_Amount * factor), 0, blur_Amount * factor);
-                YAnimSmall[i].BeginTime = TimeSpan.FromSeconds(0);
-                Storyboard.SetTargetProperty(YAnimSmall[i], new PropertyPath(MarginProperty));
-                YAnimSmallSB.Children.Add(YAnimSmall[i]);
-                Storyboard.SetTarget(YAnimSmall[i], blur_imgset_v8[i]);
-            }
-            XAnimSmallSB.Completed += delegate (object sender, EventArgs e)
-            {
-                foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Hidden;
-                image0.Opacity = MainImageOpacity;
-            };
-            YAnimSmallSB.Completed += delegate (object sender, EventArgs e)
-            {
-                foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Hidden;
-                image0.Opacity = MainImageOpacity;
-            };
-            XAnimSmallSB.DecelerationRatio = 0.1;
-            YAnimSmallSB.DecelerationRatio = 0.1;
-            XAnimSmallSB.FillBehavior = FillBehavior.Stop;
-            YAnimSmallSB.FillBehavior = FillBehavior.Stop;
-
-
-            blur_imgset_v14 = new Image[]
-            { image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14 };
-            blur_imgset_v26 = new Image[]
-            {
-                image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, image11, image12, image13, image14,
-                image15, image16, image17, image18, image19, image20, image21, image22, image23, image24, image25, image26
-            };
+            BlurAnim.From = 0.02;
+            BlurAnim.To = 0;
+            BlurAnim.Duration = TimeSpan.FromSeconds(0.15);
+            Storyboard.SetTargetProperty(BlurAnim, new PropertyPath("Effect.BlurAmount"));
+            Storyboard.SetTarget(BlurAnim, image0);
+            BlurAnimSB.Children.Add(BlurAnim);
+            BlurAnimSB.FillBehavior = FillBehavior.Stop;
 
             Fade.FillBehavior = FillBehavior.HoldEnd;
             Fade.BeginTime = TimeSpan.FromSeconds(0);
@@ -287,7 +237,6 @@ namespace MOPS
             Storyboard.SetTargetProperty(Blackout_Short, new PropertyPath(OpacityProperty));
             SB_Blackout_Short.Children.Add(Blackout_Short);
             Storyboard.SetTarget(Blackout_Short, Blackout_Rectangle);
-
             
             Blackout.BeginTime = new TimeSpan(0);
             Blackout.FillBehavior = FillBehavior.Stop;
@@ -303,9 +252,6 @@ namespace MOPS
             SB_Blackout.Children.Add(Blackout);
             Storyboard.SetTarget(Blackout, Blackout_Rectangle);
             SB_Blackout.FillBehavior = FillBehavior.Stop;
-
-            VerticalBlur_Simple.BeginTime = new TimeSpan(0);
-            Storyboard.SetTargetProperty(VerticalBlur_Simple, new PropertyPath(HeightProperty));
 
             Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
             Storyboard.SetTarget(Fade, ImageGrid);
@@ -597,26 +543,28 @@ namespace MOPS
         private void timeline_blur_vert()
         {
             if (enabled_images.Count != 0) switch (blur_quality)
-            {
-                case 1:
-                    foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
-                    image0.Opacity = MainImageOpacity / 2;
-                    XAnimSmallSB.Begin();
-                    break;
-            }
+                {
+                    case 1:
+                        //foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
+                        //image0.Opacity = MainImageOpacity / 2;
+                        image0.Effect = YBlur8;
+                        BlurAnimSB.Begin();
+                        break;
+                }
         }
 
         // 'O' Vertical blur only
         private void timeline_blur_hor()
         {
             if (enabled_images.Count != 0) switch (blur_quality)
-            {
-                case 1:
-                    foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
-                    image0.Opacity = MainImageOpacity / 2;
-                    YAnimSmallSB.Begin();
-                    break;
-            }
+                {
+                    case 1:
+                        //foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
+                        //image0.Opacity = MainImageOpacity / 2;
+                        image0.Effect = XBlur8;
+                        BlurAnimSB.Begin();
+                        break;
+                }
         }
 
         // ')' Trippy cirle in
@@ -758,7 +706,6 @@ namespace MOPS
                 if (Width / Height > RPM.allPics[current_image_pos].pic.Width / RPM.allPics[current_image_pos].pic.Height) image0.Stretch = Stretch.Uniform;
                 else image0.Stretch = Stretch.UniformToFill;
             }
-            foreach (Image img in blur_imgset_v26) img.Stretch = image0.Stretch;
         }
 
 
@@ -895,16 +842,13 @@ namespace MOPS
 
         public void ImageChange(int p)
         {
-            XAnimSmallSB.Stop();
-            YAnimSmallSB.Stop();
+            BlurAnimSB.Stop();
             image0.Opacity = MainImageOpacity;
             current_image_pos = p;
             if (p != -1)
             {
                 int index = enabled_images[p].Ind;
                 image0.Source = RPM.allPics[index].pic;
-
-                foreach (Image img in blur_imgset_v26) img.Source = image0.Source;
 
                 ////For debug:
                 //CornerBlock.Text = index + ": " + RPM.allPics[index].pic.Format.ToString();
@@ -925,7 +869,6 @@ namespace MOPS
                             image0.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
-                    foreach (Image img in blur_imgset_v26) img.HorizontalAlignment = image0.HorizontalAlignment;
                     Smart_Stretch();
                 }
                 else
@@ -948,7 +891,6 @@ namespace MOPS
                             image0.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
-                    foreach (Image img in blur_imgset_v26) img.HorizontalAlignment = image0.HorizontalAlignment;
                     //Smart_Stretch();
                 }
             }
@@ -972,7 +914,6 @@ namespace MOPS
             image0.Source = RPM.allPics[current_image_pos].animation[anim_ind];
             if (RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
-            foreach (Image img in blur_imgset_v26) img.Source = image0.Source;
         }
 
         private void Images_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
