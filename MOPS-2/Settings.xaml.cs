@@ -504,6 +504,8 @@ namespace MOPS
                     OB_colorBlend_HardLight.Background = Brushes.White;
                     break;
             }
+            if (Properties.Settings.Default.discordMode) OB_DiscordOn.Background = Brushes.White;
+            else OB_DiscordOff.Background = Brushes.White;
         }
 
         private void OB_colorNormal_Click(object sender, RoutedEventArgs e)
@@ -566,25 +568,38 @@ namespace MOPS
             {
                 case BlendMode.Plain:
                     main.image0.Opacity = 1;
-                    main.MainImageOpacity = 1;
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Visible;
                     main.ImageGrid.Effect = null;
                     break;
                 case BlendMode.Alpha:
                     main.image0.Opacity = 0.7;
-                    main.MainImageOpacity = 0.7;
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Visible;
                     main.ImageGrid.Effect = null;
                     break;
                 case BlendMode.HardLight:
                     main.image0.Opacity = 1;
-                    main.MainImageOpacity = 1;
                     main.ColorOverlap_Rectangle.Visibility = Visibility.Hidden;
                     main.ImageGrid.Effect = main.HardLightEffect;
                     Storyboard.SetTargetProperty(main.Fade, new PropertyPath("Effect.Blend"));
                     break;
             }
 
+        }
+
+        private void OB_DiscordOffButton_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.discordMode = false;
+            OB_DiscordOn.Background = Brushes.LightGray;
+            OB_DiscordOff.Background = Brushes.White;
+            main.discordRpcClient.Dispose();
+        }
+
+        private void OB_DiscordOnButton_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.discordMode = true;
+            OB_DiscordOn.Background = Brushes.White;
+            OB_DiscordOff.Background = Brushes.LightGray;
+            main.discord_rpc_init();
         }
     }
 }

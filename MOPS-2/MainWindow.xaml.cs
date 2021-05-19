@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Globalization;
+using DiscordRPC;
 
 namespace MOPS
 {
@@ -58,7 +59,6 @@ namespace MOPS
         public Hues.Palette[] hues;
 
         public int CurrentColorInd = 0;
-        public double MainImageOpacity;
 
         public static Settings set = new Settings();
         public RPManager RPM = new RPManager();
@@ -80,7 +80,7 @@ namespace MOPS
         /// <summary>
         /// How far away blur goes in WPF dots.
         /// </summary>
-        public int blur_Amount = 25;
+        public double blur_Amount = 0.02;
         public bool blackouted = false;
 
         public int current_song = 0;
@@ -100,6 +100,8 @@ namespace MOPS
         /// List of enabled images displayed in images_listbox.
         /// </summary>
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
+
+        public DiscordRpcClient discordRpcClient = new DiscordRpcClient("842763717179342858");
 
         private BackgroundWorker backgroundLoader;
         public MainWindow()
@@ -125,17 +127,51 @@ namespace MOPS
                     hues = Hues.hues_weed;
                     break;
             }
-            if (Properties.Settings.Default.blendMode == 0) MainImageOpacity = 1;
-            else MainImageOpacity = 0.7;
 
             backgroundLoader = new BackgroundWorker();
             backgroundLoader.DoWork +=
                 new DoWorkEventHandler(load_dowork);
             backgroundLoader.RunWorkerCompleted +=
                 new RunWorkerCompletedEventHandler(load_completed);
+
+            if (Properties.Settings.Default.discordMode) discord_rpc_init();
+
+
             //For Debug
             //CornerBlock.Foreground = Brushes.Red;
             //timeline_label.Foreground = Brushes.Red;
+        }
+
+        public void discord_rpc_init()
+        {
+            if (!discordRpcClient.IsInitialized)
+            {
+                discordRpcClient = new DiscordRpcClient("842763717179342858");
+                discordRpcClient.Initialize();
+                if (beat_length == 0)
+                discordRpcClient.SetPresence(new RichPresence()
+                {
+                    Details = "No song selected",
+                    State = "¯\\_(ツ)_/¯",
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "hues_csharp_main3",
+                        LargeImageText = "That's Kybey, The Cutest Waifu",
+
+                    }
+                });
+                else discordRpcClient.SetPresence(new RichPresence()
+                {
+                    Details = "Playing song",
+                    State = RPM.allSongs[current_song].title,
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "hues_csharp_main3",
+                        LargeImageText = "That's Kybey, The Cutest Waifu",
+
+                    }
+                });
+            }
         }
 
         private void load_dowork(object sender, DoWorkEventArgs e)
@@ -151,19 +187,9 @@ namespace MOPS
                 Array.Resize(ref RPM.allPics, RPM.allPics.Length + 1);
                 RPM.allPics[RPM.allPics.Length - 1] = elem;
             }
-
-            //for (int i = 0; i < RPM.allSongs.Length; i++) enabled_songs.Add(new rdata() { Name = RPM.allSongs[i].title, Ind = i });
-            //songs_listbox.ItemsSource = enabled_songs;
-
-            //for (int i = 0; i < RPM.allPics.Length; i++) enabled_images.Add(new rdata() { Name = RPM.allPics[i].name, Ind = i });
-            //images_listbox.ItemsSource = enabled_images;
-
             set.add_last_rp();
             songs_listbox.ItemsSource = enabled_songs;
             images_listbox.ItemsSource = enabled_images;
-
-            //ImageChange(0);
-            //songs_listbox.SelectedIndex = 0;
 
             full_auto_be.IsEnabled = true;
             images_be.IsEnabled = true;
@@ -242,7 +268,7 @@ namespace MOPS
             Blackout.FillBehavior = FillBehavior.Stop;
             Blackout.From = 0;
             Blackout.To = 1;
-            Blackout.Duration = new Duration(TimeSpan.FromSeconds(0.15));
+            Blackout.Duration = TimeSpan.FromSeconds(0.15);
             Blackout.Completed += delegate (object sender, EventArgs e)
             {
                 Blackout_Rectangle.Opacity = 1;
@@ -268,6 +294,8 @@ namespace MOPS
                 else set.Show();
             }
         }
+
+        #region KeyControls
 
         //
         //Key Controls
@@ -374,7 +402,7 @@ namespace MOPS
             }
         }
 
-
+        #endregion
 
         //
         // Timeline Effects Controls
@@ -545,8 +573,6 @@ namespace MOPS
             if (enabled_images.Count != 0) switch (blur_quality)
                 {
                     case 1:
-                        //foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
-                        //image0.Opacity = MainImageOpacity / 2;
                         image0.Effect = YBlur8;
                         BlurAnimSB.Begin();
                         break;
@@ -559,8 +585,6 @@ namespace MOPS
             if (enabled_images.Count != 0) switch (blur_quality)
                 {
                     case 1:
-                        //foreach (Image img in blur_imgset_v8) img.Visibility = Visibility.Visible;
-                        //image0.Opacity = MainImageOpacity / 2;
                         image0.Effect = XBlur8;
                         BlurAnimSB.Begin();
                         break;
@@ -734,7 +758,8 @@ namespace MOPS
             prev_song();
         }
 
-        private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //tied to the songs_listbox on SelectionChanged
+        private void Change_Song(object sender, SelectionChangedEventArgs e)
         {
             if (Colors_Inverted)
             {
@@ -788,8 +813,23 @@ namespace MOPS
                     TimelineLenghtFill();
                     //Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
                     Timer.Interval = TimeSpan.FromSeconds(beat_length);
-
                     ShortBlackoutTimer.Interval = Timer.Interval;
+
+                    if (Properties.Settings.Default.discordMode)
+                    {
+                        discordRpcClient.SetPresence(new RichPresence()
+                        {
+                            Details = "Playing song",
+                            State = RPM.allSongs[i].title,
+                            Assets = new Assets()
+                            {
+                                LargeImageKey = "hues_csharp_main3",
+                                LargeImageText = "That's Kybey, The Cutest Waifu",
+
+                            }
+                        }
+                        );
+                    }
 
                     Player.Play();
                     TimeLine_Move();
@@ -812,6 +852,21 @@ namespace MOPS
             song_label.Content = "NONE";
             beat_length = 0;
             timeline_label.Content = ">>.";
+            if (Properties.Settings.Default.discordMode)
+            {
+                discordRpcClient.SetPresence(new RichPresence()
+                {
+                    Details = "No song selected",
+                    State = "¯\\_(ツ)_/¯",
+                    Assets = new Assets()
+                    {
+                        LargeImageKey = "hues_csharp_main3",
+                        LargeImageText = "That's Kybey, The Cutest Waifu",
+
+                    }
+                }
+                );
+            }
         }
 
         private void prev_image_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -843,7 +898,6 @@ namespace MOPS
         public void ImageChange(int p)
         {
             BlurAnimSB.Stop();
-            image0.Opacity = MainImageOpacity;
             current_image_pos = p;
             if (p != -1)
             {
@@ -966,6 +1020,7 @@ namespace MOPS
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Properties.Settings.Default.Save();
+            discordRpcClient.Dispose();
         }
         
     }

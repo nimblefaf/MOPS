@@ -58,5 +58,17 @@ namespace MOPS.Properties {
                 this["colorSet"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool discordMode {
+            get {
+                return ((bool)(this["discordMode"]));
+            }
+            set {
+                this["discordMode"] = value;
+            }
+        }
     }
 }
