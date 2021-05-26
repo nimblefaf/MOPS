@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="MOPS.UI.Options_TabPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MOPS.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="398" d:DesignWidth="590"
+             FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10">
+    <Grid Background="#FFE5E5E5" Cursor="Arrow" Height="398" VerticalAlignment="Bottom">
+        <TextBlock x:Name="OTB_functionality" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Functionality" VerticalAlignment="Top" FontSize="16"/>
+        <TextBlock x:Name="OTB_playBuildups" HorizontalAlignment="Left" Margin="10,39,0,0" TextWrapping="Wrap" Text="Play buildups" VerticalAlignment="Top"/>
+        <Button x:Name="OB_buildOff" Content="OFF" HorizontalAlignment="Left" Margin="10,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOffButton_Click" Width="46" Background="LightGray" Focusable="False"/>
+        <Button x:Name="OB_buildOn" Content="ON" HorizontalAlignment="Left" Margin="129,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOnButton_Click" Width="43" Background="LightGray" Focusable="False"/>
+        <Button x:Name="OB_buildOnce" Content="ONCE" HorizontalAlignment="Left" Margin="61,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOnceButton_Click" Width="63" Background="LightGray" Focusable="False"/>
+        <TextBlock x:Name="OTB_colorSet" HorizontalAlignment="Left" Margin="10,208,0,0" TextWrapping="Wrap" Text="Color set" VerticalAlignment="Top"/>
+        <Button x:Name="OB_colorNormal" Content="NORMAL" HorizontalAlignment="Left" Margin="10,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorNormal_Click" Background="LightGray" Focusable="False" Width="72"/>
+        <Button x:Name="OB_colorPastel" Content="PASTEL" HorizontalAlignment="Left" Margin="87,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorPastel_Click" Width="75" Background="LightGray" Focusable="False"/>
+        <Button x:Name="OB_colorWeed" Content="V4.20" HorizontalAlignment="Left" Margin="167,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorWeed_Click" Width="63" Background="LightGray" Focusable="False"/>
+        <TextBlock x:Name="OTB_graphics" HorizontalAlignment="Left" Margin="315,12,0,0" TextWrapping="Wrap" Text="Graphics" VerticalAlignment="Top" FontSize="16"/>
+        <TextBlock x:Name="OTB_colorBlendMode" HorizontalAlignment="Left" Margin="315,39,0,0" TextWrapping="Wrap" Text="Color blend mode" VerticalAlignment="Top"/>
+        <Button x:Name="OB_colorBlend_Plain" Content="PLAIN" HorizontalAlignment="Left" Margin="315,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_Plain_Click" Background="LightGray" Focusable="False" Width="60"/>
+        <Button x:Name="OB_colorBlend_Alpha" Content="ALPHA" HorizontalAlignment="Left" Margin="380,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_Alpha_Click" Width="60" Background="LightGray" Focusable="False"/>
+        <Button x:Name="OB_colorBlend_HardLight" Content="HARD LIGHT" HorizontalAlignment="Left" Margin="445,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_HardLight_Click" Width="105" Background="LightGray" Focusable="False"/>
+        <TextBlock x:Name="OTB_DiscordMode" HorizontalAlignment="Left" Margin="10,335,0,0" TextWrapping="Wrap" Text="Discord rich presence" VerticalAlignment="Top"/>
+        <Button x:Name="OB_DiscordOn" Content="ON" HorizontalAlignment="Left" Margin="61,350,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_DiscordOnButton_Click" Width="47" Background="LightGray" Focusable="False"/>
+        <Button x:Name="OB_DiscordOff" Content="OFF" HorizontalAlignment="Left" Margin="10,350,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_DiscordOffButton_Click" Width="46" Background="LightGray" Focusable="False"/>
+    </Grid>
+</UserControl>

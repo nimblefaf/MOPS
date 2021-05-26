@@ -3,128 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:uc="clr-namespace:MOPS.UI"
         xmlns:local="clr-namespace:MOPS"
         mc:Ignorable="d"
-        Title="Settings" Height="450" Width="600" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" MouseDown="SettingsWindow_MouseDown" AllowsTransparency="True" WindowStyle="None" Opacity="0.8" Loaded="SettingsWindow_Loaded" FontFamily="/MOPS;component/fonts/#Pet Me 128" Background="#FFC5C5C5" ShowActivated="False" Focusable="False">
+        Title="Settings" Height="450" Width="600" ShowInTaskbar="False" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" MouseDown="SettingsWindow_MouseDown" AllowsTransparency="True" WindowStyle="None" Opacity="0.8" FontFamily="/MOPS;component/fonts/#Pet Me 128" Background="#FFC5C5C5" ShowActivated="False" Focusable="False">
     <Grid>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="435" VerticalAlignment="Top" Width="600" Margin="0,15,0,0" SelectionChanged="tabControl_SelectionChanged" Focusable="False">
-            <TabItem Header="RESOURCES" Cursor="Hand" FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10" Width="150" Height="25">
-                <Grid Background="#FFE5E5E5" Cursor="Arrow" HorizontalAlignment="Right" Width="590" Margin="0,0,0,-3">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" MinHeight="62"/>
-                        <RowDefinition/>
-                        <RowDefinition Height="53"/>
-                    </Grid.RowDefinitions>
-                    <ListBox x:Name="respack_listbox" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Height="315" VerticalAlignment="Top" Width="190" Margin="0,23,0,0" FontSize="10" SelectionChanged="respack_listbox_SelectionChanged" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderThickness="2,1,2,1" BorderBrush="Black">
-                                    <Grid Margin="0,2">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <CheckBox x:Name="rp_checkbox" IsChecked="{Binding State, Mode=TwoWay}" Click="RPList_CheckBox_Clicked"></CheckBox>
-                                        <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" Width="175"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <ProgressBar x:Name="ProgBar"  HorizontalAlignment="Left" Width="190" Grid.Row="2" Height="10" VerticalAlignment="Bottom" Value="-1" Margin="0,0,0,4"/>
-                    <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="0,0,0,37" Width="100" Grid.Row="2" Click="load_rp_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}"/>
-                    <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" VerticalAlignment="Top" FontFamily="/MOPS;component/fonts/#Pet Me 128" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="195,0,0,0" FontSize="10"/>
-                    <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="190" Height="23"/>
-                    <TextBox x:Name="rp_description_textbox" Margin="195,39,0,7" Text="&lt;no description&gt;" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True"/>
-                    <TabControl x:Name="ResTabControl" HorizontalAlignment="Left" Margin="195,1,0,10" Width="395" Grid.Row="1">
-                        <TabItem x:Name="Songs_tab" Header="Songs: &lt;&gt;" Width="200">
-                            <Grid Background="#FFE5E5E5">
-                                <ListBox x:Name="songs_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Background="#FFE2E2E2">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border BorderBrush="Black" BorderThickness="2,1,2,1">
-                                                <Grid Height="Auto"  Margin="0,2">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <CheckBox IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click" VerticalAlignment="Center"></CheckBox>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="345" TextWrapping="Wrap"/>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
-                        </TabItem>
-                        <TabItem x:Name="Images_tab" Header="Images: &lt;&gt;" Margin="-2,-2,-75,-1">
-                            <Grid Background="#FFE5E5E5">
-                                <ListBox x:Name="images_listbox" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="images_listbox_SelectionChanged" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border BorderThickness="2,1,2,1" BorderBrush="Black">
-                                                <Grid Margin="0,2">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <CheckBox IsChecked="{Binding State, Mode=TwoWay}" Click="Images_CheckBox_Click" VerticalAlignment="Center"></CheckBox>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="345" TextWrapping="Wrap"/>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
-                        </TabItem>
-                    </TabControl>
-                    <Label x:Name="rp_author_label" Content="&lt;no author&gt;" HorizontalAlignment="Left" Margin="195,22,0,0" VerticalAlignment="Top" FontSize="8" Height="17" Width="290"/>
-                    <Label x:Name="label_ts" Content="Total Songs:" HorizontalAlignment="Left" Margin="205,21,0,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Width="130"/>
-                    <Label x:Name="label" Content="Total Images:" HorizontalAlignment="Left" Margin="205,33,0,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Width="140"/>
-                    <Button x:Name="enableAll_button" Content="ENABLE ALL" HorizontalAlignment="Left" Margin="195,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="140" Click="enableAll_button_Click" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" Height="16"/>
-                    <Button x:Name="invert_button" Content="INVERT" HorizontalAlignment="Left" Margin="340,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="100" Click="invert_button_Click" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" Height="16"/>
-                    <Button x:Name="disabelAll_button" Content="DISABLE ALL" HorizontalAlignment="Left" Margin="445,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="140" Click="disabelAll_button_Click" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" Height="16"/>
-                    <Label x:Name="SongNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,12" Grid.Row="2" VerticalAlignment="Bottom"/>
-                    <Label x:Name="ImagesNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" VerticalAlignment="Bottom"/>
-                    <TextBlock x:Name="Status_textBlock" HorizontalAlignment="Left" Margin="0,21,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top" Width="190" Height="15"/>
-                </Grid>
+            <TabItem Name="res_tab" Header="RESOURCES" Cursor="Hand" FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10" Width="150" Height="25">
+                <uc:Resources_TabPanel/>
             </TabItem>
             <TabItem Header="EDITOR" Cursor="Hand" FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10" Width="150" Height="25">
                 <Grid Background="#FFE5E5E5" Cursor="Arrow">
                     <TextBlock x:Name="EditorTitle" TextWrapping="Wrap" Text="Coming much, much later..." FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="OPTIONS" Cursor="Hand" FontSize="10" FontFamily="/MOPS;component/fonts/#Pet Me 128" Width="150" Height="25">
-                <Grid Background="#FFE5E5E5" Cursor="Arrow" Height="398" VerticalAlignment="Bottom">
-                    <TextBlock x:Name="OTB_functionality" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Functionality" VerticalAlignment="Top" FontSize="16"/>
-                    <TextBlock x:Name="OTB_playBuildups" HorizontalAlignment="Left" Margin="10,39,0,0" TextWrapping="Wrap" Text="Play buildups" VerticalAlignment="Top"/>
-                    <Button x:Name="OB_buildOff" Content="OFF" HorizontalAlignment="Left" Margin="10,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOffButton_Click" Width="46" Background="LightGray" Focusable="False"/>
-                    <Button x:Name="OB_buildOn" Content="ON" HorizontalAlignment="Left" Margin="129,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOnButton_Click" Width="43" Background="LightGray" Focusable="False"/>
-                    <Button x:Name="OB_buildOnce" Content="ONCE" HorizontalAlignment="Left" Margin="61,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOnceButton_Click" Width="63" Background="LightGray" Focusable="False"/>
-                    <TextBlock x:Name="OTB_colorSet" HorizontalAlignment="Left" Margin="10,208,0,0" TextWrapping="Wrap" Text="Color set" VerticalAlignment="Top"/>
-                    <Button x:Name="OB_colorNormal" Content="NORMAL" HorizontalAlignment="Left" Margin="10,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorNormal_Click" Background="LightGray" Focusable="False" Width="72"/>
-                    <Button x:Name="OB_colorPastel" Content="PASTEL" HorizontalAlignment="Left" Margin="87,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorPastel_Click" Width="75" Background="LightGray" Focusable="False"/>
-                    <Button x:Name="OB_colorWeed" Content="V4.20" HorizontalAlignment="Left" Margin="167,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorWeed_Click" Width="63" Background="LightGray" Focusable="False"/>
-                    <TextBlock x:Name="OTB_graphics" HorizontalAlignment="Left" Margin="315,12,0,0" TextWrapping="Wrap" Text="Graphics" VerticalAlignment="Top" FontSize="16"/>
-                    <TextBlock x:Name="OTB_colorBlendMode" HorizontalAlignment="Left" Margin="315,39,0,0" TextWrapping="Wrap" Text="Color blend mode" VerticalAlignment="Top"/>
-                    <Button x:Name="OB_colorBlend_Plain" Content="PLAIN" HorizontalAlignment="Left" Margin="315,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_Plain_Click" Background="LightGray" Focusable="False" Width="60"/>
-                    <Button x:Name="OB_colorBlend_Alpha" Content="ALPHA" HorizontalAlignment="Left" Margin="380,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_Alpha_Click" Width="60" Background="LightGray" Focusable="False"/>
-                    <Button x:Name="OB_colorBlend_HardLight" Content="HARD LIGHT" HorizontalAlignment="Left" Margin="445,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_HardLight_Click" Width="105" Background="LightGray" Focusable="False"/>
-                    <TextBlock x:Name="OTB_DiscordMode" HorizontalAlignment="Left" Margin="10,335,0,0" TextWrapping="Wrap" Text="Discord rich presence" VerticalAlignment="Top"/>
-                    <Button x:Name="OB_DiscordOn" Content="ON" HorizontalAlignment="Left" Margin="61,350,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_DiscordOnButton_Click" Width="47" Background="LightGray" Focusable="False"/>
-                    <Button x:Name="OB_DiscordOff" Content="OFF" HorizontalAlignment="Left" Margin="10,350,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_DiscordOffButton_Click" Width="46" Background="LightGray" Focusable="False"/>
-                </Grid>
+            <TabItem Name="opt_tab" Header="OPTIONS" Cursor="Hand" FontSize="10" FontFamily="/MOPS;component/fonts/#Pet Me 128" Width="150" Height="25">
+                <uc:Options_TabPanel/>
             </TabItem>
             <TabItem Header="INFO" Cursor="Hand" FontSize="10" FontFamily="/MOPS;component/fonts/#Pet Me 128" IsSelected="True" RenderTransformOrigin="0.5,0.5" Margin="-2,-2,-73,-1" Height="25">
-                <Grid Background="#FFE5E5E5" Cursor="Arrow">
-                    <TextBlock x:Name="InfoTextBlock1" Margin="75,25,75,0" TextWrapping="Wrap" Text="0x40 Hues of C#, V0.6" VerticalAlignment="Top" FontSize="20" HorizontalAlignment="Center"/>
-                    <TextBlock x:Name="InfoTextBlock2" HorizontalAlignment="Left" Margin="96,60,0,0" TextWrapping="Wrap" Text="Adapted from the" VerticalAlignment="Top" FontSize="15"/>
-                    <TextBlock x:Name="InfoTextBlock3Link" HorizontalAlignment="Left" Margin="342,60,0,0" TextWrapping="Wrap" Text="0x40 flash" VerticalAlignment="Top" FontSize="15" Foreground="Blue"/>
-                    <TextBlock x:Name="InfoTextBlock4" HorizontalAlignment="Left" Margin="195,90,0,0" TextWrapping="Wrap" Text="Made by" VerticalAlignment="Top" FontSize="13"/>
-                    <TextBlock x:Name="InfoTextBlock5Link" HorizontalAlignment="Left" Margin="292,90,0,0" TextWrapping="Wrap" Text="Kettler" VerticalAlignment="Top" FontSize="13" Foreground="Blue"/>
-                    <TextBlock x:Name="InfoTextBlock4_Copy" HorizontalAlignment="Left" Margin="169,116,0,0" TextWrapping="Wrap" Text="Inspired by the work of" VerticalAlignment="Top" FontSize="9"/>
-                    <TextBlock x:Name="InfoTextBlock5Link_Copy" HorizontalAlignment="Left" Margin="382,116,0,0" TextWrapping="Wrap" Text="mon" VerticalAlignment="Top" FontSize="9" Foreground="Blue"/>
-                </Grid>
+                <uc:Info_TabPanel/>
             </TabItem>
         </TabControl>
         <Button x:Name="hide_button" Content="X" HorizontalAlignment="Left" Margin="585,0,0,0" VerticalAlignment="Top" Width="15" Height="15" FontWeight="Bold" FontSize="6" FontFamily="SimHei" Foreground="White" Background="Black" BorderBrush="Black" Click="hide_button_Click" Cursor="Hand"/>

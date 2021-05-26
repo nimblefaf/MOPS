@@ -87,6 +87,15 @@
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Info_TabPanel.xaml.cs">
+      <DependentUpon>Info_TabPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Options_TabPanel.xaml.cs">
+      <DependentUpon>Options_TabPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Resources_TabPanel.xaml.cs">
+      <DependentUpon>Resources_TabPanel.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -102,6 +111,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Info_TabPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Options_TabPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Resources_TabPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -187,7 +187,7 @@ namespace MOPS
                 Array.Resize(ref RPM.allPics, RPM.allPics.Length + 1);
                 RPM.allPics[RPM.allPics.Length - 1] = elem;
             }
-            set.add_last_rp();
+            set.resources_TabPanel.add_last_rp();
             songs_listbox.ItemsSource = enabled_songs;
             images_listbox.ItemsSource = enabled_images;
 
@@ -213,8 +213,8 @@ namespace MOPS
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             set.Owner = this;
-            Init_Animations();      
-            set.ColorBlend_UI_Update();
+            Init_Animations();
+            ColorBlend_Graphics_Update();
 
             timeline_color_change();
         }
@@ -283,6 +283,29 @@ namespace MOPS
             Storyboard.SetTarget(Fade, ImageGrid);
             SB_Fade.Children.Add(Fade);
             SB_Fade.FillBehavior = FillBehavior.Stop;
+        }
+
+        public void ColorBlend_Graphics_Update()
+        {
+            switch ((BlendMode)Properties.Settings.Default.blendMode)
+            {
+                case BlendMode.Plain:
+                    image0.Opacity = 1;
+                    ColorOverlap_Rectangle.Visibility = Visibility.Visible;
+                    ImageGrid.Effect = null;
+                    break;
+                case BlendMode.Alpha:
+                    image0.Opacity = 0.7;
+                    ColorOverlap_Rectangle.Visibility = Visibility.Visible;
+                    ImageGrid.Effect = null;
+                    break;
+                case BlendMode.HardLight:
+                    image0.Opacity = 1;
+                    ColorOverlap_Rectangle.Visibility = Visibility.Hidden;
+                    ImageGrid.Effect = HardLightEffect;
+                    Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
+                    break;
+            }
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
