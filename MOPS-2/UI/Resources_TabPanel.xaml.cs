@@ -15,9 +15,24 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Microsoft.Win32;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace MOPS.UI
 {
+    class RemoteRP_Info
+    {
+        public string author { get; set; }
+        public string Name { get; set; }
+        public string description { get; set; }
+        public string[] images { get; set; }
+        public string link { get; set; }
+        public string[] songs { get; set; }
+        public string url { get; set; }
+        public bool loaded = false;
+    }
+
+
     /// <summary>
     /// Interaction logic for Resources_TabPanel.xaml
     /// </summary>
@@ -27,8 +42,11 @@ namespace MOPS.UI
         public static ObservableCollection<setdata> song_names = new ObservableCollection<setdata>();
         public static ObservableCollection<setdata> images_names = new ObservableCollection<setdata>();
         MainWindow main;
+        RemoteRP_Info[] remoteRPs;
 
         private BackgroundWorker backgroundLoader;
+        private BackgroundWorker remoteListLoader;
+        private BackgroundWorker backgroundWebLoader;
 
         public Resources_TabPanel()
         {
@@ -44,6 +62,22 @@ namespace MOPS.UI
                 new DoWorkEventHandler(load_dowork);
             backgroundLoader.ProgressChanged +=
                 new ProgressChangedEventHandler(BGWorker_ProgressChanged);
+
+            remoteListLoader = new BackgroundWorker();
+            remoteListLoader.DoWork +=
+                new DoWorkEventHandler(RemoteListLoad);
+            remoteListLoader.RunWorkerCompleted +=
+                new RunWorkerCompletedEventHandler(RemoteListLoadCompleted);
+
+            backgroundWebLoader = new BackgroundWorker();
+            backgroundWebLoader.RunWorkerCompleted +=
+                new RunWorkerCompletedEventHandler(load_completed);
+            backgroundWebLoader.DoWork +=
+                new DoWorkEventHandler(webLoad_dowork);
+            backgroundWebLoader.ProgressChanged +=
+                new ProgressChangedEventHandler(BGWorker_ProgressChanged);
+
+            Remote_listBox.Items.Add(new setdata() { Name = "Click to load the list" }) ;
         }
 
         public void SetReference(MainWindow window)
@@ -53,25 +87,37 @@ namespace MOPS.UI
 
         private void respack_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int ind = respack_listbox.SelectedIndex;
-            rp_name_label.Content = main.RPM.ResPacks[ind].name;
-            rp_author_label.Content = main.RPM.ResPacks[ind].author;
-            rp_description_textbox.Text = main.RPM.ResPacks[ind].description;
-            Songs_tab.Header = "Songs: " + main.RPM.ResPacks[ind].songs_count;
-            Images_tab.Header = "Images: " + main.RPM.ResPacks[ind].pics_count;
-
-            song_names.Clear();
-            int ceiling = main.RPM.ResPacks[ind].songs_start + main.RPM.ResPacks[ind].songs_count;
-            for (int i = main.RPM.ResPacks[ind].songs_start; i < ceiling; i++)
+            if (respack_listbox.SelectedIndex != -1)
             {
-                song_names.Add(new setdata() { Name = main.RPM.allSongs[i].title, State = main.RPM.allSongs[i].enabled, Ind = i });
-            }
+                if(Remote_listBox.IsEnabled) Remote_listBox.SelectedIndex = -1;
+                load_remote_button.Visibility = Visibility.Hidden;
+                enableAll_button.Visibility = Visibility.Visible;
+                invert_button.Visibility = Visibility.Visible;
+                disabelAll_button.Visibility = Visibility.Visible;
 
-            images_names.Clear();
-            ceiling = main.RPM.ResPacks[ind].pics_start + main.RPM.ResPacks[ind].pics_count;
-            for (int i = main.RPM.ResPacks[ind].pics_start; i < ceiling; i++)
-            {
-                images_names.Add(new setdata() { Name = main.RPM.allPics[i].name, State = main.RPM.allPics[i].enabled, Ind = i });
+                int ind = respack_listbox.SelectedIndex;
+                rp_name_label.Content = main.RPM.ResPacks[ind].name;
+                rp_author_label.Content = main.RPM.ResPacks[ind].author;
+                if (main.RPM.ResPacks[ind].description == "") rp_description_textbox.Text = "<no description>";
+                else rp_description_textbox.Text = main.RPM.ResPacks[ind].description;
+                Songs_tab.Header = "Songs: " + main.RPM.ResPacks[ind].songs_count;
+                Images_tab.Header = "Images: " + main.RPM.ResPacks[ind].pics_count;
+
+                songs_listbox.ItemTemplate = (DataTemplate)Resources["DataTemplateCheckBoxed"]; //showing checkboxes
+                song_names.Clear();
+                int ceiling = main.RPM.ResPacks[ind].songs_start + main.RPM.ResPacks[ind].songs_count;
+                for (int i = main.RPM.ResPacks[ind].songs_start; i < ceiling; i++)
+                {
+                    song_names.Add(new setdata() { Name = main.RPM.allSongs[i].title, State = main.RPM.allSongs[i].enabled, Ind = i });
+                }
+
+                images_listbox.ItemTemplate = (DataTemplate)Resources["DataTemplateCheckBoxed"];
+                images_names.Clear();
+                ceiling = main.RPM.ResPacks[ind].pics_start + main.RPM.ResPacks[ind].pics_count;
+                for (int i = main.RPM.ResPacks[ind].pics_start; i < ceiling; i++)
+                {
+                    images_names.Add(new setdata() { Name = main.RPM.allPics[i].name, State = main.RPM.allPics[i].enabled, Ind = i });
+                }
             }
         }
 
@@ -87,6 +133,7 @@ namespace MOPS.UI
             if (openFile.ShowDialog() == true)
             {
                 load_rp_button.IsEnabled = false;
+                Status_textBlock.Text = "Processing...";
                 backgroundLoader.RunWorkerAsync(openFile.FileName);
             }
         }
@@ -110,6 +157,7 @@ namespace MOPS.UI
                 add_last_rp();
             }
             ProgBar.Value = 0;
+            Status_textBlock.Text = "Done";
             GC.Collect();
         }
         void BGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -142,7 +190,7 @@ namespace MOPS.UI
 
         private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (songs_listbox.SelectedIndex != -1)
+            if (songs_listbox.SelectedIndex != -1 & load_remote_button.Visibility == Visibility.Hidden)
             {
                 if (!song_names[songs_listbox.SelectedIndex].State)
                 {
@@ -161,7 +209,7 @@ namespace MOPS.UI
 
         private void images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (images_listbox.SelectedIndex != -1)
+            if (images_listbox.SelectedIndex != -1 & load_remote_button.Visibility == Visibility.Hidden)
             {
                 if (!images_names[images_listbox.SelectedIndex].State)
                 {
@@ -382,5 +430,125 @@ namespace MOPS.UI
             }
             stat_update();
         }
+
+
+        #region web
+
+        string url = "https://portal.0x40hu.es/resource_packs.json";
+        //string url_old = "https://cdn.0x40.ga/getRespacks.php";
+
+        
+
+        private void load_remote_button_Click(object sender, RoutedEventArgs e)
+        {
+            Remote_listBox.IsEnabled = false;
+            load_remote_button.IsEnabled = false;
+            Status_textBlock.Text = "Loading...";
+            using (WebClient wc = new WebClient())
+            {
+                wc.DownloadProgressChanged += wc_DownloadProgressChanged;
+                wc.DownloadDataCompleted += Wc_DownloadDataCompleted;
+                wc.DownloadDataAsync(new Uri(remoteRPs[Remote_listBox.SelectedIndex].url));
+            }
+        }
+
+        private void Wc_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
+        {
+            remoteRPs[Remote_listBox.SelectedIndex].loaded = true;
+            Remote_listBox.IsEnabled = true;
+            load_remote_button.IsEnabled = true;
+            if (load_remote_button.Visibility == Visibility.Visible)
+            {
+                load_remote_button.IsEnabled = false;
+                load_remote_button.Background = Brushes.GreenYellow;
+                load_remote_button.Content = "LOADED";
+            }
+            else Remote_listBox.SelectedIndex = -1;
+            ProgBar.Value = 0;
+            Status_textBlock.Text = "Processing...";
+            backgroundWebLoader.RunWorkerAsync(e.Result);
+        }
+
+        private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            ProgBar.Value = e.ProgressPercentage;
+        }
+
+        public void webLoad_dowork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            worker.WorkerReportsProgress = true;
+            e.Result = main.RPM.WebReader((byte[])e.Argument, worker, e);
+        }
+
+        #endregion
+
+        #region remote_list
+
+        private void RemoteListLoad(object sender, DoWorkEventArgs e)
+        {
+            string hues_json;
+            using (WebClient wc = new WebClient()) hues_json = wc.DownloadString(url);
+            remoteRPs = JsonConvert.DeserializeObject<RemoteRP_Info[]>(hues_json);
+        }
+        private void RemoteListLoadCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Remote_listBox.Items.Clear();
+            Remote_listBox.ItemsSource = remoteRPs;
+            Remote_listBox.IsEnabled = true;
+        }
+
+        private void Remote_listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Remote_listBox.ItemsSource == null & Remote_listBox.IsEnabled == true)
+            {
+                //((setdata)Remote_listBox.Items[0]).Name = "Loading...";
+                Remote_listBox.IsEnabled = false;
+                remoteListLoader.RunWorkerAsync();
+            }
+            else if (Remote_listBox.SelectedIndex != -1)
+            {
+                respack_listbox.SelectedIndex = -1;
+                load_remote_button.Visibility = Visibility.Visible;
+                enableAll_button.Visibility = Visibility.Hidden;
+                invert_button.Visibility = Visibility.Hidden;
+                disabelAll_button.Visibility = Visibility.Hidden;
+
+                if (remoteRPs[Remote_listBox.SelectedIndex].loaded)
+                {
+                    load_remote_button.Background = Brushes.GreenYellow;
+                    load_remote_button.Content = "LOADED";
+                    load_remote_button.IsEnabled = false;
+                }
+                else
+                {
+                    load_remote_button.Background = Brushes.LightGray;
+                    load_remote_button.Content = "LOAD REMOTE";
+                    load_remote_button.IsEnabled = true;
+                }
+
+                int ind = Remote_listBox.SelectedIndex;
+                rp_name_label.Content = remoteRPs[ind].Name;
+                rp_author_label.Content = remoteRPs[ind].author;
+                rp_description_textbox.Text = remoteRPs[ind].description;
+                Songs_tab.Header = "Songs: " + remoteRPs[ind].songs.Length;
+                Images_tab.Header = "Images: " + remoteRPs[ind].images.Length;
+
+                songs_listbox.ItemTemplate = (DataTemplate)Resources["DataTemplateStateless"]; //hiding checkboxes
+                song_names.Clear();
+                for (int i = 0; i < remoteRPs[ind].songs.Length; i++)
+                {
+                    song_names.Add(new setdata() { Name = remoteRPs[ind].songs[i], State = false, Ind = i });
+                }
+
+                images_listbox.ItemTemplate = (DataTemplate)Resources["DataTemplateStateless"];
+                images_names.Clear();
+                for (int i = 0; i < remoteRPs[ind].images.Length; i++)
+                {
+                    images_names.Add(new setdata() { Name = remoteRPs[ind].images[i], State = false, Ind = i });
+                }
+            }
+        }
+        #endregion
     }
 }

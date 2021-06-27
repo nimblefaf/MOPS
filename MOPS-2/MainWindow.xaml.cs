@@ -156,7 +156,7 @@ namespace MOPS
                     Assets = new Assets()
                     {
                         LargeImageKey = "hues_csharp_main3",
-                        LargeImageText = "That's Kybey, The Cutest Waifu",
+                        LargeImageText = "That's Kyubey, The Cutest Waifu",
 
                     }
                 });
@@ -167,7 +167,7 @@ namespace MOPS
                     Assets = new Assets()
                     {
                         LargeImageKey = "hues_csharp_main3",
-                        LargeImageText = "That's Kybey, The Cutest Waifu",
+                        LargeImageText = "That's Kyubey, The Cutest Waifu",
 
                     }
                 });
@@ -796,8 +796,8 @@ namespace MOPS
             if (songs_listbox.SelectedIndex != -1)
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
-                //Player.loop_mem = RPM.allSongs[i].buffer; //OOD
-                Player.loop_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].filename);
+                if (RPM.allSongs[i].buffer != null) Player.loop_mem = RPM.allSongs[i].buffer;
+                else Player.loop_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].filename);
                 if (Player.loop_mem.Length != 0)
                 {
                     loop_rhythm = RPM.allSongs[i].rhythm;
@@ -810,10 +810,10 @@ namespace MOPS
                     if (RPM.allSongs[i].buildup_filename != null & ( (BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.On | ( (BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
                     {
                         if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
-                        //Player.build_mem = RPM.allSongs[i].buildup_buffer; //OOD
-                        Player.build_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].buildup_filename);
+                        if (RPM.allSongs[i].buffer != null) Player.build_mem = RPM.allSongs[i].buildup_buffer;
+                        else Player.build_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].buildup_filename);
                         Player.Play_With_Buildup();
-                        build_rhythm = RPM.allSongs[i].buildup_rhythm;
+                        build_rhythm = RPM.allSongs[i].buildupRhythm;
                         int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
                         if (build_rhythm == null) //In case there is buildup music without beat string
                         {
@@ -847,7 +847,7 @@ namespace MOPS
                             Assets = new Assets()
                             {
                                 LargeImageKey = "hues_csharp_main3",
-                                LargeImageText = "That's Kybey, The Cutest Waifu",
+                                LargeImageText = "That's Kyubey, The Cutest Waifu",
 
                             }
                         }
@@ -884,7 +884,7 @@ namespace MOPS
                     Assets = new Assets()
                     {
                         LargeImageKey = "hues_csharp_main3",
-                        LargeImageText = "That's Kybey, The Cutest Waifu",
+                        LargeImageText = "That's Kyubey, The Cutest Waifu",
 
                     }
                 }

@@ -9,6 +9,7 @@ using System.IO.Compression;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using System.Xml.Serialization;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -16,7 +17,7 @@ using System.ComponentModel;
 
 namespace MOPS
 {
-    public struct RP
+    public class RP
     {
         public string name;
         public string author;
@@ -28,6 +29,15 @@ namespace MOPS
         public int songs_start;
         public int songs_count;
         public bool enabled;
+
+        public RP()
+        {
+            name = "";
+            author = "";
+            description = "";
+            link = "";
+            path = "";
+        }
     }
 
     
@@ -52,9 +62,9 @@ namespace MOPS
         public string source;
         public string rhythm;
         public string buildup_filename;
-        public string buildup_rhythm;
-        //public byte[] buffer; //OOD
-        //public byte[] buildup_buffer; //OOD
+        public string buildupRhythm;
+        public byte[] buffer; //OOD
+        public byte[] buildup_buffer; //OOD
         public bool enabled;
         public bool buildup_played;
     }
@@ -146,7 +156,7 @@ namespace MOPS
         public Pics[] allPics = new Pics[0];
 
         /// <summary>
-        /// Loads and parses a single resource pack in .zip format
+        /// Loads and parses a local resource pack file in .zip format
         /// </summary>
         /// <param name="target_path"></param>
         /// <returns></returns>
@@ -247,6 +257,7 @@ namespace MOPS
             {
                 //MainWindow.set.Status_textBlock.Text = "Parsing data...";
                 Array.Resize(ref ResPacks, ResPacks.Length + 1);
+                ResPacks[ResPacks.Length - 1] = new RP();
 
                 ResPacks[ResPacks.Length - 1].name = info_xml.XPathSelectElement("//info/name").Value;
                 ResPacks[ResPacks.Length - 1].author = info_xml.XPathSelectElement("//info/author").Value;
@@ -290,8 +301,266 @@ namespace MOPS
                             }
                             if (childnode.Name == "buildupRhythm")
                             {
-                                allSongs[allSongs.Length - 1].buildup_rhythm = childnode.InnerText;
-                                allSongs[allSongs.Length - 1].buildup_rhythm.Replace("\n", "");
+                                allSongs[allSongs.Length - 1].buildupRhythm = childnode.InnerText;
+                                allSongs[allSongs.Length - 1].buildupRhythm.Replace("\n", "");
+                            }
+                        }
+                    }
+                    ResPacks[ResPacks.Length - 1].songs_count = allSongs.Length - ResPacks[ResPacks.Length - 1].songs_start;
+                }
+                else ResPacks[ResPacks.Length - 1].songs_count = 0;
+
+                if (images_xml.HasChildNodes)
+                {
+                    XmlElement xRoot = images_xml.DocumentElement;
+                    foreach (XmlNode node in xRoot)
+                    {
+                        if (node.NodeType == XmlNodeType.Comment) continue; //WHY DOES IT EVEN PARSE COMMENTS?!
+                        Array.Resize(ref Transfer, Transfer.Length + 1);
+                        Transfer[Transfer.Length - 1].name = node.Attributes[0].Value;
+
+                        if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
+                            Transfer[Transfer.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value)];
+                        else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
+                            Transfer[Transfer.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
+
+                        Transfer[Transfer.Length - 1].pic = picConverter.ImageOptimize(Transfer[Transfer.Length - 1].pic);
+
+                        Transfer[Transfer.Length - 1].enabled = true;
+                        Transfer[Transfer.Length - 1].source = "";
+                        Transfer[Transfer.Length - 1].source_other = "";
+                        Transfer[Transfer.Length - 1].fullname = Transfer[Transfer.Length - 1].name;
+
+                        Transfer[Transfer.Length - 1].align = "center";
+
+                        foreach (XmlNode childnode in node)
+                        {
+                            if (childnode.Name == "source")
+                            {
+                                Transfer[Transfer.Length - 1].source = childnode.InnerText;
+                            }
+                            if (childnode.Name == "source_other")
+                            {
+                                Transfer[Transfer.Length - 1].source_other = childnode.InnerText;
+                            }
+                            if (childnode.Name == "fullname")
+                            {
+                                Transfer[Transfer.Length - 1].fullname = childnode.InnerText;
+                            }
+                            if (childnode.Name == "align")
+                            {
+                                Transfer[Transfer.Length - 1].align = childnode.InnerText;
+                            }
+                            if (childnode.Name == "frameDuration")
+                            {
+                                Transfer[Transfer.Length - 1].frameDuration = Convert.ToInt32(childnode.InnerText);
+                                Transfer[Transfer.Length - 1].pic = PicsBuffer[node.Attributes[0].Value + "_01"];
+                                Transfer[Transfer.Length - 1].pic = picConverter.ImageOptimize(Transfer[Transfer.Length - 1].pic);
+                                Transfer[Transfer.Length - 1].animation = new BitmapImage[0];
+                                for (int i = 1; i < PicsBuffer.Count; i++)
+                                {
+                                    string end = "";
+                                    if (i < 10) end = "_0" + Convert.ToString(i);
+                                    else end = "_" + Convert.ToString(i);
+                                    if (PicsBuffer.ContainsKey(node.Attributes[0].Value + end))
+                                    {
+                                        Array.Resize(ref Transfer[Transfer.Length - 1].animation, Transfer[Transfer.Length - 1].animation.Length + 1);
+                                        Transfer[Transfer.Length - 1].animation[Transfer[Transfer.Length - 1].animation.Length - 1] = PicsBuffer[node.Attributes[0].Value + end];
+                                    }
+                                    else break;
+                                }
+                                Transfer[Transfer.Length - 1].animation = picConverter.ImageArrayOptimize(Transfer[Transfer.Length - 1].animation);
+                            }
+                        }
+                    }
+                    ResPacks[ResPacks.Length - 1].pics_count = Transfer.Length;
+                }
+                else ResPacks[ResPacks.Length - 1].pics_count = 0;
+                //MainWindow.set.Status_textBlock.Text = "Loaded";
+                PicsBuffer.Clear();
+                SongsBuffer.Clear();
+                foreach (Pics p in Transfer)
+                {
+                    p.pic.Freeze();
+                    if (p.animation != null)
+                    {
+                        foreach (BitmapSource i in p.animation) i.Freeze();
+                    }
+                }
+                return Transfer;
+            }
+            else
+            {
+                //MainWindow.set.Status_textBlock.Text = "info.xml not found";
+                PicsBuffer.Clear();
+                SongsBuffer.Clear();
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Loads and parses a local resource pack file in .zip format
+        /// </summary>
+        /// <param name="target_path"></param>
+        /// <returns></returns>
+        public Pics[] WebReader(byte[] data, BackgroundWorker worker, DoWorkEventArgs e)
+        {
+            Pics[] Transfer = new Pics[0];
+            XmlDocument info_xml = new XmlDocument();
+            XmlDocument songs_xml = new XmlDocument();
+            XmlDocument images_xml = new XmlDocument();
+            Dictionary<string, BitmapImage> PicsBuffer = new Dictionary<string, BitmapImage> { };
+            Dictionary<string, byte[]> SongsBuffer = new Dictionary<string, byte[]> { };
+
+            XmlSerializer RespackSerializer = new XmlSerializer(typeof(RP));
+            RP bufferedRP = new RP();
+            XmlSerializer ImageSerializer = new XmlSerializer(typeof(Pics));
+            XmlSerializer SongSerializer = new XmlSerializer(typeof(Songs));
+
+                XmlReaderSettings readerSettings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                DtdProcessing = DtdProcessing.Ignore,
+                CheckCharacters = false
+            };
+
+            //MainWindow.set.Status_textBlock.Text = "Loading ZIP...";
+            using (MemoryStream zipToOpen = new MemoryStream(data))
+            {
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
+                {
+                    int ProgressCount = 0;
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        ProgressCount++;
+                        if (entry.FullName.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            if (entry.Name.ToLower() == "info.xml")
+                            {
+                                using (var stream = entry.Open())
+                                using (var reader = new StreamReader(stream))
+                                using (var xmlread = XmlReader.Create(reader, readerSettings))
+                                    info_xml.Load(xmlread);
+                            }
+                                
+                            
+
+                            if (entry.Name.ToLower() == "songs.xml")
+                                using (var stream = entry.Open())
+                                using (var reader = new StreamReader(stream))
+                                {
+                                    string doc = reader.ReadToEnd();
+                                    doc = doc.Replace("&", "&amp;");
+                                    doc = doc.Replace("&amp;amp;", "&amp;");
+                                    using (var inner = new MemoryStream(Encoding.UTF8.GetBytes(doc)))
+                                    using (var xmlread = XmlReader.Create(inner, readerSettings))
+                                    {
+                                        songs_xml.Load(xmlread);
+                                    }
+                                }
+                            if (entry.Name.ToLower() == "images.xml")
+                                using (var stream = entry.Open())
+                                using (var reader = new StreamReader(stream))
+                                {
+                                    using (var xmlread = XmlReader.Create(reader, readerSettings))
+                                        images_xml.Load(xmlread);
+                                }
+                        }
+                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            using (var stream = entry.Open())
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+                                memoryStream.Position = 0;
+                                using (BinaryReader br = new BinaryReader(memoryStream))
+                                {
+                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length-4), br.ReadBytes((int)memoryStream.Length));
+                                }
+                            }
+                        }
+                        if (entry.FullName.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".gif", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            using (var stream = entry.Open())
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                stream.CopyTo(memoryStream);
+                                memoryStream.Position = 0;
+
+                                var pic = new BitmapImage();
+
+                                pic.BeginInit();
+                                pic.CacheOption = BitmapCacheOption.OnLoad;
+                                pic.StreamSource = memoryStream;
+                                pic.EndInit();
+                                string name = entry.Name.Substring(0, entry.Name.Length - 4);
+                                PicsBuffer.Add(name, pic);
+                            }
+                        }
+                        int percentComplete = (int)((float)ProgressCount / (float)archive.Entries.Count * 100);
+                        if (worker.WorkerReportsProgress) worker.ReportProgress(percentComplete);
+                    }
+                }
+            }
+
+            if (info_xml.HasChildNodes)
+            {
+                //MainWindow.set.Status_textBlock.Text = "Parsing data...";
+                Array.Resize(ref ResPacks, ResPacks.Length + 1);
+                ResPacks[ResPacks.Length - 1] = new RP();
+
+                //ResPacks[ResPacks.Length - 1].name = info_xml.XPathSelectElement("//info/name").Value;
+                //ResPacks[ResPacks.Length - 1].author = info_xml.XPathSelectElement("//info/author").Value;
+                //ResPacks[ResPacks.Length - 1].description = info_xml.XPathSelectElement("//info/description").Value;
+                //ResPacks[ResPacks.Length - 1].link = info_xml.XPathSelectElement("//info/link").Value;
+
+                foreach (XmlNode node in info_xml.DocumentElement)
+                {
+                    if (node.Name == "name") ResPacks[ResPacks.Length - 1].name = node.InnerText;
+                    else if (node.Name == "author") ResPacks[ResPacks.Length - 1].author = node.InnerText;
+                    else if(node.Name == "description") ResPacks[ResPacks.Length - 1].description = node.InnerText;
+                    else if(node.Name == "link") ResPacks[ResPacks.Length - 1].link = node.InnerText;
+                }
+
+                ResPacks[ResPacks.Length - 1].songs_start = allSongs.Length;
+                ResPacks[ResPacks.Length - 1].pics_start = allPics.Length;
+                ResPacks[ResPacks.Length - 1].enabled = true;
+
+                if (songs_xml.HasChildNodes)
+                {
+                    XmlElement xRoot = songs_xml.DocumentElement;
+                    foreach (XmlNode node in xRoot)
+                    {
+                        if (node.NodeType == XmlNodeType.Comment) continue;
+                        Array.Resize(ref allSongs, allSongs.Length + 1);
+                        allSongs[allSongs.Length - 1].buffer = SongsBuffer[node.Attributes[0].Value];
+                        allSongs[allSongs.Length - 1].filename = node.Attributes[0].Value;
+                        allSongs[allSongs.Length - 1].enabled = true;
+                        allSongs[allSongs.Length - 1].buildup_played = false;
+                        foreach (XmlNode childnode in node)
+                        {
+                            if (childnode.Name == "title")
+                            {
+                                allSongs[allSongs.Length - 1].title = childnode.InnerText;
+                            }
+                            if (childnode.Name == "source")
+                            {
+                                allSongs[allSongs.Length - 1].source = childnode.InnerText;
+                            }
+                            if (childnode.Name == "rhythm")
+                            {
+                                allSongs[allSongs.Length - 1].rhythm = childnode.InnerText;
+                                allSongs[allSongs.Length - 1].rhythm.Replace("\n", "");
+                            }
+                            if (childnode.Name == "buildup")
+                            {
+                                allSongs[allSongs.Length - 1].buildup_filename = childnode.InnerText;
+                                allSongs[allSongs.Length - 1].buildup_buffer = SongsBuffer[childnode.InnerText];
+                            }
+                            if (childnode.Name == "buildupRhythm")
+                            {
+                                allSongs[allSongs.Length - 1].buildupRhythm = childnode.InnerText;
+                                allSongs[allSongs.Length - 1].buildupRhythm.Replace("\n", "");
                             }
                         }
                     }
