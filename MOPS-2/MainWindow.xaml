@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MOPS.Shaders"
+        xmlns:uc="clr-namespace:MOPS.UI"
         mc:Ignorable="d"
-        Title="0x40 Hues of MOPS" Height="600" Width="800" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" SizeChanged="Window_SizeChanged" StateChanged="Window_StateChanged" LocationChanged="Window_LocationChanged" MinWidth="800" MinHeight="600" KeyDown="Window_KeyDown" FontFamily="/MOPS;component/fonts/#Pet Me 128" Background="White" OpacityMask="Black" Closing="Window_Closing">
+        Title="0x40 Hues of MOPS" Height="600" Width="800" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" KeyDown="Window_KeyDown" FontFamily="/MOPS;component/fonts/#Pet Me 128" Background="White" OpacityMask="Black" Closing="Window_Closing">
 
     <Grid>
         <Border>
@@ -33,5 +34,7 @@
         <TextBlock x:Name="Message_textBlock" Visibility="Hidden" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Message" VerticalAlignment="Top"/>
         <TextBlock x:Name="InfoBlock" Margin="10,46,0,0" TextWrapping="Wrap" Text="Click here to start" VerticalAlignment="Top" HorizontalAlignment="Left" MouseLeftButtonDown="First_Load" Cursor="Hand" Height="25"/>
         <TextBlock x:Name="CornerBlock" Margin="10,10,0,0" TextWrapping="Wrap" Text="Warning: lots of flashing lights" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center" Height="31"/>
+        <!--The line below should be always last-->
+        <uc:InnerWindow x:Name="InnerWin" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden"></uc:InnerWindow>
     </Grid>
 </Window>

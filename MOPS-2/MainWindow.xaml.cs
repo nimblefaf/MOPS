@@ -22,6 +22,37 @@ using DiscordRPC;
 namespace MOPS
 {
     /// <summary>
+    ///     The selected hue blend mode for drawing the image.
+    /// </summary>
+    public enum BlendMode
+    {
+        /// <summary>
+        /// Image is alpha-blended over the hue.
+        /// </summary>
+        Plain = 0,
+        /// <summary>
+        /// Image is alpha-blended over the hue at 70% opacity.
+        /// </summary>
+        Alpha = 1,
+        /// <summary>
+        /// Image is alpha-blended over a white background.The hue is blended over the image with "hard light" mode at 70% opacity.
+        /// </summary>
+        HardLight = 2
+    }
+    public enum BuildUpMode
+    {
+        Off = 0,
+        On = 1,
+        Once = 2
+    }
+    public enum ColorSet
+    {
+        Normal = 0,
+        Pastel = 1,
+        Weed = 2
+    }
+
+    /// <summary>
     /// Template for the contents of images&songs listboxes
     /// </summary>
     public class rdata
@@ -60,7 +91,6 @@ namespace MOPS
 
         public int CurrentColorInd = 0;
 
-        public static Settings set = new Settings();
         public RPManager RPM = new RPManager();
 
         public bool muted = false;
@@ -113,7 +143,7 @@ namespace MOPS
             ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
 
             Player.SetReference(this);
-            set.SetReference(this);
+            InnerWin.SetReference(this);
 
             switch ((ColorSet)Properties.Settings.Default.colorSet)
             {
@@ -187,7 +217,7 @@ namespace MOPS
                 Array.Resize(ref RPM.allPics, RPM.allPics.Length + 1);
                 RPM.allPics[RPM.allPics.Length - 1] = elem;
             }
-            set.resources_TabPanel.add_last_rp();
+            InnerWin.resources_TabPanel.add_last_rp();
             songs_listbox.ItemsSource = enabled_songs;
             images_listbox.ItemsSource = enabled_images;
 
@@ -212,7 +242,7 @@ namespace MOPS
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            set.Owner = this;
+            //set.Owner = this; //that was for window
             Init_Animations();
             ColorBlend_Graphics_Update();
 
@@ -313,8 +343,8 @@ namespace MOPS
             //if (e.ChangedButton == MouseButton.Left) timeline_noblur();
             if (e.ChangedButton == MouseButton.Right)
             {
-                if (set.IsVisible) set.Hide();
-                else set.Show();
+                if (InnerWin.IsVisible) InnerWin.Visibility = Visibility.Hidden;
+                else InnerWin.Visibility = Visibility.Visible;
             }
         }
 
@@ -709,37 +739,7 @@ namespace MOPS
 
         #endregion
 
-        //
-        // Settings Window Position Controls
-        //
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (WindowState != WindowState.Maximized)
-            {
-                set.Top = Top + (Height / 2) - (set.Height / 2);
-                set.Left = Left + (Width / 2) - (set.Width / 2);
-            }
-            if (RPM.allPics.Length != 0) Smart_Stretch();
-        }
-        private void Window_StateChanged(object sender, EventArgs e)
-        {
-            Smart_Stretch();
-            if (WindowState == WindowState.Normal)
-            {
-                set.Top = Top + (Height / 2) - (set.Height / 2);
-                set.Left = Left + (Width / 2) - (set.Width / 2);
-            }
-            if (WindowState == WindowState.Maximized)
-            {
-                set.Top = (SystemParameters.MaximizedPrimaryScreenHeight / 2) - (set.Height / 2);
-                set.Left = (SystemParameters.MaximizedPrimaryScreenWidth / 2) - (set.Width / 2);
-            }
-        }
-        private void Window_LocationChanged(object sender, EventArgs e)
-        {
-            set.Top = Top + (Height / 2) - (set.Height / 2);
-            set.Left = Left + (Width / 2) - (set.Width / 2);
-        }
+
         private void Smart_Stretch()
         {
             if (WindowState == WindowState.Maximized)
