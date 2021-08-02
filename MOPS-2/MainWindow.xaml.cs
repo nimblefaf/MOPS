@@ -22,46 +22,6 @@ using DiscordRPC;
 namespace MOPS
 {
     /// <summary>
-    ///     The selected hue blend mode for drawing the image.
-    /// </summary>
-    public enum BlendMode
-    {
-        /// <summary>
-        /// Image is alpha-blended over the hue.
-        /// </summary>
-        Plain = 0,
-        /// <summary>
-        /// Image is alpha-blended over the hue at 70% opacity.
-        /// </summary>
-        Alpha = 1,
-        /// <summary>
-        /// Image is alpha-blended over a white background.The hue is blended over the image with "hard light" mode at 70% opacity.
-        /// </summary>
-        HardLight = 2
-    }
-    public enum BuildUpMode
-    {
-        Off = 0,
-        On = 1,
-        Once = 2
-    }
-    public enum ColorSet
-    {
-        Normal = 0,
-        Pastel = 1,
-        Weed = 2
-    }
-
-    /// <summary>
-    /// Template for the contents of images&songs listboxes
-    /// </summary>
-    public class rdata
-    {
-        public string Name { get; set; }
-        public int Ind { get; set; }
-    }
-
-    /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
@@ -265,7 +225,7 @@ namespace MOPS
         private DoubleAnimation Blackout = new DoubleAnimation();
         private Storyboard SB_Blackout_Short = new Storyboard();
         private DoubleAnimation Blackout_Short = new DoubleAnimation();
-        private ThicknessAnimation Blackout_Blur = new ThicknessAnimation();
+        private DoubleAnimation Blackout_Blur = new DoubleAnimation();
         public ColorAnimation Fade = new ColorAnimation();
 
         private Storyboard SB_Fade = new Storyboard();
@@ -305,8 +265,17 @@ namespace MOPS
                 blackouted = true;
             };
             Storyboard.SetTargetProperty(Blackout, new PropertyPath(OpacityProperty));
+
+            Blackout_Blur.BeginTime = new TimeSpan(0);
+            Blackout_Blur.FillBehavior = FillBehavior.Stop;
+            Blackout_Blur.From = 0;
+            Blackout_Blur.To = 0.02;
+            Blackout_Blur.Duration = TimeSpan.FromSeconds(0.15);
+            Storyboard.SetTargetProperty(Blackout_Blur, new PropertyPath("Effect.BlurAmount"));
             SB_Blackout.Children.Add(Blackout);
+            SB_Blackout.Children.Add(Blackout_Blur);
             Storyboard.SetTarget(Blackout, Blackout_Rectangle);
+            Storyboard.SetTarget(Blackout_Blur, image0);
             SB_Blackout.FillBehavior = FillBehavior.Stop;
 
             Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
@@ -548,6 +517,9 @@ namespace MOPS
                     case '=':
                         timeline_fade_image();
                         break;
+                    case '¤':
+                        timeline_whiteout();
+                        break;
                 }
         }
 
@@ -575,12 +547,26 @@ namespace MOPS
         // '+'
         private void timeline_blackout()
         {
+            Blackout_Rectangle.Fill = Brushes.Black;
+            if (enabled_images.Count != 0) switch (blur_quality)
+                {
+                    case 1:
+                        image0.Effect = XBlur8;
+                        break;
+                }
             SB_Blackout.Begin();
         }
         // '¤'
         private void timeline_whiteout()
         {
-
+            Blackout_Rectangle.Fill = Brushes.White;
+            if (enabled_images.Count != 0) switch (blur_quality)
+                {
+                    case 1:
+                        image0.Effect = XBlur8;
+                        break;
+                }
+            SB_Blackout.Begin();
         }
         // '|'
         private void timeline_blackout_short()
@@ -1046,5 +1032,45 @@ namespace MOPS
             discordRpcClient.Dispose();
         }
         
+    }
+
+    /// <summary>
+    ///     The selected hue blend mode for drawing the image.
+    /// </summary>
+    public enum BlendMode
+    {
+        /// <summary>
+        /// Image is alpha-blended over the hue.
+        /// </summary>
+        Plain = 0,
+        /// <summary>
+        /// Image is alpha-blended over the hue at 70% opacity.
+        /// </summary>
+        Alpha = 1,
+        /// <summary>
+        /// Image is alpha-blended over a white background.The hue is blended over the image with "hard light" mode at 70% opacity.
+        /// </summary>
+        HardLight = 2
+    }
+    public enum BuildUpMode
+    {
+        Off = 0,
+        On = 1,
+        Once = 2
+    }
+    public enum ColorSet
+    {
+        Normal = 0,
+        Pastel = 1,
+        Weed = 2
+    }
+
+    /// <summary>
+    /// Template for the contents of images&songs listboxes
+    /// </summary>
+    public class rdata
+    {
+        public string Name { get; set; }
+        public int Ind { get; set; }
     }
 }

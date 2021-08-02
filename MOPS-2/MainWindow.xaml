@@ -16,7 +16,7 @@
                 <Image x:Name="image0" Source="Kyubey.png" Opacity="1" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" SourceUpdated="image_SourceUpdated" RenderOptions.EdgeMode="Aliased"/>
             </Grid>
         </Border>
-        <Rectangle x:Name="Blackout_Rectangle" Fill="Black" Stroke="Black" Opacity="0" Visibility="Visible"/>
+        <Rectangle x:Name="Blackout_Rectangle" Fill="Black" Stroke="Black" Opacity="0" Visibility="Visible" Margin="-10"/>
         <Label x:Name="timeline_label" Content=">." VerticalAlignment="Bottom" FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="9"/>
         <Label x:Name="song_label" Content="SongName" Margin="0,0,0,13" VerticalAlignment="Bottom" FontFamily="/MOPS;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="792" FontSize="9"/>
         <Label x:Name="color_label" Content="Color" Margin="0,0,0,39" VerticalAlignment="Bottom" FontFamily="/MOPS;component/fonts/#Pet Me 128" HorizontalAlignment="Left" Width="200" FontSize="9"/>
