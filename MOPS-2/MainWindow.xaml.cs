@@ -937,7 +937,7 @@ namespace MOPS
                 else
                 {
                     anim_ind = 1;
-                    AnimTimer.Interval = TimeSpan.FromMilliseconds(RPM.allPics[current_image_pos].frameDuration);
+                    AnimTimer.Interval = TimeSpan.FromMilliseconds(RPM.allPics[current_image_pos].frameDuration[0]);
                     AnimTimer.Start();
                     ////For debug:
                     //CornerBlock.Text = index + ": " + RPM.allPics[index].animation[0].Format.ToString();
@@ -954,7 +954,7 @@ namespace MOPS
                             image0.HorizontalAlignment = HorizontalAlignment.Right;
                             break;
                     }
-                    //Smart_Stretch();
+                    Smart_Stretch();
                 }
             }
             else

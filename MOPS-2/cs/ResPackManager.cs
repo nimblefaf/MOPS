@@ -51,7 +51,9 @@ namespace MOPS
         public string align;
         public BitmapSource pic;
         public BitmapSource[] animation;
-        public int frameDuration;
+        public int[] frameDuration;
+        public double beatsPerAnim;
+        public double syncOffset;
         public bool enabled;
     }
 
@@ -63,8 +65,8 @@ namespace MOPS
         public string rhythm;
         public string buildup_filename;
         public string buildupRhythm;
-        public byte[] buffer; //OOD
-        public byte[] buildup_buffer; //OOD
+        public byte[] buffer;
+        public byte[] buildup_buffer;
         public bool enabled;
         public bool buildup_played;
     }
@@ -177,7 +179,6 @@ namespace MOPS
                 CheckCharacters = false
             };
 
-            //MainWindow.set.Status_textBlock.Text = "Loading ZIP...";
             using (FileStream zipToOpen = new FileStream(target_path, FileMode.Open))
             {
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
@@ -216,7 +217,7 @@ namespace MOPS
                                         images_xml.Load(xmlread);
                                 }
                         }
-                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase))
+                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase))
                         {
                             using (var stream = entry.Open())
                             using (var memoryStream = new MemoryStream())
@@ -225,7 +226,7 @@ namespace MOPS
                                 memoryStream.Position = 0;
                                 using (BinaryReader br = new BinaryReader(memoryStream))
                                 {
-                                    SongsBuffer.Add(entry.Name, br.ReadBytes((int)memoryStream.Length));
+                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length - 4), br.ReadBytes((int)memoryStream.Length));
                                 }
                             }
                         }
@@ -268,113 +269,10 @@ namespace MOPS
                 ResPacks[ResPacks.Length - 1].enabled = true;
                 ResPacks[ResPacks.Length - 1].path = target_path;
 
-                if (songs_xml.HasChildNodes)
-                {
-                    XmlElement xRoot = songs_xml.DocumentElement;
-                    foreach (XmlNode node in xRoot)
-                    {
-                        if (node.NodeType == XmlNodeType.Comment) continue;
-                        Array.Resize(ref allSongs, allSongs.Length + 1);
-                        //allSongs[allSongs.Length - 1].buffer = SongsBuffer[node.Attributes[0].Value + ".mp3"]; //OOD
-                        allSongs[allSongs.Length - 1].filename = node.Attributes[0].Value + ".mp3";
-                        allSongs[allSongs.Length - 1].enabled = true;
-                        allSongs[allSongs.Length - 1].buildup_played = false;
-                        foreach (XmlNode childnode in node)
-                        {
-                            if (childnode.Name == "title")
-                            {
-                                allSongs[allSongs.Length - 1].title = childnode.InnerText;
-                            }
-                            if (childnode.Name == "source")
-                            {
-                                allSongs[allSongs.Length - 1].source = childnode.InnerText;
-                            }
-                            if (childnode.Name == "rhythm")
-                            {
-                                allSongs[allSongs.Length - 1].rhythm = childnode.InnerText;
-                                allSongs[allSongs.Length - 1].rhythm.Replace("\n", "");
-                            }
-                            if (childnode.Name == "buildup")
-                            {
-                                allSongs[allSongs.Length - 1].buildup_filename = childnode.InnerText + ".mp3";
-                                //allSongs[allSongs.Length - 1].buildup_buffer = SongsBuffer[childnode.InnerText + ".mp3"]; //OOD
-                            }
-                            if (childnode.Name == "buildupRhythm")
-                            {
-                                allSongs[allSongs.Length - 1].buildupRhythm = childnode.InnerText;
-                                allSongs[allSongs.Length - 1].buildupRhythm.Replace("\n", "");
-                            }
-                        }
-                    }
-                    ResPacks[ResPacks.Length - 1].songs_count = allSongs.Length - ResPacks[ResPacks.Length - 1].songs_start;
-                }
+                if (songs_xml.HasChildNodes) parseSongs(songs_xml, SongsBuffer, false);
                 else ResPacks[ResPacks.Length - 1].songs_count = 0;
 
-                if (images_xml.HasChildNodes)
-                {
-                    XmlElement xRoot = images_xml.DocumentElement;
-                    foreach (XmlNode node in xRoot)
-                    {
-                        if (node.NodeType == XmlNodeType.Comment) continue; //WHY DOES IT EVEN PARSE COMMENTS?!
-                        Array.Resize(ref Transfer, Transfer.Length + 1);
-                        Transfer[Transfer.Length - 1].name = node.Attributes[0].Value;
-
-                        if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
-                            Transfer[Transfer.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value)];
-                        else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
-                            Transfer[Transfer.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
-
-                        Transfer[Transfer.Length - 1].pic = picConverter.ImageOptimize(Transfer[Transfer.Length - 1].pic);
-
-                        Transfer[Transfer.Length - 1].enabled = true;
-                        Transfer[Transfer.Length - 1].source = "";
-                        Transfer[Transfer.Length - 1].source_other = "";
-                        Transfer[Transfer.Length - 1].fullname = Transfer[Transfer.Length - 1].name;
-
-                        Transfer[Transfer.Length - 1].align = "center";
-
-                        foreach (XmlNode childnode in node)
-                        {
-                            if (childnode.Name == "source")
-                            {
-                                Transfer[Transfer.Length - 1].source = childnode.InnerText;
-                            }
-                            if (childnode.Name == "source_other")
-                            {
-                                Transfer[Transfer.Length - 1].source_other = childnode.InnerText;
-                            }
-                            if (childnode.Name == "fullname")
-                            {
-                                Transfer[Transfer.Length - 1].fullname = childnode.InnerText;
-                            }
-                            if (childnode.Name == "align")
-                            {
-                                Transfer[Transfer.Length - 1].align = childnode.InnerText;
-                            }
-                            if (childnode.Name == "frameDuration")
-                            {
-                                Transfer[Transfer.Length - 1].frameDuration = Convert.ToInt32(childnode.InnerText);
-                                Transfer[Transfer.Length - 1].pic = PicsBuffer[node.Attributes[0].Value + "_01"];
-                                Transfer[Transfer.Length - 1].pic = picConverter.ImageOptimize(Transfer[Transfer.Length - 1].pic);
-                                Transfer[Transfer.Length - 1].animation = new BitmapImage[0];
-                                for (int i = 1; i < PicsBuffer.Count; i++)
-                                {
-                                    string end = "";
-                                    if (i < 10) end = "_0" + Convert.ToString(i);
-                                    else end = "_" + Convert.ToString(i);
-                                    if (PicsBuffer.ContainsKey(node.Attributes[0].Value + end))
-                                    {
-                                        Array.Resize(ref Transfer[Transfer.Length - 1].animation, Transfer[Transfer.Length - 1].animation.Length + 1);
-                                        Transfer[Transfer.Length - 1].animation[Transfer[Transfer.Length - 1].animation.Length - 1] = PicsBuffer[node.Attributes[0].Value + end];
-                                    }
-                                    else break;
-                                }
-                                Transfer[Transfer.Length - 1].animation = picConverter.ImageArrayOptimize(Transfer[Transfer.Length - 1].animation);
-                            }
-                        }
-                    }
-                    ResPacks[ResPacks.Length - 1].pics_count = Transfer.Length;
-                }
+                if (images_xml.HasChildNodes) parsePics(images_xml, PicsBuffer, ref Transfer);
                 else ResPacks[ResPacks.Length - 1].pics_count = 0;
                 //MainWindow.set.Status_textBlock.Text = "Loaded";
                 PicsBuffer.Clear();
@@ -399,7 +297,7 @@ namespace MOPS
         }
 
         /// <summary>
-        /// Loads and parses a local resource pack file in .zip format
+        /// Parses a remote resource pack file in .zip format
         /// </summary>
         /// <param name="target_path"></param>
         /// <returns></returns>
@@ -526,115 +424,11 @@ namespace MOPS
                 ResPacks[ResPacks.Length - 1].pics_start = allPics.Length;
                 ResPacks[ResPacks.Length - 1].enabled = true;
 
-                if (songs_xml.HasChildNodes)
-                {
-                    XmlElement xRoot = songs_xml.DocumentElement;
-                    foreach (XmlNode node in xRoot)
-                    {
-                        if (node.NodeType == XmlNodeType.Comment) continue;
-                        Array.Resize(ref allSongs, allSongs.Length + 1);
-                        allSongs[allSongs.Length - 1].buffer = SongsBuffer[node.Attributes[0].Value];
-                        allSongs[allSongs.Length - 1].filename = node.Attributes[0].Value;
-                        allSongs[allSongs.Length - 1].enabled = true;
-                        allSongs[allSongs.Length - 1].buildup_played = false;
-                        foreach (XmlNode childnode in node)
-                        {
-                            if (childnode.Name == "title")
-                            {
-                                allSongs[allSongs.Length - 1].title = childnode.InnerText;
-                            }
-                            if (childnode.Name == "source")
-                            {
-                                allSongs[allSongs.Length - 1].source = childnode.InnerText;
-                            }
-                            if (childnode.Name == "rhythm")
-                            {
-                                allSongs[allSongs.Length - 1].rhythm = childnode.InnerText;
-                                allSongs[allSongs.Length - 1].rhythm.Replace("\n", "");
-                            }
-                            if (childnode.Name == "buildup")
-                            {
-                                allSongs[allSongs.Length - 1].buildup_filename = childnode.InnerText;
-                                allSongs[allSongs.Length - 1].buildup_buffer = SongsBuffer[childnode.InnerText];
-                            }
-                            if (childnode.Name == "buildupRhythm")
-                            {
-                                allSongs[allSongs.Length - 1].buildupRhythm = childnode.InnerText;
-                                allSongs[allSongs.Length - 1].buildupRhythm.Replace("\n", "");
-                            }
-                        }
-                    }
-                    ResPacks[ResPacks.Length - 1].songs_count = allSongs.Length - ResPacks[ResPacks.Length - 1].songs_start;
-                }
+                if (songs_xml.HasChildNodes) parseSongs(songs_xml, SongsBuffer, true);
                 else ResPacks[ResPacks.Length - 1].songs_count = 0;
-
-                if (images_xml.HasChildNodes)
-                {
-                    XmlElement xRoot = images_xml.DocumentElement;
-                    foreach (XmlNode node in xRoot)
-                    {
-                        if (node.NodeType == XmlNodeType.Comment) continue; //WHY DOES IT EVEN PARSE COMMENTS?!
-                        Array.Resize(ref Transfer, Transfer.Length + 1);
-                        Transfer[Transfer.Length - 1].name = node.Attributes[0].Value;
-
-                        if (PicsBuffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
-                            Transfer[Transfer.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.Attributes[0].Value)];
-                        else if (PicsBuffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
-                            Transfer[Transfer.Length - 1].pic = PicsBuffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
-
-                        Transfer[Transfer.Length - 1].pic = picConverter.ImageOptimize(Transfer[Transfer.Length - 1].pic);
-
-                        Transfer[Transfer.Length - 1].enabled = true;
-                        Transfer[Transfer.Length - 1].source = "";
-                        Transfer[Transfer.Length - 1].source_other = "";
-                        Transfer[Transfer.Length - 1].fullname = Transfer[Transfer.Length - 1].name;
-
-                        Transfer[Transfer.Length - 1].align = "center";
-
-                        foreach (XmlNode childnode in node)
-                        {
-                            if (childnode.Name == "source")
-                            {
-                                Transfer[Transfer.Length - 1].source = childnode.InnerText;
-                            }
-                            if (childnode.Name == "source_other")
-                            {
-                                Transfer[Transfer.Length - 1].source_other = childnode.InnerText;
-                            }
-                            if (childnode.Name == "fullname")
-                            {
-                                Transfer[Transfer.Length - 1].fullname = childnode.InnerText;
-                            }
-                            if (childnode.Name == "align")
-                            {
-                                Transfer[Transfer.Length - 1].align = childnode.InnerText;
-                            }
-                            if (childnode.Name == "frameDuration")
-                            {
-                                Transfer[Transfer.Length - 1].frameDuration = Convert.ToInt32(childnode.InnerText);
-                                Transfer[Transfer.Length - 1].pic = PicsBuffer[node.Attributes[0].Value + "_01"];
-                                Transfer[Transfer.Length - 1].pic = picConverter.ImageOptimize(Transfer[Transfer.Length - 1].pic);
-                                Transfer[Transfer.Length - 1].animation = new BitmapImage[0];
-                                for (int i = 1; i < PicsBuffer.Count; i++)
-                                {
-                                    string end = "";
-                                    if (i < 10) end = "_0" + Convert.ToString(i);
-                                    else end = "_" + Convert.ToString(i);
-                                    if (PicsBuffer.ContainsKey(node.Attributes[0].Value + end))
-                                    {
-                                        Array.Resize(ref Transfer[Transfer.Length - 1].animation, Transfer[Transfer.Length - 1].animation.Length + 1);
-                                        Transfer[Transfer.Length - 1].animation[Transfer[Transfer.Length - 1].animation.Length - 1] = PicsBuffer[node.Attributes[0].Value + end];
-                                    }
-                                    else break;
-                                }
-                                Transfer[Transfer.Length - 1].animation = picConverter.ImageArrayOptimize(Transfer[Transfer.Length - 1].animation);
-                            }
-                        }
-                    }
-                    ResPacks[ResPacks.Length - 1].pics_count = Transfer.Length;
-                }
+                
+                if (images_xml.HasChildNodes) parsePics(images_xml, PicsBuffer, ref Transfer);
                 else ResPacks[ResPacks.Length - 1].pics_count = 0;
-                //MainWindow.set.Status_textBlock.Text = "Loaded";
                 PicsBuffer.Clear();
                 SongsBuffer.Clear();
                 foreach (Pics p in Transfer)
@@ -654,6 +448,146 @@ namespace MOPS
                 SongsBuffer.Clear();
                 return null;
             }
+        }
+
+        private void parseSongs(XmlDocument xml, Dictionary<string, byte[]> Buffer, bool remotePack)
+        {
+            XmlElement xRoot = xml.DocumentElement;
+            foreach (XmlNode node in xRoot)
+            {
+                if (node.NodeType == XmlNodeType.Comment) continue;
+                Array.Resize(ref allSongs, allSongs.Length + 1);
+                if (remotePack) allSongs[allSongs.Length - 1].buffer = Buffer[node.Attributes[0].Value];
+                allSongs[allSongs.Length - 1].filename = node.Attributes[0].Value;
+                allSongs[allSongs.Length - 1].enabled = true;
+                allSongs[allSongs.Length - 1].buildup_played = false;
+                foreach (XmlNode childnode in node)
+                {
+                    if (childnode.Name == "title")
+                    {
+                        allSongs[allSongs.Length - 1].title = childnode.InnerText;
+                    }
+                    if (childnode.Name == "source")
+                    {
+                        allSongs[allSongs.Length - 1].source = childnode.InnerText;
+                    }
+                    if (childnode.Name == "rhythm")
+                    {
+                        allSongs[allSongs.Length - 1].rhythm = childnode.InnerText;
+                        allSongs[allSongs.Length - 1].rhythm.Replace("\n", "");
+                    }
+                    if (childnode.Name == "buildup")
+                    {
+                        allSongs[allSongs.Length - 1].buildup_filename = childnode.InnerText;
+                        if (remotePack) allSongs[allSongs.Length - 1].buildup_buffer = Buffer[childnode.InnerText];
+                    }
+                    if (childnode.Name == "buildupRhythm")
+                    {
+                        allSongs[allSongs.Length - 1].buildupRhythm = childnode.InnerText;
+                        allSongs[allSongs.Length - 1].buildupRhythm.Replace("\n", "");
+                    }
+                }
+            }
+            ResPacks[ResPacks.Length - 1].songs_count = allSongs.Length - ResPacks[ResPacks.Length - 1].songs_start;
+        }
+
+        private void parsePics(XmlDocument xml, Dictionary<string, BitmapImage> Buffer, ref Pics[] Transfer) 
+        {
+            XmlElement xRoot = xml.DocumentElement;
+            Pics tempPic;
+            foreach (XmlNode node in xRoot)
+            {
+                tempPic = new Pics();
+                if (node.NodeType == XmlNodeType.Comment) continue; //WHY DOES IT EVEN PARSE COMMENTS?!
+                tempPic.name = node.Attributes[0].Value;
+
+                if (Buffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
+                    tempPic.pic = Buffer[RemoveDiacritics(node.Attributes[0].Value)];
+                else if (Buffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
+                    tempPic.pic = Buffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
+
+                tempPic.pic = picConverter.ImageOptimize(tempPic.pic);
+
+                tempPic.enabled = true;
+                tempPic.source = "";
+                tempPic.source_other = "";
+                tempPic.fullname = tempPic.name;
+
+                tempPic.align = "center";
+
+                foreach (XmlNode childnode in node)
+                {
+                    if (childnode.Name == "source")
+                    {
+                        tempPic.source = childnode.InnerText;
+                    }
+                    else if (childnode.Name == "source_other")
+                    {
+                        tempPic.source_other = childnode.InnerText;
+                    }
+                    else if(childnode.Name == "fullname")
+                    {
+                        tempPic.fullname = childnode.InnerText;
+                    }
+                    else if(childnode.Name == "align")
+                    {
+                        tempPic.align = childnode.InnerText;
+                    }
+                    else if(childnode.Name == "frameDuration")
+                    {
+                        string MysteriousZero = "";
+                        if (Buffer.ContainsKey(node.Attributes[0].Value + "_1")) MysteriousZero = "";
+                        else if (Buffer.ContainsKey(node.Attributes[0].Value + "_01")) MysteriousZero = "0";
+                        else continue; //https://youtu.be/5FjWe31S_0g
+
+                        //TEST IT
+                        //tempPic.pic = Buffer[node.Attributes[0].Value + "_01"];
+                        //tempPic.pic = picConverter.ImageOptimize(tempPic.pic);
+                        tempPic.pic = picConverter.ImageOptimize(Buffer[node.Attributes[0].Value + "_" + MysteriousZero + "1"]);
+
+                        tempPic.animation = new BitmapImage[0];
+                        for (int i = 1; i < Buffer.Count; i++)
+                        {
+                            string end;
+                            if (i < 10) end = "_" + MysteriousZero + Convert.ToString(i);
+                            else end = "_" + Convert.ToString(i);
+                            if (Buffer.ContainsKey(node.Attributes[0].Value + end))
+                            {
+                                Array.Resize(ref tempPic.animation, tempPic.animation.Length + 1);
+                                tempPic.animation[tempPic.animation.Length - 1] = Buffer[node.Attributes[0].Value + end];
+                            }
+                            else break;
+                        }
+
+                        string text = childnode.InnerText;
+                        tempPic.frameDuration = new int[tempPic.animation.Length];
+                        int tempInt;
+                        if (int.TryParse(text, out tempInt)) 
+                            for (int i=0; i< tempPic.frameDuration.Length; i++) tempPic.frameDuration[i] = tempInt;
+                        else
+                        {
+                            string[] s_nums = text.Split(',');
+                            if (tempPic.animation.Length > s_nums.Length)
+                            {
+                                for (int i = 0; i < s_nums.Length; i++)
+                                    tempPic.frameDuration[i] = int.Parse(s_nums[i]);
+                                for (int i = s_nums.Length; i < tempPic.frameDuration.Length; i++)
+                                    tempPic.frameDuration[i] = int.Parse(s_nums[s_nums.Length - 1]);
+                            }
+                            else
+                            {
+                                for (int i = 0; i < tempPic.frameDuration.Length; i++)
+                                    tempPic.frameDuration[i] = int.Parse(s_nums[i]);
+                            }
+                        }
+
+                        tempPic.animation = picConverter.ImageArrayOptimize(tempPic.animation);
+                    }
+                }
+                Array.Resize(ref Transfer, Transfer.Length + 1);
+                Transfer[Transfer.Length - 1] = tempPic;
+            }
+            ResPacks[ResPacks.Length - 1].pics_count = Transfer.Length;
         }
     }
 }
