@@ -165,12 +165,11 @@ namespace MOPS
         public Pics[] SupremeReader(string target_path, BackgroundWorker worker, DoWorkEventArgs e)
         {
             Pics[] Transfer = new Pics[0];
-            XDocument info_xml = new XDocument();
+            XmlDocument info_xml = new XmlDocument();
             XmlDocument songs_xml = new XmlDocument();
             XmlDocument images_xml = new XmlDocument();
             Dictionary<string, BitmapImage> PicsBuffer = new Dictionary<string, BitmapImage> { };
             Dictionary<string, byte[]> SongsBuffer = new Dictionary<string, byte[]> { };
-
 
             XmlReaderSettings readerSettings = new XmlReaderSettings
             {
@@ -192,10 +191,8 @@ namespace MOPS
                             if (entry.Name.ToLower() == "info.xml")
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
-                                {
-                                    using (var xmlread = XmlReader.Create(reader, readerSettings))
-                                        info_xml = XDocument.Load(xmlread);
-                                }
+                                using (var xmlread = XmlReader.Create(reader, readerSettings))
+                                        info_xml.Load(xmlread);
                             if (entry.Name.ToLower() == "songs.xml")
                                 using (var stream = entry.Open())
                                 using (var reader = new StreamReader(stream))
@@ -254,16 +251,20 @@ namespace MOPS
                 }
             }
 
-            if (info_xml.Root != null)
+            if (info_xml.HasChildNodes)
             {
                 //MainWindow.set.Status_textBlock.Text = "Parsing data...";
                 Array.Resize(ref ResPacks, ResPacks.Length + 1);
                 ResPacks[ResPacks.Length - 1] = new RP();
 
-                ResPacks[ResPacks.Length - 1].name = info_xml.XPathSelectElement("//info/name").Value;
-                ResPacks[ResPacks.Length - 1].author = info_xml.XPathSelectElement("//info/author").Value;
-                ResPacks[ResPacks.Length - 1].description = info_xml.XPathSelectElement("//info/description").Value;
-                ResPacks[ResPacks.Length - 1].link = info_xml.XPathSelectElement("//info/link").Value;
+                foreach (XmlNode node in info_xml.DocumentElement)
+                {
+                    if (node.Name == "name") ResPacks[ResPacks.Length - 1].name = node.InnerText;
+                    else if (node.Name == "author") ResPacks[ResPacks.Length - 1].author = node.InnerText;
+                    else if (node.Name == "description") ResPacks[ResPacks.Length - 1].description = node.InnerText;
+                    else if (node.Name == "link") ResPacks[ResPacks.Length - 1].link = node.InnerText;
+                }
+
                 ResPacks[ResPacks.Length - 1].songs_start = allSongs.Length;
                 ResPacks[ResPacks.Length - 1].pics_start = allPics.Length;
                 ResPacks[ResPacks.Length - 1].enabled = true;
@@ -310,12 +311,7 @@ namespace MOPS
             Dictionary<string, BitmapImage> PicsBuffer = new Dictionary<string, BitmapImage> { };
             Dictionary<string, byte[]> SongsBuffer = new Dictionary<string, byte[]> { };
 
-            XmlSerializer RespackSerializer = new XmlSerializer(typeof(RP));
-            RP bufferedRP = new RP();
-            XmlSerializer ImageSerializer = new XmlSerializer(typeof(Pics));
-            XmlSerializer SongSerializer = new XmlSerializer(typeof(Songs));
-
-                XmlReaderSettings readerSettings = new XmlReaderSettings
+            XmlReaderSettings readerSettings = new XmlReaderSettings
             {
                 IgnoreComments = true,
                 DtdProcessing = DtdProcessing.Ignore,
@@ -406,11 +402,6 @@ namespace MOPS
                 //MainWindow.set.Status_textBlock.Text = "Parsing data...";
                 Array.Resize(ref ResPacks, ResPacks.Length + 1);
                 ResPacks[ResPacks.Length - 1] = new RP();
-
-                //ResPacks[ResPacks.Length - 1].name = info_xml.XPathSelectElement("//info/name").Value;
-                //ResPacks[ResPacks.Length - 1].author = info_xml.XPathSelectElement("//info/author").Value;
-                //ResPacks[ResPacks.Length - 1].description = info_xml.XPathSelectElement("//info/description").Value;
-                //ResPacks[ResPacks.Length - 1].link = info_xml.XPathSelectElement("//info/link").Value;
 
                 foreach (XmlNode node in info_xml.DocumentElement)
                 {
