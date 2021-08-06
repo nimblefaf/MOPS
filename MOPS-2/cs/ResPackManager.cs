@@ -214,7 +214,7 @@ namespace MOPS
                                         images_xml.Load(xmlread);
                                 }
                         }
-                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase))
+                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase)/* | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase)*/)
                         {
                             using (var stream = entry.Open())
                             using (var memoryStream = new MemoryStream())
@@ -223,7 +223,7 @@ namespace MOPS
                                 memoryStream.Position = 0;
                                 using (BinaryReader br = new BinaryReader(memoryStream))
                                 {
-                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length - 4), br.ReadBytes((int)memoryStream.Length));
+                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length/* - 4*/), br.ReadBytes((int)memoryStream.Length));
                                 }
                             }
                         }
@@ -360,7 +360,7 @@ namespace MOPS
                                         images_xml.Load(xmlread);
                                 }
                         }
-                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase))
+                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase)/* | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase)*/)
                         {
                             using (var stream = entry.Open())
                             using (var memoryStream = new MemoryStream())
@@ -369,7 +369,7 @@ namespace MOPS
                                 memoryStream.Position = 0;
                                 using (BinaryReader br = new BinaryReader(memoryStream))
                                 {
-                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length-4), br.ReadBytes((int)memoryStream.Length));
+                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length/*-4*/), br.ReadBytes((int)memoryStream.Length));
                                 }
                             }
                         }
@@ -449,7 +449,7 @@ namespace MOPS
                 if (node.NodeType == XmlNodeType.Comment) continue;
                 Array.Resize(ref allSongs, allSongs.Length + 1);
                 if (remotePack) allSongs[allSongs.Length - 1].buffer = Buffer[node.Attributes[0].Value];
-                allSongs[allSongs.Length - 1].filename = node.Attributes[0].Value;
+                allSongs[allSongs.Length - 1].filename = node.Attributes[0].Value + ".mp3";
                 allSongs[allSongs.Length - 1].enabled = true;
                 allSongs[allSongs.Length - 1].buildup_played = false;
                 foreach (XmlNode childnode in node)
