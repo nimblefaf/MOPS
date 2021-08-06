@@ -46,6 +46,10 @@ namespace MOPS
         public Shaders.ColorBlend_HardLightEffect HardLightEffect = new Shaders.ColorBlend_HardLightEffect();
         Shaders.HuesYBlur8Effect YBlur8 = new Shaders.HuesYBlur8Effect();
         Shaders.HuesXBlur8Effect XBlur8 = new Shaders.HuesXBlur8Effect();
+        Shaders.HuesYBlur14Effect YBlur14 = new Shaders.HuesYBlur14Effect();
+        Shaders.HuesXBlur14Effect XBlur14 = new Shaders.HuesXBlur14Effect();
+        Shaders.HuesYBlur26Effect YBlur26 = new Shaders.HuesYBlur26Effect();
+        Shaders.HuesXBlur26Effect XBlur26 = new Shaders.HuesXBlur26Effect();
 
         public Hues.Palette[] hues;
 
@@ -60,17 +64,9 @@ namespace MOPS
         public bool full_auto_mode = true;
 
         /// <summary>
-        /// Quality of blur, from 0 to 3. Zero for stretching a single image, 1-3 for moving copies of image to the center.
-        /// </summary>
-        public int blur_quality = 1;
-        /// <summary>
-        /// Duration of blur animation. From 0 to 3. [appr. from 1s to 0.3s]
-        /// </summary>
-        public double blur_decay = 0.15;
-        /// <summary>
         /// How far away blur goes in WPF dots.
         /// </summary>
-        public double blur_Amount = 0.02;
+        public double blur_amount = 0.02;
         public bool blackouted = false;
 
         public int current_song = 0;
@@ -205,6 +201,8 @@ namespace MOPS
             //set.Owner = this; //that was for window
             Init_Animations();
             ColorBlend_Graphics_Update();
+            BlurDecay_Upd();
+            BlurAmount_Upd();
 
             timeline_color_change();
         }
@@ -234,7 +232,7 @@ namespace MOPS
         {
             BlurAnim.From = 0.02;
             BlurAnim.To = 0;
-            BlurAnim.Duration = TimeSpan.FromSeconds(0.15);
+            BlurAnim.Duration = TimeSpan.FromSeconds(0.5);
             Storyboard.SetTargetProperty(BlurAnim, new PropertyPath("Effect.BlurAmount"));
             Storyboard.SetTarget(BlurAnim, image0);
             BlurAnimSB.Children.Add(BlurAnim);
@@ -303,6 +301,40 @@ namespace MOPS
                     ColorOverlap_Rectangle.Visibility = Visibility.Hidden;
                     ImageGrid.Effect = HardLightEffect;
                     Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
+                    break;
+            }
+        }
+        public void BlurDecay_Upd()
+        {
+            switch ((BlurDecay)Properties.Settings.Default.blurDecay)
+            {
+                case BlurDecay.Slow:
+                    BlurAnim.Duration = TimeSpan.FromSeconds(0.4);
+                    break;
+                case BlurDecay.Medium:
+                    BlurAnim.Duration = TimeSpan.FromSeconds(0.3);
+                    break;
+                case BlurDecay.Fast:
+                    BlurAnim.Duration = TimeSpan.FromSeconds(0.25);
+                    break;
+                case BlurDecay.Fastest:
+                    BlurAnim.Duration = TimeSpan.FromSeconds(0.15);
+                    break;
+            }
+
+        }
+        public void BlurAmount_Upd()
+        {
+            switch ((BlurAmount)Properties.Settings.Default.blurAmount)
+            {
+                case BlurAmount.Low:
+                    BlurAnim.From = 0.005 / (Properties.Settings.Default.blurQuality+1);
+                    break;
+                case BlurAmount.Medium:
+                    BlurAnim.From = 0.01 / (Properties.Settings.Default.blurQuality + 1);
+                    break;
+                case BlurAmount.High:
+                    BlurAnim.From = 0.05 / (Properties.Settings.Default.blurQuality + 1);
                     break;
             }
         }
@@ -548,24 +580,14 @@ namespace MOPS
         private void timeline_blackout()
         {
             Blackout_Rectangle.Fill = Brushes.Black;
-            if (enabled_images.Count != 0) switch (blur_quality)
-                {
-                    case 1:
-                        image0.Effect = XBlur8;
-                        break;
-                }
+            image0.Effect = XBlur8;
             SB_Blackout.Begin();
         }
         // '¤'
         private void timeline_whiteout()
         {
             Blackout_Rectangle.Fill = Brushes.White;
-            if (enabled_images.Count != 0) switch (blur_quality)
-                {
-                    case 1:
-                        image0.Effect = XBlur8;
-                        break;
-                }
+            image0.Effect = XBlur8;
             SB_Blackout.Begin();
         }
         // '|'
@@ -609,25 +631,37 @@ namespace MOPS
         // 'X' Vertical blur only
         private void timeline_blur_vert()
         {
-            if (enabled_images.Count != 0) switch (blur_quality)
+            if (enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
-                    case 1:
+                    case BlurQuality.Low:
                         image0.Effect = YBlur8;
-                        BlurAnimSB.Begin();
+                        break;
+                    case BlurQuality.Medium:
+                        image0.Effect = YBlur14;
+                        break;
+                    case BlurQuality.High:
+                        image0.Effect = YBlur26;
                         break;
                 }
+            BlurAnimSB.Begin();
         }
 
         // 'O' Vertical blur only
         private void timeline_blur_hor()
         {
-            if (enabled_images.Count != 0) switch (blur_quality)
+            if (enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
-                    case 1:
+                    case BlurQuality.Low:
                         image0.Effect = XBlur8;
-                        BlurAnimSB.Begin();
+                        break;
+                    case BlurQuality.Medium:
+                        image0.Effect = XBlur14;
+                        break;
+                    case BlurQuality.High:
+                        image0.Effect = XBlur26;
                         break;
                 }
+            BlurAnimSB.Begin();
         }
 
         // ')' Trippy cirle in
@@ -1063,6 +1097,25 @@ namespace MOPS
         Normal = 0,
         Pastel = 1,
         Weed = 2
+    }
+    public enum BlurAmount
+    {
+        Low = 0,
+        Medium = 1,
+        High = 2
+    }
+    public enum BlurDecay
+    {
+        Slow = 0,
+        Medium = 1,
+        Fast = 2,
+        Fastest = 3
+    }
+    public enum BlurQuality
+    {
+        Low = 0,
+        Medium = 1,
+        High = 2,
     }
 
     /// <summary>

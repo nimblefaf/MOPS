@@ -31,12 +31,12 @@ namespace MOPS.UI
         public Options_TabPanel()
         {
             InitializeComponent();
-            Options_UI_Update();
         }
         MainWindow main;
         public void SetReference(MainWindow window)
         {
             main = window;
+            Options_UI_Update();
         }
 
 
@@ -78,6 +78,46 @@ namespace MOPS.UI
                     OB_colorBlend_HardLight.Background = Brushes.White;
                     break;
             }
+            switch ((BlurAmount)Properties.Settings.Default.blurAmount)
+            {
+                case BlurAmount.Low:
+                    OB_BlurAmountLOW.Background = Brushes.White;
+                    break;
+                case BlurAmount.Medium:
+                    OB_BlurAmountMED.Background = Brushes.White;
+                    break;
+                case BlurAmount.High:
+                    OB_BlurAmountHIGH.Background = Brushes.White;
+                    break;
+            }
+            switch ((BlurDecay)Properties.Settings.Default.blurDecay)
+            {
+                case BlurDecay.Slow:
+                    OB_BlurDecaySLOW.Background = Brushes.White;
+                    break;
+                case BlurDecay.Medium:
+                    OB_BlurDecayMED.Background = Brushes.White;
+                    break;
+                case BlurDecay.Fast:
+                    OB_BlurDecayFAST.Background = Brushes.White;
+                    break;
+                case BlurDecay.Fastest:
+                    OB_BlurDecayEXFAST.Background = Brushes.White;
+                    break;
+            }
+            switch ((BlurQuality)Properties.Settings.Default.blurQuality)
+            {
+                case BlurQuality.Low:
+                    OB_BlurQualLOW.Background = Brushes.White;
+                    break;
+                case BlurQuality.Medium:
+                    OB_BlurQualMED.Background = Brushes.White;
+                    break;
+                case BlurQuality.High:
+                    OB_BlurQualHIGH.Background = Brushes.White;
+                    break;
+            }
+            
             if (Properties.Settings.Default.discordMode) OB_DiscordOn.Background = Brushes.White;
             else OB_DiscordOff.Background = Brushes.White;
         }
@@ -175,7 +215,99 @@ namespace MOPS.UI
             OB_buildOn.Background = Brushes.LightGray;
         }
 
+        private void OB_BlurAmountLOW_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurAmount = (int)BlurAmount.Low;
+            main.BlurAmount_Upd();
+            OB_BlurAmountLOW.Background = Brushes.White;
+            OB_BlurAmountMED.Background = Brushes.LightGray;
+            OB_BlurAmountHIGH.Background = Brushes.LightGray;
+        }
+
+        private void OB_BlurAmountMED_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurAmount = (int)BlurAmount.Medium;
+            main.BlurAmount_Upd();
+            OB_BlurAmountLOW.Background = Brushes.LightGray;
+            OB_BlurAmountMED.Background = Brushes.White;
+            OB_BlurAmountHIGH.Background = Brushes.LightGray;
+        }
+
+        private void OB_BlurAmountHIGH_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurAmount = (int)BlurAmount.High;
+            main.BlurAmount_Upd();
+            OB_BlurAmountLOW.Background = Brushes.LightGray;
+            OB_BlurAmountMED.Background = Brushes.LightGray;
+            OB_BlurAmountHIGH.Background = Brushes.White;
+        }
+
+        private void OB_BlurDecaySLOW_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurDecay = (int)BlurDecay.Slow;
+            main.BlurDecay_Upd();
+            OB_BlurDecaySLOW.Background = Brushes.White;
+            OB_BlurDecayMED.Background = Brushes.LightGray;
+            OB_BlurDecayFAST.Background = Brushes.LightGray;
+            OB_BlurDecayEXFAST.Background = Brushes.LightGray;
+        }
+
+        private void OB_BlurDecayMED_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurDecay = (int)BlurDecay.Medium;
+            main.BlurDecay_Upd();
+            OB_BlurDecaySLOW.Background = Brushes.LightGray;
+            OB_BlurDecayMED.Background = Brushes.White;
+            OB_BlurDecayFAST.Background = Brushes.LightGray;
+            OB_BlurDecayEXFAST.Background = Brushes.LightGray;
+        }
+
+        private void OB_BlurDecayFAST_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurDecay = (int)BlurDecay.Fast;
+            main.BlurDecay_Upd();
+            OB_BlurDecaySLOW.Background = Brushes.LightGray;
+            OB_BlurDecayMED.Background = Brushes.LightGray;
+            OB_BlurDecayFAST.Background = Brushes.White;
+            OB_BlurDecayEXFAST.Background = Brushes.LightGray;
+        }
+
+        private void OB_BlurDecayEXFAST_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurDecay = (int)BlurDecay.Fastest;
+            main.BlurDecay_Upd();
+            OB_BlurDecaySLOW.Background = Brushes.LightGray;
+            OB_BlurDecayMED.Background = Brushes.LightGray;
+            OB_BlurDecayFAST.Background = Brushes.LightGray;
+            OB_BlurDecayEXFAST.Background = Brushes.White;
+        }
 
 
+        private void OB_BlurQualLOW_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurQuality = (int)BlurQuality.Low;
+            OB_BlurQualLOW.Background = Brushes.White;
+            OB_BlurQualMED.Background = Brushes.LightGray;
+            OB_BlurQualHIGH.Background = Brushes.LightGray;
+            main.BlurAmount_Upd();
+        }
+
+        private void OB_BlurQualMED_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurQuality = (int)BlurQuality.Medium;
+            OB_BlurQualLOW.Background = Brushes.LightGray;
+            OB_BlurQualMED.Background = Brushes.White;
+            OB_BlurQualHIGH.Background = Brushes.LightGray;
+            main.BlurAmount_Upd();
+        }
+
+        private void OB_BlurQualHIGH_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.blurQuality = (int)BlurQuality.High;
+            OB_BlurQualLOW.Background = Brushes.LightGray;
+            OB_BlurQualMED.Background = Brushes.LightGray;
+            OB_BlurQualHIGH.Background = Brushes.White;
+            main.BlurAmount_Upd();
+        }
     }
 }

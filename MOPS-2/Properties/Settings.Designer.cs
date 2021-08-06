@@ -70,5 +70,41 @@ namespace MOPS.Properties {
                 this["discordMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int blurAmount {
+            get {
+                return ((int)(this["blurAmount"]));
+            }
+            set {
+                this["blurAmount"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int blurDecay {
+            get {
+                return ((int)(this["blurDecay"]));
+            }
+            set {
+                this["blurDecay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int blurQuality {
+            get {
+                return ((int)(this["blurQuality"]));
+            }
+            set {
+                this["blurQuality"] = value;
+            }
+        }
     }
 }
