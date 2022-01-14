@@ -93,6 +93,9 @@
     <Compile Include="UI\Options_TabPanel.xaml.cs">
       <DependentUpon>Options_TabPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Preloader.xaml.cs">
+      <DependentUpon>Preloader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Resources_TabPanel.xaml.cs">
       <DependentUpon>Resources_TabPanel.xaml</DependentUpon>
     </Compile>
@@ -119,6 +122,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Options_TabPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Preloader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -157,15 +164,6 @@
     <Resource Include="effects\InvertColorEffect.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Packs\CharPackagev0.03.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Packs\Halloweenv0.98.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Packs\Xmas.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Resource Include="effects\HuesXBlur14Effect.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -193,9 +191,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Kyubey.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bass.dll">

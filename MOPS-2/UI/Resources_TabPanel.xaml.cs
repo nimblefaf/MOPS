@@ -134,7 +134,7 @@ namespace MOPS.UI
             {
                 load_rp_button.IsEnabled = false;
                 Status_textBlock.Text = "Processing...";
-                backgroundLoader.RunWorkerAsync(openFile.FileName);
+                backgroundLoader.RunWorkerAsync(new string[] { openFile.FileName });
             }
         }
 
@@ -142,9 +142,9 @@ namespace MOPS.UI
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             worker.WorkerReportsProgress = true;
-            e.Result = main.RPM.SupremeReader((string)e.Argument, worker, e);
+            e.Result = main.RPM.SupremeReader((string[])e.Argument, worker, e);
         }
-        private void load_completed(object sender, RunWorkerCompletedEventArgs e)
+        public void load_completed(object sender, RunWorkerCompletedEventArgs e)
         {
             load_rp_button.IsEnabled = true;
             if (e.Result.ToString() != null)
@@ -154,7 +154,17 @@ namespace MOPS.UI
                     Array.Resize(ref main.RPM.allPics, main.RPM.allPics.Length + 1);
                     main.RPM.allPics[main.RPM.allPics.Length - 1] = elem;
                 }
-                add_last_rp();
+
+                bool preaload = false;
+                if (rp_names.Count == 0) preaload = true;
+                add_last_rps();
+                if (preaload)
+                {
+                    if (main.RPM.ResPacks[0].name == "0x40 Hues v5.0 Defaults") main.ImageChange(55);
+                    else if (main.RPM.allPics.Length > 0) main.ImageChange(0);
+                    if (main.RPM.allSongs.Length > 0) main.songs_listbox.SelectedIndex = 0;
+                }
+
             }
             ProgBar.Value = 0;
             Status_textBlock.Text = "Done";
@@ -166,19 +176,36 @@ namespace MOPS.UI
         }
 
 
-        public void add_last_rp()
+        public void add_last_rps()
         {
-            rp_names.Add(new setdata() { Name = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].name, State = true });
+            int num = main.RPM.ResPacks.Length - rp_names.Count;
+            for (int j = num; j > 0; j--)
+            {
+                rp_names.Add(new setdata() { Name = main.RPM.ResPacks[main.RPM.ResPacks.Length - j].name, State = true });
 
-            if (main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].songs_count > 0)
-                for (int i = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].songs_start; i < main.RPM.allSongs.Length; i++)
-                    MainWindow.enabled_songs.Add(new rdata() { Name = main.RPM.allSongs[i].title, Ind = i });
-            if (main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].pics_count > 0)
-                for (int i = main.RPM.ResPacks[main.RPM.ResPacks.Length - 1].pics_start; i < main.RPM.allPics.Length; i++)
-                    MainWindow.enabled_images.Add(new rdata() { Name = main.RPM.allPics[i].name, Ind = i });
-
+                if (main.RPM.ResPacks[main.RPM.ResPacks.Length - j].songs_count > 0)
+                    for (int i = main.RPM.ResPacks[main.RPM.ResPacks.Length - j].songs_start; i < main.RPM.ResPacks[main.RPM.ResPacks.Length - j].songs_start + main.RPM.ResPacks[main.RPM.ResPacks.Length - j].songs_count; i++)
+                        MainWindow.enabled_songs.Add(new rdata() { Name = main.RPM.allSongs[i].title, Ind = i });
+                if (main.RPM.ResPacks[main.RPM.ResPacks.Length - j].pics_count > 0)
+                    for (int i = main.RPM.ResPacks[main.RPM.ResPacks.Length - j].pics_start; i < main.RPM.ResPacks[main.RPM.ResPacks.Length - j].pics_start + main.RPM.ResPacks[main.RPM.ResPacks.Length - j].pics_count; i++)
+                        MainWindow.enabled_images.Add(new rdata() { Name = main.RPM.allPics[i].name, Ind = i });
+            }
             stat_update();
         }
+        //public void add_rp(int RP_id)
+        //{
+        //    rp_names.Add(new setdata() { Name = main.RPM.ResPacks[RP_id].name, State = true });
+
+        //    if (main.RPM.ResPacks[RP_id].songs_count > 0)
+        //        for (int i = main.RPM.ResPacks[RP_id].songs_start; i < main.RPM.allSongs.Length; i++)
+        //            MainWindow.enabled_songs.Add(new rdata() { Name = main.RPM.allSongs[i].title, Ind = i });
+        //    if (main.RPM.ResPacks[RP_id].pics_count > 0)
+        //        for (int i = main.RPM.ResPacks[RP_id].pics_start; i < main.RPM.allPics.Length; i++)
+        //            MainWindow.enabled_images.Add(new rdata() { Name = main.RPM.allPics[i].name, Ind = i });
+
+        //    stat_update();
+        //}
+
         /// <summary>
         /// Updates data in "total songs" and "total images" labels
         /// </summary>

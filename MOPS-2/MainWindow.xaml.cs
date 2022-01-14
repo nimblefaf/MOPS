@@ -70,7 +70,7 @@ namespace MOPS
         public bool blackouted = false;
 
         public int current_song = 0;
-        public int current_image_pos = 55;
+        public int current_image_pos = 0;
         private int anim_ind = 0;
 
         private string loop_rhythm;
@@ -99,7 +99,9 @@ namespace MOPS
             ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
 
             Player.SetReference(this);
+            PreloaderWin.SetReference(this);
             InnerWin.SetReference(this);
+            
 
             switch ((ColorSet)Properties.Settings.Default.colorSet)
             {
@@ -122,6 +124,8 @@ namespace MOPS
 
             if (Properties.Settings.Default.discordMode) discord_rpc_init();
 
+            songs_listbox.ItemsSource = enabled_songs;
+            images_listbox.ItemsSource = enabled_images;
 
             //For Debug
             //CornerBlock.Foreground = Brushes.Red;
@@ -163,7 +167,7 @@ namespace MOPS
         private void load_dowork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            e.Result = RPM.SupremeReader((string)e.Argument, worker, e);
+            e.Result = RPM.SupremeReader((string[])e.Argument, worker, e);
         }
 
         private void load_completed(object sender, RunWorkerCompletedEventArgs e)
@@ -173,7 +177,7 @@ namespace MOPS
                 Array.Resize(ref RPM.allPics, RPM.allPics.Length + 1);
                 RPM.allPics[RPM.allPics.Length - 1] = elem;
             }
-            InnerWin.resources_TabPanel.add_last_rp();
+            InnerWin.resources_TabPanel.add_last_rps();
             songs_listbox.ItemsSource = enabled_songs;
             images_listbox.ItemsSource = enabled_images;
 
@@ -187,11 +191,8 @@ namespace MOPS
             songs_be.IsEnabled = true;
 
             Cursor = Cursors.Arrow;
-            InfoBlock.Cursor = Cursors.Arrow;
-            InfoBlock.Text = "Loaded";
 
             CornerBlock.Visibility = Visibility.Hidden;
-            InfoBlock.Visibility = Visibility.Hidden;
 
             GC.Collect();
         }
@@ -210,9 +211,9 @@ namespace MOPS
         private void First_Load(object sender, MouseButtonEventArgs e)
         {
             Cursor = Cursors.Wait;
-            InfoBlock.Text = "Initializing...";
-            InfoBlock.IsEnabled = false;
-            InfoBlock.Cursor = Cursors.Wait;
+            //InfoBlock.Text = "Initializing...";
+            //InfoBlock.IsEnabled = false;
+            //InfoBlock.Cursor = Cursors.Wait;
             backgroundLoader.RunWorkerAsync("Packs/Defaults_v5.0.zip");
         }
 

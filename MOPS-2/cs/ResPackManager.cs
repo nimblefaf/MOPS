@@ -80,25 +80,19 @@ namespace MOPS
             try
             {
                 using (FileStream zipToOpen = new FileStream(RP_path, FileMode.Open))
-                {
-                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
-                    {
-                        foreach (ZipArchiveEntry entry in archive.Entries.Where(e => e.FullName.Contains(filename)))
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
+                    foreach (ZipArchiveEntry entry in archive.Entries.Where(e => e.FullName.Contains(filename)))
+                    using (var stream = entry.Open())
+                        using (var memoryStream = new MemoryStream())
                         {
-                            using (var stream = entry.Open())
-                            using (var memoryStream = new MemoryStream())
+                            stream.CopyTo(memoryStream);
+                            memoryStream.Position = 0;
+                            using (BinaryReader br = new BinaryReader(memoryStream))
                             {
-                                stream.CopyTo(memoryStream);
-                                memoryStream.Position = 0;
-                                using (BinaryReader br = new BinaryReader(memoryStream))
-                                {
-                                    res = br.ReadBytes((int)memoryStream.Length);
-                                    break;
-                                }
+                                res = br.ReadBytes((int)memoryStream.Length);
+                                break;
                             }
                         }
-                    }
-                }
             }
             catch (IOException e)
             {
@@ -124,6 +118,17 @@ namespace MOPS
             }
 
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        static int GetNumOfZipEntries(string filePath)
+        {
+            using (FileStream zipToOpen = new FileStream(filePath, FileMode.Open))
+            {
+                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
+                {
+                    return archive.Entries.Count;
+                }
+            }
         }
 
         public int Get_rp_of_song(int ind)
@@ -160,9 +165,9 @@ namespace MOPS
         /// <summary>
         /// Loads and parses a local resource pack file in .zip format
         /// </summary>
-        /// <param name="target_path"></param>
+        /// <param name="respacks"></param>
         /// <returns></returns>
-        public Pics[] SupremeReader(string target_path, BackgroundWorker worker, DoWorkEventArgs e)
+        public Pics[] SupremeReader(string[] respacks, BackgroundWorker worker, DoWorkEventArgs e)
         {
             Pics[] Transfer = new Pics[0];
             XmlDocument info_xml = new XmlDocument();
@@ -170,6 +175,10 @@ namespace MOPS
             XmlDocument images_xml = new XmlDocument();
             Dictionary<string, BitmapImage> PicsBuffer = new Dictionary<string, BitmapImage> { };
             Dictionary<string, byte[]> SongsBuffer = new Dictionary<string, byte[]> { };
+            int TotalEntries = 0;
+            int ProccessedEntries = 0;
+            foreach (string arch in respacks) TotalEntries += GetNumOfZipEntries(arch);
+
 
             XmlReaderSettings readerSettings = new XmlReaderSettings
             {
@@ -177,124 +186,141 @@ namespace MOPS
                 DtdProcessing = DtdProcessing.Ignore,
                 CheckCharacters = false
             };
-
-            using (FileStream zipToOpen = new FileStream(target_path, FileMode.Open))
+            foreach (string target_path in respacks)
             {
-                using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
+                using (FileStream zipToOpen = new FileStream(target_path, FileMode.Open))
                 {
-                    int ProgressCount = 0;
-                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
                     {
-                        ProgressCount++;
-                        if (entry.FullName.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
+                        foreach (ZipArchiveEntry entry in archive.Entries)
                         {
-                            if (entry.Name.ToLower() == "info.xml")
-                                using (var stream = entry.Open())
-                                using (var reader = new StreamReader(stream))
-                                using (var xmlread = XmlReader.Create(reader, readerSettings))
+                            if (entry.FullName.EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                if (entry.Name.ToLower() == "info.xml")
+                                    using (var stream = entry.Open())
+                                    using (var reader = new StreamReader(stream))
+                                    using (var xmlread = XmlReader.Create(reader, readerSettings))
                                         info_xml.Load(xmlread);
-                            if (entry.Name.ToLower() == "songs.xml")
-                                using (var stream = entry.Open())
-                                using (var reader = new StreamReader(stream))
-                                {
-                                    string doc = reader.ReadToEnd();
-                                    doc = doc.Replace("&", "&amp;");
-                                    doc = doc.Replace("&amp;amp;", "&amp;");
-                                    using (var inner = new MemoryStream(Encoding.UTF8.GetBytes(doc)))
-                                    using (var xmlread = XmlReader.Create(inner, readerSettings))
+                                if (entry.Name.ToLower() == "songs.xml")
+                                    using (var stream = entry.Open())
+                                    using (var reader = new StreamReader(stream))
                                     {
-                                        songs_xml.Load(xmlread);
+                                        string doc = reader.ReadToEnd();
+                                        doc = doc.Replace("&", "&amp;");
+                                        doc = doc.Replace("&amp;amp;", "&amp;");
+                                        using (var inner = new MemoryStream(Encoding.UTF8.GetBytes(doc)))
+                                        using (var xmlread = XmlReader.Create(inner, readerSettings))
+                                        {
+                                            songs_xml.Load(xmlread);
+                                        }
+                                    }
+                                if (entry.Name.ToLower() == "images.xml")
+                                    using (var stream = entry.Open())
+                                    using (var reader = new StreamReader(stream))
+                                    {
+                                        using (var xmlread = XmlReader.Create(reader, readerSettings))
+                                            images_xml.Load(xmlread);
+                                    }
+                            }
+                            if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase)/* | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase)*/)
+                            {
+                                using (var stream = entry.Open())
+                                using (var memoryStream = new MemoryStream())
+                                {
+                                    stream.CopyTo(memoryStream);
+                                    memoryStream.Position = 0;
+                                    using (BinaryReader br = new BinaryReader(memoryStream))
+                                    {
+                                        SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length/* - 4*/), br.ReadBytes((int)memoryStream.Length));
                                     }
                                 }
-                            if (entry.Name.ToLower() == "images.xml")
+                            }
+                            if (entry.FullName.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".gif", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase))
+                            {
                                 using (var stream = entry.Open())
-                                using (var reader = new StreamReader(stream))
+                                using (var memoryStream = new MemoryStream())
                                 {
-                                    using (var xmlread = XmlReader.Create(reader, readerSettings))
-                                        images_xml.Load(xmlread);
-                                }
-                        }
-                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase)/* | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase)*/)
-                        {
-                            using (var stream = entry.Open())
-                            using (var memoryStream = new MemoryStream())
-                            {
-                                stream.CopyTo(memoryStream);
-                                memoryStream.Position = 0;
-                                using (BinaryReader br = new BinaryReader(memoryStream))
-                                {
-                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length/* - 4*/), br.ReadBytes((int)memoryStream.Length));
+                                    stream.CopyTo(memoryStream);
+                                    memoryStream.Position = 0;
+
+                                    var pic = new BitmapImage();
+
+                                    pic.BeginInit();
+                                    pic.CacheOption = BitmapCacheOption.OnLoad;
+                                    pic.StreamSource = memoryStream;
+                                    pic.EndInit();
+                                    string name = entry.Name.Substring(0, entry.Name.Length - 4);
+                                    PicsBuffer.Add(name, pic);
                                 }
                             }
+                            ProccessedEntries++;
+                            int percentComplete = (int)((float)ProccessedEntries / TotalEntries * 100);
+                            if (worker.WorkerReportsProgress) worker.ReportProgress(percentComplete);
                         }
-                        if (entry.FullName.EndsWith(".png", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".gif", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".jpg", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            using (var stream = entry.Open())
-                            using (var memoryStream = new MemoryStream())
-                            {
-                                stream.CopyTo(memoryStream);
-                                memoryStream.Position = 0;
-
-                                var pic = new BitmapImage();
-
-                                pic.BeginInit();
-                                pic.CacheOption = BitmapCacheOption.OnLoad;
-                                pic.StreamSource = memoryStream;
-                                pic.EndInit();
-                                string name = entry.Name.Substring(0, entry.Name.Length - 4);
-                                PicsBuffer.Add(name, pic);
-                            }
-                        }
-                        int percentComplete = (int)((float)ProgressCount / (float)archive.Entries.Count * 100);
-                        if (worker.WorkerReportsProgress) worker.ReportProgress(percentComplete);
                     }
                 }
-            }
 
-            if (info_xml.HasChildNodes)
-            {
-                //MainWindow.set.Status_textBlock.Text = "Parsing data...";
-                Array.Resize(ref ResPacks, ResPacks.Length + 1);
-                ResPacks[ResPacks.Length - 1] = new RP();
-
-                foreach (XmlNode node in info_xml.DocumentElement)
+                if (info_xml.HasChildNodes)
                 {
-                    if (node.Name == "name") ResPacks[ResPacks.Length - 1].name = node.InnerText;
-                    else if (node.Name == "author") ResPacks[ResPacks.Length - 1].author = node.InnerText;
-                    else if (node.Name == "description") ResPacks[ResPacks.Length - 1].description = node.InnerText;
-                    else if (node.Name == "link") ResPacks[ResPacks.Length - 1].link = node.InnerText;
-                }
+                    Array.Resize(ref ResPacks, ResPacks.Length + 1);
+                    ResPacks[ResPacks.Length - 1] = new RP();
 
-                ResPacks[ResPacks.Length - 1].songs_start = allSongs.Length;
-                ResPacks[ResPacks.Length - 1].pics_start = allPics.Length;
-                ResPacks[ResPacks.Length - 1].enabled = true;
-                ResPacks[ResPacks.Length - 1].path = target_path;
-
-                if (songs_xml.HasChildNodes) parseSongs(songs_xml, SongsBuffer, false);
-                else ResPacks[ResPacks.Length - 1].songs_count = 0;
-
-                if (images_xml.HasChildNodes) parsePics(images_xml, PicsBuffer, ref Transfer);
-                else ResPacks[ResPacks.Length - 1].pics_count = 0;
-                //MainWindow.set.Status_textBlock.Text = "Loaded";
-                PicsBuffer.Clear();
-                SongsBuffer.Clear();
-                foreach (Pics p in Transfer)
-                {
-                    p.pic.Freeze();
-                    if (p.animation != null)
+                    foreach (XmlNode node in info_xml.DocumentElement)
                     {
-                        foreach (BitmapSource i in p.animation) i.Freeze();
+                        if (node.Name == "name") ResPacks[ResPacks.Length - 1].name = node.InnerText;
+                        else if (node.Name == "author") ResPacks[ResPacks.Length - 1].author = node.InnerText;
+                        else if (node.Name == "description") ResPacks[ResPacks.Length - 1].description = node.InnerText;
+                        else if (node.Name == "link") ResPacks[ResPacks.Length - 1].link = node.InnerText;
                     }
+
+                    ResPacks[ResPacks.Length - 1].songs_start = allSongs.Length;
+
+                    ResPacks[ResPacks.Length - 1].enabled = true;
+                    ResPacks[ResPacks.Length - 1].path = target_path;
+
+                    if (songs_xml.HasChildNodes) parseSongs(songs_xml, SongsBuffer, false);
+                    else ResPacks[ResPacks.Length - 1].songs_count = 0;
+
+                    if (images_xml.HasChildNodes) parsePics(images_xml, PicsBuffer, ref Transfer);
+                    else ResPacks[ResPacks.Length - 1].pics_count = 0;
+                    if (ResPacks.Length - 1 == 0) ResPacks[ResPacks.Length - 1].pics_start = 0;
+                    else ResPacks[ResPacks.Length - 1].pics_start = ResPacks[ResPacks.Length - 2].pics_start + ResPacks[ResPacks.Length - 2].pics_count;
+
+                    PicsBuffer.Clear();
+                    SongsBuffer.Clear();
+                    info_xml = new XmlDocument();
+                    songs_xml = new XmlDocument();
+                    images_xml = new XmlDocument();
+                    //return Transfer;
                 }
-                return Transfer;
+                else
+                {
+                    //MainWindow.set.Status_textBlock.Text = "info.xml not found";
+                    PicsBuffer.Clear();
+                    SongsBuffer.Clear();
+                    info_xml = new XmlDocument();
+                    songs_xml = new XmlDocument();
+                    images_xml = new XmlDocument();
+                    //return null;
+                }
             }
-            else
+            for (int j = 0; j < Transfer.Length; j++)
             {
-                //MainWindow.set.Status_textBlock.Text = "info.xml not found";
-                PicsBuffer.Clear();
-                SongsBuffer.Clear();
-                return null;
+                Transfer[j].pic.Freeze();
+                if (Transfer[j].animation != null)
+                {
+                    foreach (BitmapSource i in Transfer[j].animation) i.Freeze();
+                }
             }
+            //foreach (Pics p in Transfer)
+            //{
+            //    p.pic.Freeze();
+            //    if (p.animation != null)
+            //    {
+            //        foreach (BitmapSource i in p.animation) i.Freeze();
+            //    }
+            //}
+            return Transfer;
         }
 
         /// <summary>
@@ -360,7 +386,7 @@ namespace MOPS
                                         images_xml.Load(xmlread);
                                 }
                         }
-                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase)/* | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase)*/)
+                        if (entry.FullName.EndsWith(".mp3", StringComparison.InvariantCultureIgnoreCase) | entry.FullName.EndsWith(".ogg", StringComparison.InvariantCultureIgnoreCase))
                         {
                             using (var stream = entry.Open())
                             using (var memoryStream = new MemoryStream())
@@ -369,7 +395,7 @@ namespace MOPS
                                 memoryStream.Position = 0;
                                 using (BinaryReader br = new BinaryReader(memoryStream))
                                 {
-                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length/*-4*/), br.ReadBytes((int)memoryStream.Length));
+                                    SongsBuffer.Add(entry.Name.Substring(0, entry.Name.Length - 4), br.ReadBytes((int)memoryStream.Length));
                                 }
                             }
                         }
@@ -486,6 +512,7 @@ namespace MOPS
         {
             XmlElement xRoot = xml.DocumentElement;
             Pics tempPic;
+            int count = 0;
             foreach (XmlNode node in xRoot)
             {
                 tempPic = new Pics();
@@ -577,8 +604,9 @@ namespace MOPS
                 }
                 Array.Resize(ref Transfer, Transfer.Length + 1);
                 Transfer[Transfer.Length - 1] = tempPic;
+                count++;
             }
-            ResPacks[ResPacks.Length - 1].pics_count = Transfer.Length;
+            ResPacks[ResPacks.Length - 1].pics_count = count;
         }
     }
 }
