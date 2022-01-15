@@ -89,7 +89,6 @@ namespace MOPS
 
         public DiscordRpcClient discordRpcClient = new DiscordRpcClient("842763717179342858");
 
-        private BackgroundWorker backgroundLoader;
         public MainWindow()
         {
             InitializeComponent();
@@ -115,12 +114,6 @@ namespace MOPS
                     hues = Hues.hues_weed;
                     break;
             }
-
-            backgroundLoader = new BackgroundWorker();
-            backgroundLoader.DoWork +=
-                new DoWorkEventHandler(load_dowork);
-            backgroundLoader.RunWorkerCompleted +=
-                new RunWorkerCompletedEventHandler(load_completed);
 
             if (Properties.Settings.Default.discordMode) discord_rpc_init();
 
@@ -164,39 +157,6 @@ namespace MOPS
             }
         }
 
-        private void load_dowork(object sender, DoWorkEventArgs e)
-        {
-            BackgroundWorker worker = sender as BackgroundWorker;
-            e.Result = RPM.SupremeReader((string[])e.Argument, worker, e);
-        }
-
-        private void load_completed(object sender, RunWorkerCompletedEventArgs e)
-        {
-            foreach (Pics elem in (Pics[])e.Result)
-            {
-                Array.Resize(ref RPM.allPics, RPM.allPics.Length + 1);
-                RPM.allPics[RPM.allPics.Length - 1] = elem;
-            }
-            InnerWin.resources_TabPanel.add_last_rps();
-            songs_listbox.ItemsSource = enabled_songs;
-            images_listbox.ItemsSource = enabled_images;
-
-            full_auto_be.IsEnabled = true;
-            images_be.IsEnabled = true;
-            next_image_be.IsEnabled = true;
-            prev_image_be.IsEnabled = true;
-
-            next_song_be.IsEnabled = true;
-            prev_song_be.IsEnabled = true;
-            songs_be.IsEnabled = true;
-
-            Cursor = Cursors.Arrow;
-
-            CornerBlock.Visibility = Visibility.Hidden;
-
-            GC.Collect();
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //set.Owner = this; //that was for window
@@ -206,15 +166,6 @@ namespace MOPS
             BlurAmount_Upd();
 
             timeline_color_change();
-        }
-
-        private void First_Load(object sender, MouseButtonEventArgs e)
-        {
-            Cursor = Cursors.Wait;
-            //InfoBlock.Text = "Initializing...";
-            //InfoBlock.IsEnabled = false;
-            //InfoBlock.Cursor = Cursors.Wait;
-            backgroundLoader.RunWorkerAsync("Packs/Defaults_v5.0.zip");
         }
 
         private Storyboard BlurAnimSB = new Storyboard();
@@ -310,16 +261,16 @@ namespace MOPS
             switch ((BlurDecay)Properties.Settings.Default.blurDecay)
             {
                 case BlurDecay.Slow:
-                    BlurAnim.Duration = TimeSpan.FromSeconds(0.4);
+                    BlurAnim.Duration = TimeSpan.FromSeconds(0.35);
                     break;
                 case BlurDecay.Medium:
-                    BlurAnim.Duration = TimeSpan.FromSeconds(0.3);
-                    break;
-                case BlurDecay.Fast:
                     BlurAnim.Duration = TimeSpan.FromSeconds(0.25);
                     break;
-                case BlurDecay.Fastest:
+                case BlurDecay.Fast:
                     BlurAnim.Duration = TimeSpan.FromSeconds(0.15);
+                    break;
+                case BlurDecay.Fastest:
+                    BlurAnim.Duration = TimeSpan.FromSeconds(0.10);
                     break;
             }
 
