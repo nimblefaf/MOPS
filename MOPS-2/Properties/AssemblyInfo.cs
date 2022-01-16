@@ -9,10 +9,10 @@ using System.Windows;
 // связанные со сборкой.
 [assembly: AssemblyTitle("MOPS-2")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("Alpha")]
+[assembly: AssemblyConfiguration("Beta")]
 [assembly: AssemblyCompany("Waifu Inc.")]
 [assembly: AssemblyProduct("MOPS-2")]
-[assembly: AssemblyCopyright("Copyright © Kettler")]
+[assembly: AssemblyCopyright("Copyright © Nimblefaf")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // Можно задать все значения или принять номера сборки и редакции по умолчанию 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.6")]
-[assembly: AssemblyFileVersion("0.6")]
+[assembly: AssemblyVersion("0.7.0.0")]
+[assembly: AssemblyFileVersion("0.7.0.0")]

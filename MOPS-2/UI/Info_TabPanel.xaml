@@ -8,11 +8,11 @@
              d:DesignHeight="398" d:DesignWidth="590"
              FontFamily="/MOPS;component/fonts/#Pet Me 128">
     <Grid Background="#FFE5E5E5" Cursor="Arrow">
-        <TextBlock x:Name="InfoTextBlock1" Margin="75,25,75,0" TextWrapping="Wrap" Text="0x40 Hues of C#, V0.6" VerticalAlignment="Top" FontSize="20" HorizontalAlignment="Center"/>
+        <TextBlock x:Name="InfoTextBlock1" Margin="75,25,75,0" TextWrapping="Wrap" Text="0x40 Hues of C#, V0.7" VerticalAlignment="Top" FontSize="20" HorizontalAlignment="Center"/>
         <TextBlock x:Name="InfoTextBlock2" HorizontalAlignment="Left" Margin="96,60,0,0" TextWrapping="Wrap" Text="Adapted from the" VerticalAlignment="Top" FontSize="15"/>
         <TextBlock x:Name="InfoTextBlock3Link" HorizontalAlignment="Left" Margin="342,60,0,0" TextWrapping="Wrap" Text="0x40 flash" VerticalAlignment="Top" FontSize="15" Foreground="Blue"/>
         <TextBlock x:Name="InfoTextBlock4" HorizontalAlignment="Left" Margin="195,90,0,0" TextWrapping="Wrap" Text="Made by" VerticalAlignment="Top" FontSize="13"/>
-        <TextBlock x:Name="InfoTextBlock5Link" HorizontalAlignment="Left" Margin="292,90,0,0" TextWrapping="Wrap" Text="Kettler" VerticalAlignment="Top" FontSize="13" Foreground="Blue"/>
+        <TextBlock x:Name="InfoTextBlock5Link" HorizontalAlignment="Left" Margin="292,90,0,0" TextWrapping="Wrap" Text="Nimblefaf" VerticalAlignment="Top" FontSize="13" Foreground="Blue"/>
         <TextBlock x:Name="InfoTextBlock4_Copy" HorizontalAlignment="Left" Margin="169,116,0,0" TextWrapping="Wrap" Text="Inspired by the work of" VerticalAlignment="Top" FontSize="9"/>
         <TextBlock x:Name="InfoTextBlock5Link_Copy" HorizontalAlignment="Left" Margin="382,116,0,0" TextWrapping="Wrap" Text="mon" VerticalAlignment="Top" FontSize="9" Foreground="Blue"/>
     </Grid>
