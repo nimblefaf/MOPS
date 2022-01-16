@@ -27,11 +27,13 @@ namespace MOPS.UI
         private MainWindow main;
         private BackgroundWorker backgroundLoader;
         public DoubleAnimation PreloaderFade = new DoubleAnimation();
+        private int Percentage;
 
         public Preloader()
         {
             InitializeComponent();
             RespackCheck();
+            Percentage = 0;
 
             backgroundLoader = new BackgroundWorker();
             backgroundLoader.RunWorkerCompleted += new RunWorkerCompletedEventHandler(load_completed);
@@ -39,7 +41,7 @@ namespace MOPS.UI
 
             PreloaderFade.From = 1;
             PreloaderFade.To = 0;
-            PreloaderFade.Duration = TimeSpan.FromSeconds(0.5);
+            PreloaderFade.Duration = TimeSpan.FromSeconds(0.4);
             PreloaderFade.Completed += delegate (object sender, EventArgs e)
             {
                 this.Visibility = Visibility.Hidden;
@@ -58,10 +60,16 @@ namespace MOPS.UI
             this.BeginAnimation(OpacityProperty, PreloaderFade);
         }
 
-        void BGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            Percentage = e.ProgressPercentage;
             PacksBlock.Text = e.ProgressPercentage.ToString();
-            ProgressBGBar.Width = this.Width / 100 * e.ProgressPercentage;
+            ProgressBarMove(e.ProgressPercentage);
+        }
+
+        private void ProgressBarMove(int Perc)
+        {
+            ProgressBGBar.Width = this.ActualWidth / 100 * Perc;
         }
 
 
@@ -117,6 +125,11 @@ namespace MOPS.UI
 
             if (packs.Count == 0) this.BeginAnimation(OpacityProperty, PreloaderFade);
             else backgroundLoader.RunWorkerAsync(packs.ToArray());
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ProgressBarMove(Percentage);
         }
     }
 }
