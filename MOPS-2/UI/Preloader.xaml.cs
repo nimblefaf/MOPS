@@ -44,7 +44,8 @@ namespace MOPS.UI
             PreloaderFade.Duration = TimeSpan.FromSeconds(0.4);
             PreloaderFade.Completed += delegate (object sender, EventArgs e)
             {
-                this.Visibility = Visibility.Hidden;
+                Visibility = Visibility.Hidden;
+                ((Panel)this.Parent).Children.Remove(this); //removing UC, since we don't need it anymore
             };
         }
         public void SetReference(MainWindow window)
@@ -56,6 +57,7 @@ namespace MOPS.UI
 
         private void load_completed(object sender, RunWorkerCompletedEventArgs e) 
         {
+            Cursor = Cursors.Arrow;
             StartBlock.Text = "Completed";
             this.BeginAnimation(OpacityProperty, PreloaderFade);
         }
@@ -72,6 +74,10 @@ namespace MOPS.UI
             ProgressBGBar.Width = this.ActualWidth / 100 * Perc;
         }
 
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ProgressBarMove(Percentage);
+        }
 
         List<string> packs = new List<string>();
         private void RespackCheck()
@@ -116,20 +122,24 @@ namespace MOPS.UI
 
         private void StartBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Cursor = Cursors.Wait;
-            StartBlock.Cursor = Cursors.Wait;
-            WarningBlock.Visibility = Visibility.Hidden;
-            //PacksBlock.Visibility = Visibility.Hidden;
+            StartLoading();
+        }
 
-            StartBlock.Text = "Loading...";
+        private void StartLoading()
+        {
+            Cursor = Cursors.Wait;
+            WarningBlock.Visibility = Visibility.Hidden;
+            StartBlock.IsEnabled = false;
+            StartBlock.Visibility = Visibility.Hidden;
+            LoadingBlock.Visibility = Visibility.Visible;
 
             if (packs.Count == 0) this.BeginAnimation(OpacityProperty, PreloaderFade);
             else backgroundLoader.RunWorkerAsync(packs.ToArray());
         }
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            ProgressBarMove(Percentage);
+            if (Properties.Settings.Default.skipPreloadWarn) StartLoading();
         }
     }
 }

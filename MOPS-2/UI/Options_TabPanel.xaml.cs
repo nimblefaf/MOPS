@@ -120,6 +120,9 @@ namespace MOPS.UI
             
             if (Properties.Settings.Default.discordMode) OB_DiscordOn.Background = Brushes.White;
             else OB_DiscordOff.Background = Brushes.White;
+
+            if (Properties.Settings.Default.skipPreloadWarn) OB_SkipPreloadOn.Background = Brushes.White;
+            else OB_SkipPreloadOff.Background = Brushes.White;
         }
 
 
@@ -308,6 +311,20 @@ namespace MOPS.UI
             OB_BlurQualMED.Background = Brushes.LightGray;
             OB_BlurQualHIGH.Background = Brushes.White;
             main.BlurAmount_Upd();
+        }
+
+        private void OB_SkipPreloadOff_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.skipPreloadWarn = false;
+            OB_SkipPreloadOn.Background = Brushes.LightGray;
+            OB_SkipPreloadOff.Background = Brushes.White;
+        }
+
+        private void OB_SkipPreloadOn_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.skipPreloadWarn = true;
+            OB_SkipPreloadOn.Background = Brushes.White;
+            OB_SkipPreloadOff.Background = Brushes.LightGray;
         }
     }
 }

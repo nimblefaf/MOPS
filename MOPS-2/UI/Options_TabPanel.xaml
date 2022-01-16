@@ -38,5 +38,8 @@
         <Button x:Name="OB_BlurQualLOW" Content="LOW" HorizontalAlignment="Left" Margin="315,170,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="44" Click="OB_BlurQualLOW_Click"/>
         <Button x:Name="OB_BlurQualMED" Content="MEDIUM" HorizontalAlignment="Left" Margin="364,170,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="71" Click="OB_BlurQualMED_Click"/>
         <Button x:Name="OB_BlurQualHIGH" Content="HIGH" HorizontalAlignment="Left" Margin="440,170,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="51" Click="OB_BlurQualHIGH_Click"/>
+        <TextBlock x:Name="OTB_SkipPreloadWarn" HorizontalAlignment="Left" Margin="10,79,0,0" TextWrapping="Wrap" Text="Skip preloader warning" VerticalAlignment="Top"/>
+        <Button x:Name="OB_SkipPreloadOff" Content="OFF" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_SkipPreloadOff_Click" Width="46" Background="LightGray" Focusable="False"/>
+        <Button x:Name="OB_SkipPreloadOn" Content="ON" HorizontalAlignment="Left" Margin="61,95,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_SkipPreloadOn_Click" Width="43" Background="LightGray" Focusable="False"/>
     </Grid>
 </UserControl>

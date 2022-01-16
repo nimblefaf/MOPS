@@ -106,5 +106,17 @@ namespace MOPS.Properties {
                 this["blurQuality"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool skipPreloadWarn {
+            get {
+                return ((bool)(this["skipPreloadWarn"]));
+            }
+            set {
+                this["skipPreloadWarn"] = value;
+            }
+        }
     }
 }
