@@ -41,5 +41,8 @@
         <TextBlock x:Name="OTB_SkipPreloadWarn" HorizontalAlignment="Left" Margin="10,79,0,0" TextWrapping="Wrap" Text="Skip preloader warning" VerticalAlignment="Top"/>
         <Button x:Name="OB_SkipPreloadOff" Content="OFF" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_SkipPreloadOff_Click" Width="46" Background="LightGray" Focusable="False"/>
         <Button x:Name="OB_SkipPreloadOn" Content="ON" HorizontalAlignment="Left" Margin="61,95,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_SkipPreloadOn_Click" Width="43" Background="LightGray" Focusable="False"/>
+        <TextBlock x:Name="OTB_ShuffleImages" HorizontalAlignment="Left" Margin="10,174,0,0" TextWrapping="Wrap" Text="Shuffle images" VerticalAlignment="Top"/>
+        <Button x:Name="OB_ShuffleImagesOff" Content="OFF" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_ShuffleImagesOff_Click" Width="46" Background="LightGray" Focusable="False"/>
+        <Button x:Name="OB_ShuffleImagesOn" Content="ON" HorizontalAlignment="Left" Margin="61,189,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_ShuffleImagesOn_Click" Width="43" Background="LightGray" Focusable="False"/>
     </Grid>
 </UserControl>

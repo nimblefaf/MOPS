@@ -123,6 +123,9 @@ namespace MOPS.UI
 
             if (Properties.Settings.Default.skipPreloadWarn) OB_SkipPreloadOn.Background = Brushes.White;
             else OB_SkipPreloadOff.Background = Brushes.White;
+
+            if (Properties.Settings.Default.shuffleImages) OB_ShuffleImagesOn.Background = Brushes.White;
+            else OB_ShuffleImagesOff.Background = Brushes.White;
         }
 
 
@@ -325,6 +328,20 @@ namespace MOPS.UI
             Properties.Settings.Default.skipPreloadWarn = true;
             OB_SkipPreloadOn.Background = Brushes.White;
             OB_SkipPreloadOff.Background = Brushes.LightGray;
+        }
+
+        private void OB_ShuffleImagesOff_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.shuffleImages = false;
+            OB_ShuffleImagesOn.Background = Brushes.LightGray;
+            OB_ShuffleImagesOff.Background = Brushes.White;
+        }
+
+        private void OB_ShuffleImagesOn_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.shuffleImages = true;
+            OB_ShuffleImagesOn.Background = Brushes.White;
+            OB_ShuffleImagesOff.Background = Brushes.LightGray;
         }
     }
 }

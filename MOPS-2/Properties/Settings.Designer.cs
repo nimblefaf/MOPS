@@ -118,5 +118,17 @@ namespace MOPS.Properties {
                 this["skipPreloadWarn"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool shuffleImages {
+            get {
+                return ((bool)(this["shuffleImages"]));
+            }
+            set {
+                this["shuffleImages"] = value;
+            }
+        }
     }
 }

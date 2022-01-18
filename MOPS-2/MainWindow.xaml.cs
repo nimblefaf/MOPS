@@ -570,7 +570,8 @@ namespace MOPS
             {
                 if (enabled_images.Count != 0)
                 {
-                    ImageChange((current_image_pos + rnd.Next(1, enabled_images.Count - 1)) % enabled_images.Count);
+                    if (Properties.Settings.Default.shuffleImages) ImageChange((current_image_pos + rnd.Next(1, enabled_images.Count - 1)) % enabled_images.Count);
+                    else ImageChange(++current_image_pos % enabled_images.Count);
                 }
                 else ImageChange(-1);
             }

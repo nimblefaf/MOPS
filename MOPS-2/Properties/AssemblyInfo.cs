@@ -7,11 +7,11 @@ using System.Windows;
 // Управление общими сведениями о сборке осуществляется с помощью 
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
-[assembly: AssemblyTitle("MOPS-2")]
+[assembly: AssemblyTitle("MOPS")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("Beta")]
 [assembly: AssemblyCompany("Waifu Inc.")]
-[assembly: AssemblyProduct("MOPS-2")]
+[assembly: AssemblyProduct("MOPS")]
 [assembly: AssemblyCopyright("Copyright © Nimblefaf")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -51,5 +51,5 @@ using System.Windows;
 // Можно задать все значения или принять номера сборки и редакции по умолчанию 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.7.0.0")]
-[assembly: AssemblyFileVersion("0.7.0.0")]
+[assembly: AssemblyVersion("0.7.1")]
+[assembly: AssemblyFileVersion("0.7.1")]
