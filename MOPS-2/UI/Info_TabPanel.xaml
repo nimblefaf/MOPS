@@ -10,10 +10,22 @@
     <Grid Background="#FFE5E5E5" Cursor="Arrow">
         <TextBlock x:Name="InfoTextBlock1" Margin="75,25,75,0" TextWrapping="Wrap" Text="0x40 Hues of C#, V0.7" VerticalAlignment="Top" FontSize="20" HorizontalAlignment="Center"/>
         <TextBlock x:Name="InfoTextBlock2" HorizontalAlignment="Left" Margin="96,60,0,0" TextWrapping="Wrap" Text="Adapted from the" VerticalAlignment="Top" FontSize="15"/>
-        <TextBlock x:Name="InfoTextBlock3Link" HorizontalAlignment="Left" Margin="342,60,0,0" TextWrapping="Wrap" Text="0x40 flash" VerticalAlignment="Top" FontSize="15" Foreground="Blue"/>
-        <TextBlock x:Name="InfoTextBlock4" HorizontalAlignment="Left" Margin="195,90,0,0" TextWrapping="Wrap" Text="Made by" VerticalAlignment="Top" FontSize="13"/>
-        <TextBlock x:Name="InfoTextBlock5Link" HorizontalAlignment="Left" Margin="292,90,0,0" TextWrapping="Wrap" Text="Nimblefaf" VerticalAlignment="Top" FontSize="13" Foreground="Blue"/>
-        <TextBlock x:Name="InfoTextBlock4_Copy" HorizontalAlignment="Left" Margin="169,116,0,0" TextWrapping="Wrap" Text="Inspired by the work of" VerticalAlignment="Top" FontSize="9"/>
-        <TextBlock x:Name="InfoTextBlock5Link_Copy" HorizontalAlignment="Left" Margin="382,116,0,0" TextWrapping="Wrap" Text="mon" VerticalAlignment="Top" FontSize="9" Foreground="Blue"/>
+        <TextBlock x:Name="InfoTextBlock3Link" HorizontalAlignment="Left" Margin="342,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15">
+            <Hyperlink NavigateUri="https://0x40hues.blogspot.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                0x40 flash
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock x:Name="InfoTextBlock4" HorizontalAlignment="Left" Margin="189,90,0,0" TextWrapping="Wrap" Text="Made by" VerticalAlignment="Top" FontSize="13"/>
+        <TextBlock x:Name="InfoTextBlock5Link" HorizontalAlignment="Right" Margin="0,90,189,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="13">
+            <Hyperlink NavigateUri="https://github.com/nimblefaf" RequestNavigate="Hyperlink_RequestNavigate">
+                nimblefaf
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock x:Name="InfoTextBlock4_Copy" HorizontalAlignment="Left" Margin="175,116,0,0" TextWrapping="Wrap" Text="Inspired by the work of" VerticalAlignment="Top" FontSize="9"/>
+        <TextBlock x:Name="InfoTextBlock5Link_Copy" HorizontalAlignment="Right" Margin="0,116,176,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="9">
+            <Hyperlink NavigateUri="https://github.com/mon" RequestNavigate="Hyperlink_RequestNavigate">
+                mon
+            </Hyperlink>
+        </TextBlock>
     </Grid>
 </UserControl>
