@@ -17,6 +17,7 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using System.Net;
 using Newtonsoft.Json;
+using System.Windows.Threading;
 
 namespace MOPS.UI
 {
@@ -48,6 +49,8 @@ namespace MOPS.UI
         private BackgroundWorker remoteListLoader;
         private BackgroundWorker backgroundWebLoader;
 
+        private DispatcherTimer timer;
+
         public Resources_TabPanel()
         {
             InitializeComponent();
@@ -76,6 +79,10 @@ namespace MOPS.UI
                 new DoWorkEventHandler(webLoad_dowork);
             backgroundWebLoader.ProgressChanged +=
                 new ProgressChangedEventHandler(BGWorker_ProgressChanged);
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(3);
+            timer.Tick += new EventHandler(WC_UI_Reset);
 
             Remote_listBox.Items.Add(new setdata() { Name = "Click to load the list" }) ;
         }
@@ -461,16 +468,14 @@ namespace MOPS.UI
 
         #region web
 
-        string url = "https://portal.0x40hu.es/resource_packs.json";
-        //string url_old = "https://cdn.0x40.ga/getRespacks.php";
-
+        private bool WebClient_IsActive = false;
         
-
         private void load_remote_button_Click(object sender, RoutedEventArgs e)
         {
             Remote_listBox.IsEnabled = false;
             load_remote_button.IsEnabled = false;
             Status_textBlock.Text = "Loading...";
+            WebClient_IsActive = true;
             using (WebClient wc = new WebClient())
             {
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
@@ -484,21 +489,41 @@ namespace MOPS.UI
             remoteRPs[Remote_listBox.SelectedIndex].loaded = true;
             Remote_listBox.IsEnabled = true;
             load_remote_button.IsEnabled = true;
-            if (load_remote_button.Visibility == Visibility.Visible)
-            {
-                load_remote_button.IsEnabled = false;
-                load_remote_button.Background = Brushes.GreenYellow;
-                load_remote_button.Content = "LOADED";
-            }
-            else Remote_listBox.SelectedIndex = -1;
             ProgBar.Value = 0;
-            Status_textBlock.Text = "Processing...";
-            backgroundWebLoader.RunWorkerAsync(e.Result);
+            if (e.Error != null)
+            {
+                Status_textBlock.Text = "Error!";
+                Status_textBlock.Foreground = Brushes.Red;
+            }
+            else if (Encoding.Default.GetString(e.Result.Take(6).ToArray()) == "<html>") //if the site returned 404 page
+            {
+                Status_textBlock.Text = "Error!";
+                Status_textBlock.Foreground = Brushes.Red;
+            }
+            else
+            {
+                if (load_remote_button.Visibility == Visibility.Visible)
+                {
+                    load_remote_button.IsEnabled = false;
+                    load_remote_button.Background = Brushes.GreenYellow;
+                    load_remote_button.Content = "LOADED";
+                }
+                else Remote_listBox.SelectedIndex = -1;
+
+                Status_textBlock.Text = "Processing...";
+                backgroundWebLoader.RunWorkerAsync(e.Result);
+                
+            }
+            WebClient_IsActive = false;
+            timer.Start();
         }
 
         private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             ProgBar.Value = e.ProgressPercentage;
+            bytesLoaded_textBlock.Text = e.BytesReceived.ToString() + "b";
+            bytesToLoad_textBlock.Text = e.TotalBytesToReceive.ToString() + "b";
+            percentLoaded_textBlock.Text = e.ProgressPercentage.ToString() + "%";
         }
 
         public void webLoad_dowork(object sender, DoWorkEventArgs e)
@@ -508,28 +533,80 @@ namespace MOPS.UI
             e.Result = main.RPM.WebReader((byte[])e.Argument, worker, e);
         }
 
+        private void WC_UI_Reset(object sender, EventArgs e)
+        {
+            timer.Stop();
+            if (!WebClient_IsActive)
+            {
+                bytesLoaded_textBlock.Text = "0b";
+                bytesToLoad_textBlock.Text = "0b";
+                percentLoaded_textBlock.Text = "0%";
+                Status_textBlock.Text = "Idle"; 
+                Status_textBlock.Foreground = Brushes.Black;
+            }
+        }
+
         #endregion
 
         #region remote_list
 
+        string url_new = "https://portal.0x40hu.es/resource_packs.json";
+        //string url_classic = "https://cdn.0x40.ga/getRespacks.php";
+
+        private string error_message;
+        private string hues_json;
         private void RemoteListLoad(object sender, DoWorkEventArgs e)
         {
-            string hues_json;
-            using (WebClient wc = new WebClient()) hues_json = wc.DownloadString(url);
-            remoteRPs = JsonConvert.DeserializeObject<RemoteRP_Info[]>(hues_json);
+            hues_json = "";
+            Exception exception;
+            error_message = "";
+            using (WebClient wc = new WebClient())
+            {
+                try
+                {
+                    //hues_json = wc.DownloadString(url);
+                    hues_json = wc.DownloadString(url_new);
+                }
+                catch (WebException WE)
+                {
+                    exception = WE;
+                    error_message = WE.Message;
+                }
+            }
+
         }
         private void RemoteListLoadCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Remote_listBox.Items.Clear();
-            Remote_listBox.ItemsSource = remoteRPs;
+            if (error_message != "")
+            {
+                Remote_listBox.Items.Clear();
+                Remote_listBox.Items.Add(new setdata() { Name = "Error! Click to try again" });
+            }
+            else if (hues_json.Substring(0, 6) == "<html>") //if loaded 404 page in json string
+            {
+                Remote_listBox.Items.Clear();
+                Remote_listBox.Items.Add(new setdata() { Name = "Error! Click to try again" });
+            }
+            else
+            {
+                remoteRPs = JsonConvert.DeserializeObject<RemoteRP_Info[]>(hues_json);
+
+                Remote_listBox.Items.Clear();
+                Remote_listBox.ItemsSource = remoteRPs;
+            }
+
             Remote_listBox.IsEnabled = true;
+            Remote_listBox.Cursor = Cursors.Arrow;
         }
 
         private void Remote_listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Remote_listBox.ItemsSource == null & Remote_listBox.IsEnabled == true)
+            if (Remote_listBox.ItemsSource == null & Remote_listBox.IsEnabled == true & Remote_listBox.SelectedIndex == 0)
             {
                 //((setdata)Remote_listBox.Items[0]).Name = "Loading...";
+                Remote_listBox.Items.Clear();
+                Remote_listBox.Items.Add(new setdata() { Name = "Loading..." });
+                Remote_listBox.Cursor = Cursors.Wait;
                 Remote_listBox.IsEnabled = false;
                 remoteListLoader.RunWorkerAsync();
             }

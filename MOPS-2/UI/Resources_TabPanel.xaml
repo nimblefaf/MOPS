@@ -41,8 +41,8 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ProgressBar x:Name="ProgBar"  HorizontalAlignment="Left" Width="190" Grid.Row="2" Height="10" VerticalAlignment="Bottom" Value="-1" Margin="0,0,0,4"/>
-        <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="1,0,0,37" Width="79" Grid.Row="2" Click="load_rp_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8" Opacity="1"/>
+        <ProgressBar x:Name="ProgBar"  HorizontalAlignment="Left" Width="190" Grid.Row="2" Height="7" VerticalAlignment="Bottom" Value="-1" Margin="1,0,0,15"/>
+        <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="1,0,0,36" Width="88" Grid.Row="2" Click="load_rp_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8"/>
         <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" VerticalAlignment="Top" FontFamily="/MOPS;component/fonts/#Pet Me 128" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="195,0,0,0" FontSize="10"/>
         <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="190" Height="23"/>
         <TextBox x:Name="rp_description_textbox" Margin="195,39,0,7" Text="&lt;no description&gt;" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True"/>
@@ -79,9 +79,12 @@
         <Button x:Name="disabelAll_button" Content="DISABLE ALL" HorizontalAlignment="Left" Margin="445,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="140" Click="disabelAll_button_Click" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" Height="16" FontSize="8" Visibility="Hidden"/>
         <Label x:Name="SongNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,12" Grid.Row="2" VerticalAlignment="Bottom"/>
         <Label x:Name="ImagesNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="Status_textBlock" HorizontalAlignment="Left" Margin="0,21,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top" Width="190" Height="15"/>
+        <TextBlock x:Name="Status_textBlock" HorizontalAlignment="Left" Margin="1,0,0,22" Grid.Row="2" TextWrapping="Wrap" Text="Status" VerticalAlignment="Bottom" Width="100" Height="11" FontSize="10"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="0,0,0,148" Grid.Row="1" TextWrapping="Wrap" Text="Remote Respacks" VerticalAlignment="Bottom"/>
         <ListBox x:Name="Remote_listBox" HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Row="1" Width="190" Height="138" VerticalAlignment="Bottom" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" Background="#FFE2E2E2" FontSize="8" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" SelectionChanged="Remote_listBox_SelectionChanged" ItemTemplate="{DynamicResource DataTemplateStateless}"/>
-        <Button x:Name="load_remote_button" Visibility="Hidden" Content="LOAD REMOTE" HorizontalAlignment="Left" Margin="94,0,0,37" Width="96" Grid.Row="2" Click="load_remote_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8"/>
+        <Button x:Name="load_remote_button" Visibility="Hidden" Content="LOAD REMOTE" HorizontalAlignment="Left" Margin="94,0,0,36" Width="96" Grid.Row="2" Click="load_remote_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8"/>
+        <TextBlock x:Name="bytesLoaded_textBlock" HorizontalAlignment="Left" Margin="1,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0b" VerticalAlignment="Bottom" Height="7" Width="64" FontSize="8" TextAlignment="Center"/>
+        <TextBlock x:Name="bytesToLoad_textBlock" HorizontalAlignment="Left" Margin="70,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0b" VerticalAlignment="Bottom" Height="7" Width="72" FontSize="8" TextAlignment="Center"/>
+        <TextBlock x:Name="percentLoaded_textBlock" HorizontalAlignment="Left" Margin="147,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0%" VerticalAlignment="Bottom" Height="7" Width="44" FontSize="8" TextAlignment="Center"/>
     </Grid>
 </UserControl>
