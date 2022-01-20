@@ -18,6 +18,7 @@ using Microsoft.Win32;
 using System.Net;
 using Newtonsoft.Json;
 using System.Windows.Threading;
+using System.Timers;
 
 namespace MOPS.UI
 {
@@ -49,7 +50,7 @@ namespace MOPS.UI
         private BackgroundWorker remoteListLoader;
         private BackgroundWorker backgroundWebLoader;
 
-        private DispatcherTimer timer;
+        private DispatcherTimer ui_reset_timer;
 
         public Resources_TabPanel()
         {
@@ -80,9 +81,9 @@ namespace MOPS.UI
             backgroundWebLoader.ProgressChanged +=
                 new ProgressChangedEventHandler(BGWorker_ProgressChanged);
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(3);
-            timer.Tick += new EventHandler(WC_UI_Reset);
+            ui_reset_timer = new DispatcherTimer();
+            ui_reset_timer.Interval = TimeSpan.FromSeconds(3);
+            ui_reset_timer.Tick += new EventHandler(ui_reset_timer_tick);
 
             Remote_listBox.Items.Add(new setdata() { Name = "Click to load the list" }) ;
         }
@@ -466,12 +467,13 @@ namespace MOPS.UI
         }
 
 
-        #region web
+        #region remote_rp_load
 
         private bool WebClient_IsActive = false;
         
         private void load_remote_button_Click(object sender, RoutedEventArgs e)
         {
+            WC_UI_Reset();
             Remote_listBox.IsEnabled = false;
             load_remote_button.IsEnabled = false;
             Status_textBlock.Text = "Loading...";
@@ -515,7 +517,7 @@ namespace MOPS.UI
                 
             }
             WebClient_IsActive = false;
-            timer.Start();
+            ui_reset_timer.Start();
         }
 
         private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -533,9 +535,14 @@ namespace MOPS.UI
             e.Result = main.RPM.WebReader((byte[])e.Argument, worker, e);
         }
 
-        private void WC_UI_Reset(object sender, EventArgs e)
+        private void ui_reset_timer_tick(object sender, EventArgs e)
         {
-            timer.Stop();
+            WC_UI_Reset();
+        }
+
+        private void WC_UI_Reset()
+        {
+            ui_reset_timer.Stop();
             if (!WebClient_IsActive)
             {
                 bytesLoaded_textBlock.Text = "0b";
