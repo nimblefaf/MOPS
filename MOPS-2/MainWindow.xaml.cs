@@ -100,6 +100,7 @@ namespace MOPS
             Player.SetReference(this);
             PreloaderWin.SetReference(this);
             InnerWin.SetReference(this);
+            Display_Alpha.SetReference(this);
             
 
             switch ((ColorSet)Properties.Settings.Default.colorSet)
@@ -313,14 +314,14 @@ namespace MOPS
             if (e.Delta < 0 & Player.Volume != 0)
             {
                 Player.Volume -= 10;
-                volume_label.Content = Player.Volume;
+                Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
             }
             if (e.Delta > 0 & Player.Volume != 100)
             {
                 if (muted) toggle_mute();
                 Player.Volume += 10;
-                volume_label.Content = Player.Volume;
+                Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
             }
         }
@@ -353,7 +354,7 @@ namespace MOPS
             }
         }
 
-        private void next_song()
+        public void next_song()
         {
             if (enabled_songs.Count > 1)
             {
@@ -361,7 +362,7 @@ namespace MOPS
                 else songs_listbox.SelectedIndex += 1;
             }
         }
-        private void prev_song()
+        public void prev_song()
         {
             if (enabled_songs.Count > 1)
             {
@@ -375,7 +376,7 @@ namespace MOPS
             if (!muted)
             {
                 muted_volume = Player.Volume;
-                volume_label.Content = 0;
+                Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
                 Player.Volume = 0;
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
                 muted = true;
@@ -383,13 +384,13 @@ namespace MOPS
             else
             {
                 Player.Volume = muted_volume;
-                volume_label.Content = Player.Volume;
+                Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
                 muted = false;
             }
         }
 
-        private void next_image()
+        public void next_image()
         {
             if (enabled_images.Count > 1)
             {
@@ -398,7 +399,7 @@ namespace MOPS
                 full_auto_mode = false;
             }
         }
-        private void prev_image()
+        public void prev_image()
         {
             if (enabled_images.Count > 1)
             {
@@ -435,15 +436,15 @@ namespace MOPS
         /// <summary> Check if displayed rhythm is too short and fills it if neccessary </summary>
         private void TimelineLenghtFill()
         {
-            if (timeline_label.Content.ToString().Length < 250)
-                timeline_label.Content = timeline_label.Content = string.Concat(timeline_label.Content.ToString(), loop_rhythm);
+            if (Display_Alpha.timeline_textBlock.Text.Length < 250)
+                Display_Alpha.timeline_textBlock.Text = Display_Alpha.timeline_textBlock.Text = string.Concat(Display_Alpha.timeline_textBlock.Text, loop_rhythm);
         }
 
         private void TimeLine_Move()
         {
             //CornerBlock.Text = rhythm_pos.ToString();
-            beat(timeline_label.Content.ToString()[2]);
-            timeline_label.Content = timeline_label.Content.ToString().Remove(2, 1);
+            beat(Display_Alpha.timeline_textBlock.Text[2]);
+            Display_Alpha.timeline_textBlock.Text = Display_Alpha.timeline_textBlock.Text.Remove(2, 1);
             TimelineLenghtFill();
             rhythm_pos += 1;
             if (rhythm_pos == loop_rhythm.Length) rhythm_pos = 0;
@@ -561,7 +562,7 @@ namespace MOPS
             
             ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
             HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
-            color_label.Content = hues[CurrentColorInd].name.ToUpper(); 
+            Display_Alpha.color_textBlock.Text = hues[CurrentColorInd].name.ToUpper(); 
         }
         // '*'
         private void timeline_image_change()
@@ -644,7 +645,7 @@ namespace MOPS
                 Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
                 Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
             }
-            color_label.Content = hues[CurrentColorInd].name.ToUpper();
+            Display_Alpha.color_textBlock.Text = hues[CurrentColorInd].name.ToUpper();
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
         }
 
@@ -739,15 +740,6 @@ namespace MOPS
         {
             next_song();
         }
-        private void songs_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (songs_listbox.Visibility == Visibility.Hidden)
-            {
-                songs_listbox.Visibility = Visibility.Visible;
-                images_listbox.Visibility = Visibility.Hidden;
-            }
-            else songs_listbox.Visibility = Visibility.Hidden;
-        }
 
         private void prev_song_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -774,8 +766,8 @@ namespace MOPS
                 if (Player.loop_mem.Length != 0)
                 {
                     loop_rhythm = RPM.allSongs[i].rhythm;
-                    song_label.Content = RPM.allSongs[i].title.ToUpper();
-                    timeline_label.Content = RPM.allSongs[i].rhythm;
+                    Display_Alpha.song_textBlock.Text = RPM.allSongs[i].title.ToUpper();
+                    Display_Alpha.timeline_textBlock.Text = RPM.allSongs[i].rhythm;
                     current_song = songs_listbox.SelectedIndex;
 
                     rhythm_pos = 1;
@@ -796,13 +788,13 @@ namespace MOPS
                         {
                             build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
                         }
-                        if (timeline_label.Content.ToString().Length < 250) timeline_label.Content = string.Concat(build_rhythm, timeline_label.Content);
-                        else timeline_label.Content = build_rhythm;
+                        if (Display_Alpha.timeline_textBlock.Text.Length < 250) Display_Alpha.timeline_textBlock.Text = string.Concat(build_rhythm, Display_Alpha.timeline_textBlock.Text);
+                        else Display_Alpha.timeline_textBlock.Text = build_rhythm;
                         rhythm_pos = -expected_size;
                     }
                     else Player.Play_Without_Buildup();
 
-                    timeline_label.Content = ">>" + timeline_label.Content;
+                    Display_Alpha.timeline_textBlock.Text = ">>" + Display_Alpha.timeline_textBlock.Text;
 
                     beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
 
@@ -845,9 +837,9 @@ namespace MOPS
         {
             Timer.Stop();
             Player.Stop();
-            song_label.Content = "NONE";
+            Display_Alpha.song_textBlock.Text = "NONE";
             beat_length = 0;
-            timeline_label.Content = ">>.";
+            Display_Alpha.timeline_textBlock.Text = ">>.";
             if (Properties.Settings.Default.discordMode)
             {
                 discordRpcClient.SetPresence(new RichPresence()
@@ -906,7 +898,7 @@ namespace MOPS
                 if (RPM.allPics[index].animation == null)
                 {
                     AnimTimer.Stop();
-                    character_label.Content = RPM.allPics[index].fullname.ToUpper();
+                    Display_Alpha.character_textBlock.Text = RPM.allPics[index].fullname.ToUpper();
                     switch (RPM.allPics[index].align)
                     {
                         case "left":
@@ -949,7 +941,7 @@ namespace MOPS
                 if (enabled_images.Count == 0)
                 {
                     image0.Source = null;
-                    character_label.Content = "NONE";
+                    Display_Alpha.character_textBlock.Text = "NONE";
                 }
             }
         }
@@ -964,16 +956,6 @@ namespace MOPS
             image0.Source = RPM.allPics[current_image_pos].animation[anim_ind];
             if (RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
-        }
-
-        private void Images_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (images_listbox.Visibility == Visibility.Hidden)
-            {
-                images_listbox.Visibility = Visibility.Visible;
-                songs_listbox.Visibility = Visibility.Hidden;
-            }
-            else images_listbox.Visibility = Visibility.Hidden;
         }
 
         private void Images_listbox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -998,11 +980,11 @@ namespace MOPS
             int limit = build_rhythm.Length + (loop_rhythm.Length * 3);
             for (int i = 3; i < limit; i++)
             {
-                if (timeline_label.Content.ToString()[i] != '.') break;
+                if (Display_Alpha.timeline_textBlock.Text[i] != '.') break;
                 else
                 {
                     Count++;
-                    if (timeline_label.Content.ToString().Length - 1 == i) timeline_label.Content = timeline_label.Content.ToString() + loop_rhythm;
+                    if (Display_Alpha.timeline_textBlock.Text.Length - 1 == i) Display_Alpha.timeline_textBlock.Text = Display_Alpha.timeline_textBlock.Text + loop_rhythm;
                     if (i == limit - 1)
                     {
                         Count = 0;
