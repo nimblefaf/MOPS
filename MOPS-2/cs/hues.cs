@@ -16,7 +16,7 @@ namespace MOPS
             }
         }
 
-        public static Palette[] hues_normal =
+        public static readonly Palette[] hues_normal =
         {
             new Palette("Black", (SolidColorBrush)new BrushConverter().ConvertFromString("#000000")),
             new Palette("Brick", (SolidColorBrush)new BrushConverter().ConvertFromString("#550000")),
@@ -82,9 +82,9 @@ namespace MOPS
             new Palette("Turquoise", (SolidColorBrush)new BrushConverter().ConvertFromString("#55ffff")),
             new Palette("Powder", (SolidColorBrush)new BrushConverter().ConvertFromString("#aaffff")),
             new Palette("White", (SolidColorBrush)new BrushConverter().ConvertFromString("#ffffff"))
-        };          //  Macros would help with these.
+        };
 
-        public static Palette[] hues_pastel =
+        public static readonly Palette[] hues_pastel =
         {
             new Palette("Mahogany", (SolidColorBrush)new BrushConverter().ConvertFromString("#CD4A4A")),
             new Palette("Banana Mania", (SolidColorBrush)new BrushConverter().ConvertFromString("#FAE7B5")),
@@ -152,7 +152,7 @@ namespace MOPS
             new Palette("Yellow Orange", (SolidColorBrush)new BrushConverter().ConvertFromString("#FFB653")),
         };
 
-        public static Palette[] hues_weed =
+        public static readonly Palette[] hues_weed =
         {
             new Palette("Green", (SolidColorBrush)new BrushConverter().ConvertFromString("#00FF00")),
             new Palette("Lizard", (SolidColorBrush)new BrushConverter().ConvertFromString("#5A6351")),

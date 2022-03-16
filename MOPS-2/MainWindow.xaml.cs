@@ -139,7 +139,7 @@ namespace MOPS
             BlurAnimSB.Children.Add(BlurAnim);
             BlurAnimSB.FillBehavior = FillBehavior.Stop;
 
-            Fade.FillBehavior = FillBehavior.HoldEnd;
+            Fade.FillBehavior = FillBehavior.Stop;
             Fade.BeginTime = TimeSpan.FromSeconds(0);
 
             Blackout_Rectangle.Opacity = 0;
