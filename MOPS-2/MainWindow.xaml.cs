@@ -97,7 +97,6 @@ namespace MOPS
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
             ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
 
-            Player.SetReference(this);
             PreloaderWin.SetReference(this);
             InnerWin.SetReference(this);
             Display_Alpha.SetReference(this);
@@ -172,7 +171,7 @@ namespace MOPS
         private Storyboard BlurAnimSB = new Storyboard();
         private DoubleAnimation BlurAnim = new DoubleAnimation();
 
-        private Storyboard SB_Blackout = new Storyboard();
+        public Storyboard SB_Blackout = new Storyboard();
         private DoubleAnimation Blackout = new DoubleAnimation();
         private Storyboard SB_Blackout_Short = new Storyboard();
         private DoubleAnimation Blackout_Short = new DoubleAnimation();
@@ -511,40 +510,40 @@ namespace MOPS
         #region Timeline events
 
         // Vertical blur (snare)
-        private void timeline_x()
+        public void timeline_x()
         {
             timeline_pic_and_color();
             timeline_blur_vert();
         }
         // Horizontal blur (bass)
-        private void timeline_o()
+        public void timeline_o()
         {
             timeline_pic_and_color();
             timeline_blur_hor();
         }
 
         // For '-' in the timeline
-        private void timeline_pic_and_color()
+        public void timeline_pic_and_color()
         {
             timeline_color_change();
             timeline_image_change();
         }
         // '+'
-        private void timeline_blackout()
+        public void timeline_blackout()
         {
             Blackout_Rectangle.Fill = Brushes.Black;
             image0.Effect = XBlur8;
             SB_Blackout.Begin();
         }
         // '¤'
-        private void timeline_whiteout()
+        public void timeline_whiteout()
         {
             Blackout_Rectangle.Fill = Brushes.White;
             image0.Effect = XBlur8;
             SB_Blackout.Begin();
         }
         // '|'
-        private void timeline_blackout_short()
+        public void timeline_blackout_short()
         {
             Blackout_Rectangle.Opacity = 1;
             timeline_pic_and_color();
@@ -565,7 +564,7 @@ namespace MOPS
             Display_Alpha.color_textBlock.Text = hues[CurrentColorInd].name.ToUpper(); 
         }
         // '*'
-        private void timeline_image_change()
+        public void timeline_image_change()
         {
             if (full_auto_mode & enabled_images.Count != 1)
             {
@@ -579,11 +578,11 @@ namespace MOPS
         }
 
 
-        
-        
+
+
 
         // 'X' Vertical blur only
-        private void timeline_blur_vert()
+        public void timeline_blur_vert()
         {
             if (enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
@@ -601,7 +600,7 @@ namespace MOPS
         }
 
         // 'O' Vertical blur only
-        private void timeline_blur_hor()
+        public void timeline_blur_hor()
         {
             if (enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
@@ -631,7 +630,7 @@ namespace MOPS
         }
 
         // '~' Fade color
-        private void timeline_fade()
+        public void timeline_fade()
         {
             Fade.Duration = TimeSpan.FromSeconds((CountDots() + 1) * beat_length);
             if ((BlendMode)Properties.Settings.Default.blendMode == BlendMode.HardLight)
@@ -650,14 +649,14 @@ namespace MOPS
         }
 
         // '=' Fade and change image
-        private void timeline_fade_image()
+        public void timeline_fade_image()
         {
             timeline_image_change();
             timeline_fade();
         }
 
         /// <summary> 'i' - inverts colors of the window </summary>
-        private void timeline_invert()
+        public void timeline_invert()
         {
             if (Colors_Inverted)
             {
@@ -674,7 +673,7 @@ namespace MOPS
         }
 
         // 'I' Invert & change image
-        private void timeline_invert_w_image()
+        public void timeline_invert_w_image()
         {
             timeline_pic_and_color();
             timeline_invert();
@@ -734,17 +733,6 @@ namespace MOPS
         //
         //
         //
-
-
-        private void next_song_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            next_song();
-        }
-
-        private void prev_song_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            prev_song();
-        }
 
         //tied to the songs_listbox on SelectionChanged
         private void Change_Song(object sender, SelectionChangedEventArgs e)
@@ -855,16 +843,6 @@ namespace MOPS
                 }
                 );
             }
-        }
-
-        private void prev_image_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            prev_image();
-        }
-
-        private void next_image_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            next_image();
         }
 
         private void full_auto_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

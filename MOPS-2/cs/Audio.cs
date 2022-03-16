@@ -47,12 +47,6 @@ namespace MOPS
         public byte[] loop_mem;
         public byte[] build_mem;
 
-        MainWindow main;
-        public void SetReference(MainWindow window)
-        {
-            main = window;
-        }
-
 
 
         private static bool InitBass(int hz)
@@ -144,7 +138,6 @@ namespace MOPS
         /// </summary>
         public void Stop()
         {
-            main.Timer.Stop();
             Bass.BASS_ChannelStop(Channel);
             if (point_L.IsAllocated) point_L.Free();
             if (point_B.IsAllocated) point_B.Free();

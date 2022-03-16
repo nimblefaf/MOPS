@@ -73,6 +73,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="cs\Core.cs" />
     <Compile Include="effects\ColorBlend_HardLightEffect.cs" />
     <Compile Include="cs\hues.cs" />
     <Compile Include="cs\PicConverter.cs" />
