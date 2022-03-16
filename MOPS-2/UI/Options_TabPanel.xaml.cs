@@ -134,14 +134,14 @@ namespace MOPS.UI
             Properties.Settings.Default.discordMode = false;
             OB_DiscordOn.Background = Brushes.LightGray;
             OB_DiscordOff.Background = Brushes.White;
-            main.discordRpcClient.Dispose();
+            main.Core.discordRpcClient.Dispose();
         }
         private void OB_DiscordOnButton_Click(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.discordMode = true;
             OB_DiscordOn.Background = Brushes.White;
             OB_DiscordOff.Background = Brushes.LightGray;
-            main.discord_rpc_init();
+            main.Core.discord_rpc_init();
         }
 
 

@@ -27,20 +27,11 @@ namespace MOPS
     public partial class MainWindow : Window
     {
         Random rnd = new Random();
-        Audio Player = new Audio();
-        
 
-        //Stopwatch TMP_tester = new Stopwatch();
+        internal Core Core = new Core();
         
-        //public Timer TTimer = new Timer(new TimerCallback);
-        public DispatcherTimer Timer = new DispatcherTimer(DispatcherPriority.Send);
         DispatcherTimer AnimTimer = new DispatcherTimer(DispatcherPriority.Render);
-        DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
-        double Correction;
-        public double beat_length = 0;
-
-        public Label[] allLabels;
-        public TextBlock[] allTextBlocks;
+        public DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
 
         Shaders.InvertColorEffect invertColorEffect = new Shaders.InvertColorEffect();
         public Shaders.ColorBlend_HardLightEffect HardLightEffect = new Shaders.ColorBlend_HardLightEffect();
@@ -57,8 +48,7 @@ namespace MOPS
 
         public RPManager RPM = new RPManager();
 
-        public bool muted = false;
-        public int muted_volume;
+
         public bool Colors_Inverted = false;
 
         public bool full_auto_mode = true;
@@ -69,14 +59,8 @@ namespace MOPS
         public double blur_amount = 0.02;
         public bool blackouted = false;
 
-        public int current_song = 0;
         public int current_image_pos = 0;
         private int anim_ind = 0;
-
-        private string loop_rhythm;
-        private string build_rhythm = "";
-        public int rhythm_pos = 1;
-        public int b_rhythm_pos = 1;
 
         /// <summary>
         /// List of enabled songs displayed in songs_listbox.
@@ -87,16 +71,14 @@ namespace MOPS
         /// </summary>
         public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
-        public DiscordRpcClient discordRpcClient = new DiscordRpcClient("842763717179342858");
-
         public MainWindow()
         {
             InitializeComponent();
 
-            Timer.Tick += new EventHandler(Timer_Tick);
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
             ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
 
+            Core.SetReference(this);
             PreloaderWin.SetReference(this);
             InnerWin.SetReference(this);
             Display_Alpha.SetReference(this);
@@ -115,8 +97,6 @@ namespace MOPS
                     break;
             }
 
-            if (Properties.Settings.Default.discordMode) discord_rpc_init();
-
             songs_listbox.ItemsSource = enabled_songs;
             images_listbox.ItemsSource = enabled_images;
 
@@ -125,37 +105,6 @@ namespace MOPS
             //timeline_label.Foreground = Brushes.Red;
         }
 
-        public void discord_rpc_init()
-        {
-            if (!discordRpcClient.IsInitialized)
-            {
-                discordRpcClient = new DiscordRpcClient("842763717179342858");
-                discordRpcClient.Initialize();
-                if (beat_length == 0)
-                discordRpcClient.SetPresence(new RichPresence()
-                {
-                    Details = "No song selected",
-                    State = "¯\\_(ツ)_/¯",
-                    Assets = new Assets()
-                    {
-                        LargeImageKey = "hues_csharp_main3",
-                        LargeImageText = "That's Kyubey, The Cutest Waifu",
-
-                    }
-                });
-                else discordRpcClient.SetPresence(new RichPresence()
-                {
-                    Details = "Playing song",
-                    State = RPM.allSongs[current_song].title,
-                    Assets = new Assets()
-                    {
-                        LargeImageKey = "hues_csharp_main3",
-                        LargeImageText = "That's Kyubey, The Cutest Waifu",
-
-                    }
-                });
-            }
-        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -309,20 +258,7 @@ namespace MOPS
 
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (muted) toggle_mute();
-            if (e.Delta < 0 & Player.Volume != 0)
-            {
-                Player.Volume -= 10;
-                Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
-                Player.SetVolumeToStream(Player.Channel, Player.Volume);
-            }
-            if (e.Delta > 0 & Player.Volume != 100)
-            {
-                if (muted) toggle_mute();
-                Player.Volume += 10;
-                Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
-                Player.SetVolumeToStream(Player.Channel, Player.Volume);
-            }
+            Core.ChangeVolume(e.Delta);
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -330,7 +266,7 @@ namespace MOPS
             switch (e.Key)
             {
                 case Key.M:
-                    toggle_mute();
+                    Core.toggle_mute();
                     break;
                 case Key.Up:
                     next_song();
@@ -370,24 +306,7 @@ namespace MOPS
             }
         }
 
-        private void toggle_mute()
-        {
-            if (!muted)
-            {
-                muted_volume = Player.Volume;
-                Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
-                Player.Volume = 0;
-                Player.SetVolumeToStream(Player.Channel, Player.Volume);
-                muted = true;
-            }
-            else
-            {
-                Player.Volume = muted_volume;
-                Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
-                Player.SetVolumeToStream(Player.Channel, Player.Volume);
-                muted = false;
-            }
-        }
+        
 
         public void next_image()
         {
@@ -410,102 +329,7 @@ namespace MOPS
 
         #endregion
 
-        //
-        // Timeline Effects Controls
-        //
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            if (rhythm_pos >= 0)
-            {
-                if (rhythm_pos != 1) Correction = beat_length * (rhythm_pos - 1) - Player.GetPosOfStream(Player.Stream_L);
-                if (Correction > 0) Timer.Interval = TimeSpan.FromSeconds(Correction);
-                else if (rhythm_pos > 2) Timer.Interval = TimeSpan.FromTicks(10);
-            }
-            else
-            {
-                b_rhythm_pos += 1;
-                Correction = beat_length * (build_rhythm.Length + rhythm_pos) - Player.GetPosOfStream(Player.Stream_B);
-                if (Correction > 0) Timer.Interval = TimeSpan.FromSeconds(Correction);
-                else Timer.Interval = TimeSpan.FromTicks(10);
-            }
-            TimeLine_Move(); //THIS MUST BE _AFTER_ THE TIMER.INTERVAL IS CORRECTED
-            //CornerBlock.Text = rhythm_pos.ToString();
-        }
-        /// <summary> Check if displayed rhythm is too short and fills it if neccessary </summary>
-        private void TimelineLenghtFill()
-        {
-            if (Display_Alpha.timeline_textBlock.Text.Length < 250)
-                Display_Alpha.timeline_textBlock.Text = Display_Alpha.timeline_textBlock.Text = string.Concat(Display_Alpha.timeline_textBlock.Text, loop_rhythm);
-        }
-
-        private void TimeLine_Move()
-        {
-            //CornerBlock.Text = rhythm_pos.ToString();
-            beat(Display_Alpha.timeline_textBlock.Text[2]);
-            Display_Alpha.timeline_textBlock.Text = Display_Alpha.timeline_textBlock.Text.Remove(2, 1);
-            TimelineLenghtFill();
-            rhythm_pos += 1;
-            if (rhythm_pos == loop_rhythm.Length) rhythm_pos = 0;
-        }
-        /// <summary> Plays the event according to char </summary>
-        private void beat(char c)
-        {
-            if (Blackout_Rectangle.Opacity != 0 & c != '.')
-            {
-                SB_Blackout.Stop();
-                blackouted = false;
-                Blackout_Rectangle.Opacity = 0;
-            }
-            if (c != '.') switch (c)
-                {
-                    case 'o':
-                        timeline_o();
-                        break;
-                    case 'O':
-                        timeline_blur_hor();
-                        break;
-                    case 'x':
-                        timeline_x();
-                        break;
-                    case 'X':
-                        timeline_blur_vert();
-                        break;
-                    case '-':
-                        timeline_pic_and_color();
-                        break;
-                    case '‑'://YES THATS A DIFFERENT ONE. Thanks to tylup RP.
-                        timeline_pic_and_color();
-                        break;
-                    case '~':
-                        timeline_fade();
-                        break;
-                    case ':':
-                        timeline_color_change();
-                        break;
-                    case '*':
-                        timeline_image_change();
-                        break;
-                    case '|':
-                        timeline_blackout_short();
-                        break;
-                    case '+':
-                        timeline_blackout();
-                        break;
-                    case 'i':
-                        timeline_invert();
-                        break;
-                    case 'I':
-                        timeline_invert_w_image();
-                        break;
-                    case '=':
-                        timeline_fade_image();
-                        break;
-                    case '¤':
-                        timeline_whiteout();
-                        break;
-                }
-        }
+        
 
         #region Timeline events
 
@@ -632,7 +456,7 @@ namespace MOPS
         // '~' Fade color
         public void timeline_fade()
         {
-            Fade.Duration = TimeSpan.FromSeconds((CountDots() + 1) * beat_length);
+            Fade.Duration = TimeSpan.FromSeconds((Core.CountDots() + 1) * Core.beat_length);
             if ((BlendMode)Properties.Settings.Default.blendMode == BlendMode.HardLight)
             {
                 Fade.From = HardLightEffect.Blend;
@@ -729,11 +553,6 @@ namespace MOPS
         }
 
 
-
-        //
-        //
-        //
-
         //tied to the songs_listbox on SelectionChanged
         private void Change_Song(object sender, SelectionChangedEventArgs e)
         {
@@ -749,101 +568,17 @@ namespace MOPS
             if (songs_listbox.SelectedIndex != -1)
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
-                if (RPM.allSongs[i].buffer != null) Player.loop_mem = RPM.allSongs[i].buffer;
-                else Player.loop_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].filename);
-                if (Player.loop_mem.Length != 0)
-                {
-                    loop_rhythm = RPM.allSongs[i].rhythm;
-                    Display_Alpha.song_textBlock.Text = RPM.allSongs[i].title.ToUpper();
-                    Display_Alpha.timeline_textBlock.Text = RPM.allSongs[i].rhythm;
-                    current_song = songs_listbox.SelectedIndex;
-
-                    rhythm_pos = 1;
-                    b_rhythm_pos = 1;
-                    if (RPM.allSongs[i].buildup_filename != null & ( (BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.On | ( (BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
-                    {
-                        if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
-                        if (RPM.allSongs[i].buffer != null) Player.build_mem = RPM.allSongs[i].buildup_buffer;
-                        else Player.build_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].buildup_filename);
-                        Player.Play_With_Buildup();
-                        build_rhythm = RPM.allSongs[i].buildupRhythm;
-                        int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
-                        if (build_rhythm == null) //In case there is buildup music without beat string
-                        {
-                            build_rhythm = new string('.', expected_size);
-                        }
-                        else if (build_rhythm.Length < expected_size)
-                        {
-                            build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
-                        }
-                        if (Display_Alpha.timeline_textBlock.Text.Length < 250) Display_Alpha.timeline_textBlock.Text = string.Concat(build_rhythm, Display_Alpha.timeline_textBlock.Text);
-                        else Display_Alpha.timeline_textBlock.Text = build_rhythm;
-                        rhythm_pos = -expected_size;
-                    }
-                    else Player.Play_Without_Buildup();
-
-                    Display_Alpha.timeline_textBlock.Text = ">>" + Display_Alpha.timeline_textBlock.Text;
-
-                    beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
-
-                    TimelineLenghtFill();
-                    //Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
-                    Timer.Interval = TimeSpan.FromSeconds(beat_length);
-                    ShortBlackoutTimer.Interval = Timer.Interval;
-
-                    if (Properties.Settings.Default.discordMode)
-                    {
-                        discordRpcClient.SetPresence(new RichPresence()
-                        {
-                            Details = "Playing song",
-                            State = RPM.allSongs[i].title,
-                            Assets = new Assets()
-                            {
-                                LargeImageKey = "hues_csharp_main3",
-                                LargeImageText = "That's Kyubey, The Cutest Waifu",
-
-                            }
-                        }
-                        );
-                    }
-
-                    Player.Play();
-                    TimeLine_Move();
-                    Timer.Start();
-                }
-                else StopSong();
+                Core.Change_Song(i);
             }
             else
             {
                 if (enabled_songs.Count == 0)
                 {
-                    StopSong();
+                    Core.StopSong();
                 }
             }
         }
-        public void StopSong()
-        {
-            Timer.Stop();
-            Player.Stop();
-            Display_Alpha.song_textBlock.Text = "NONE";
-            beat_length = 0;
-            Display_Alpha.timeline_textBlock.Text = ">>.";
-            if (Properties.Settings.Default.discordMode)
-            {
-                discordRpcClient.SetPresence(new RichPresence()
-                {
-                    Details = "No song selected",
-                    State = "¯\\_(ツ)_/¯",
-                    Assets = new Assets()
-                    {
-                        LargeImageKey = "hues_csharp_main3",
-                        LargeImageText = "That's Kyubey, The Cutest Waifu",
-
-                    }
-                }
-                );
-            }
-        }
+        
 
         private void full_auto_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -952,31 +687,12 @@ namespace MOPS
             return hues[CurrentColorInd];
         }
 
-        private int CountDots()
-        {
-            int Count = 0;
-            int limit = build_rhythm.Length + (loop_rhythm.Length * 3);
-            for (int i = 3; i < limit; i++)
-            {
-                if (Display_Alpha.timeline_textBlock.Text[i] != '.') break;
-                else
-                {
-                    Count++;
-                    if (Display_Alpha.timeline_textBlock.Text.Length - 1 == i) Display_Alpha.timeline_textBlock.Text = Display_Alpha.timeline_textBlock.Text + loop_rhythm;
-                    if (i == limit - 1)
-                    {
-                        Count = 0;
-                        break;
-                    }
-                }
-            }
-            return Count;
-        }
+
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Properties.Settings.Default.Save();
-            discordRpcClient.Dispose();
+            Core.discordRpcClient.Dispose();
         }
         
     }
