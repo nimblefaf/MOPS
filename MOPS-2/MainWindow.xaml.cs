@@ -4,20 +4,10 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Threading;
-using System.IO;
-using System.Drawing;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.ComponentModel;
-using System.Globalization;
-using DiscordRPC;
 
 namespace MOPS
 {
@@ -42,11 +32,12 @@ namespace MOPS
         Shaders.HuesYBlur26Effect YBlur26 = new Shaders.HuesYBlur26Effect();
         Shaders.HuesXBlur26Effect XBlur26 = new Shaders.HuesXBlur26Effect();
 
+        //public UI.UI_Alpha Display_Alpha = new UI.UI_Alpha();
+        //public UI.UI_Mini Display_Mini = new UI.UI_Mini();
+
         public Hues.Palette[] hues;
 
         public int CurrentColorInd = 0;
-
-        public RPManager RPM = new RPManager();
 
 
         public bool Colors_Inverted = false;
@@ -78,10 +69,9 @@ namespace MOPS
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
             ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
 
-            Core.SetReference(this);
+            
             PreloaderWin.SetReference(this);
             InnerWin.SetReference(this);
-            Display_Alpha.SetReference(this);
             
 
             switch ((ColorSet)Properties.Settings.Default.colorSet)
@@ -109,11 +99,12 @@ namespace MOPS
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             //set.Owner = this; //that was for window
+            Core.SetReferences();
             Init_Animations();
             ColorBlend_Graphics_Update();
+            UIStyle_Graphics_Update();
             BlurDecay_Upd();
             BlurAmount_Upd();
-
             timeline_color_change();
         }
 
@@ -203,6 +194,23 @@ namespace MOPS
                     ImageGrid.Effect = HardLightEffect;
                     Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
                     break;
+            }
+        }
+        public void UIStyle_Graphics_Update()
+        {
+            switch ((UIStyle)Properties.Settings.Default.uiStyle)
+            {
+                case UIStyle.Alpha:
+                    DisplayGrid.Children.Add(Core.UIHandler.Display_Alpha);
+                    break;
+                case UIStyle.Mini:
+                    DisplayGrid.Children.Add(Core.UIHandler.Display_Mini);
+                    break;
+            }
+            if (DisplayGrid.Children.Count == 2)
+            {
+                DisplayGrid.Children.RemoveAt(0);
+                Core.UIHandler.UpdateEverything();
             }
         }
         public void BlurDecay_Upd()
@@ -385,7 +393,7 @@ namespace MOPS
             
             ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
             HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
-            Display_Alpha.color_textBlock.Text = hues[CurrentColorInd].name.ToUpper(); 
+            Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name); 
         }
         // '*'
         public void timeline_image_change()
@@ -468,7 +476,7 @@ namespace MOPS
                 Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
                 Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
             }
-            Display_Alpha.color_textBlock.Text = hues[CurrentColorInd].name.ToUpper();
+            Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name);
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
         }
 
@@ -541,13 +549,13 @@ namespace MOPS
         {
             if (WindowState == WindowState.Maximized)
             {
-                if (SystemParameters.MaximizedPrimaryScreenWidth / SystemParameters.MaximizedPrimaryScreenHeight > RPM.allPics[current_image_pos].pic.Width / RPM.allPics[current_image_pos].pic.Height)
+                if (SystemParameters.MaximizedPrimaryScreenWidth / SystemParameters.MaximizedPrimaryScreenHeight > Core.RPM.allPics[current_image_pos].pic.Width / Core.RPM.allPics[current_image_pos].pic.Height)
                     image0.Stretch = Stretch.Uniform;
                 else image0.Stretch = Stretch.UniformToFill;
             }
             else
             {
-                if (Width / Height > RPM.allPics[current_image_pos].pic.Width / RPM.allPics[current_image_pos].pic.Height) image0.Stretch = Stretch.Uniform;
+                if (Width / Height > Core.RPM.allPics[current_image_pos].pic.Width / Core.RPM.allPics[current_image_pos].pic.Height) image0.Stretch = Stretch.Uniform;
                 else image0.Stretch = Stretch.UniformToFill;
             }
         }
@@ -603,16 +611,16 @@ namespace MOPS
             if (p != -1)
             {
                 int index = enabled_images[p].Ind;
-                image0.Source = RPM.allPics[index].pic;
+                image0.Source = Core.RPM.allPics[index].pic;
 
                 ////For debug:
                 //CornerBlock.Text = index + ": " + RPM.allPics[index].pic.Format.ToString();
 
-                if (RPM.allPics[index].animation == null)
+                if (Core.RPM.allPics[index].animation == null)
                 {
                     AnimTimer.Stop();
-                    Display_Alpha.character_textBlock.Text = RPM.allPics[index].fullname.ToUpper();
-                    switch (RPM.allPics[index].align)
+                    Core.UIHandler.UpdatePicName(Core.RPM.allPics[index].fullname);
+                    switch (Core.RPM.allPics[index].align)
                     {
                         case "left":
                             image0.HorizontalAlignment = HorizontalAlignment.Left;
@@ -629,12 +637,12 @@ namespace MOPS
                 else
                 {
                     anim_ind = 1;
-                    AnimTimer.Interval = TimeSpan.FromMilliseconds(RPM.allPics[current_image_pos].frameDuration[0]);
+                    AnimTimer.Interval = TimeSpan.FromMilliseconds(Core.RPM.allPics[current_image_pos].frameDuration[0]);
                     AnimTimer.Start();
                     ////For debug:
                     //CornerBlock.Text = index + ": " + RPM.allPics[index].animation[0].Format.ToString();
 
-                    switch (RPM.allPics[index].align)
+                    switch (Core.RPM.allPics[index].align)
                     {
                         case "left":
                             image0.HorizontalAlignment = HorizontalAlignment.Left;
@@ -654,7 +662,7 @@ namespace MOPS
                 if (enabled_images.Count == 0)
                 {
                     image0.Source = null;
-                    Display_Alpha.character_textBlock.Text = "NONE";
+                    Core.UIHandler.UpdatePicName("NONE");
                 }
             }
         }
@@ -666,8 +674,8 @@ namespace MOPS
 
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            image0.Source = RPM.allPics[current_image_pos].animation[anim_ind];
-            if (RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
+            image0.Source = Core.RPM.allPics[current_image_pos].animation[anim_ind];
+            if (Core.RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
         }
 
@@ -695,56 +703,6 @@ namespace MOPS
             Core.discordRpcClient.Dispose();
         }
         
-    }
-
-    /// <summary>
-    ///     The selected hue blend mode for drawing the image.
-    /// </summary>
-    public enum BlendMode
-    {
-        /// <summary>
-        /// Image is alpha-blended over the hue.
-        /// </summary>
-        Plain = 0,
-        /// <summary>
-        /// Image is alpha-blended over the hue at 70% opacity.
-        /// </summary>
-        Alpha = 1,
-        /// <summary>
-        /// Image is alpha-blended over a white background.The hue is blended over the image with "hard light" mode at 70% opacity.
-        /// </summary>
-        HardLight = 2
-    }
-    public enum BuildUpMode
-    {
-        Off = 0,
-        On = 1,
-        Once = 2
-    }
-    public enum ColorSet
-    {
-        Normal = 0,
-        Pastel = 1,
-        Weed = 2
-    }
-    public enum BlurAmount
-    {
-        Low = 0,
-        Medium = 1,
-        High = 2
-    }
-    public enum BlurDecay
-    {
-        Slow = 0,
-        Medium = 1,
-        Fast = 2,
-        Fastest = 3
-    }
-    public enum BlurQuality
-    {
-        Low = 0,
-        Medium = 1,
-        High = 2,
     }
 
     /// <summary>

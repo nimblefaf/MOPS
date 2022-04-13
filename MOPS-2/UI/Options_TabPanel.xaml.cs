@@ -117,7 +117,17 @@ namespace MOPS.UI
                     OB_BlurQualHIGH.Background = Brushes.White;
                     break;
             }
-            
+            switch ((UIStyle)Properties.Settings.Default.uiStyle)
+            {
+                case UIStyle.Alpha:
+                    OB_UI_alpha.Background = Brushes.White;
+                    break;
+                case UIStyle.Mini:
+                    OB_UI_mini.Background = Brushes.White;
+                    break;
+            }
+
+
             if (Properties.Settings.Default.discordMode) OB_DiscordOn.Background = Brushes.White;
             else OB_DiscordOff.Background = Brushes.White;
 
@@ -199,7 +209,7 @@ namespace MOPS.UI
 
         private void OB_buildOnButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.RPM.allSongs.Length; i++) main.RPM.allSongs[i].buildup_played = false;
+            if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.Core.RPM.allSongs.Length; i++) main.Core.RPM.allSongs[i].buildup_played = false;
             Properties.Settings.Default.buildUpMode = (int)BuildUpMode.On;
             OB_buildOn.Background = Brushes.White;
             OB_buildOff.Background = Brushes.LightGray;
@@ -207,7 +217,7 @@ namespace MOPS.UI
         }
         private void OB_buildOffButton_Click(object sender, RoutedEventArgs e)
         {
-            if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.RPM.allSongs.Length; i++) main.RPM.allSongs[i].buildup_played = false;
+            if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) for (int i = 0; i < main.Core.RPM.allSongs.Length; i++) main.Core.RPM.allSongs[i].buildup_played = false;
             Properties.Settings.Default.buildUpMode = (int)BuildUpMode.Off;
             OB_buildOff.Background = Brushes.White;
             OB_buildOn.Background = Brushes.LightGray;
@@ -342,6 +352,22 @@ namespace MOPS.UI
             Properties.Settings.Default.shuffleImages = true;
             OB_ShuffleImagesOn.Background = Brushes.White;
             OB_ShuffleImagesOff.Background = Brushes.LightGray;
+        }
+
+        private void OB_UI_alpha_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.uiStyle = (int)UIStyle.Alpha;
+            OB_UI_alpha.Background = Brushes.White;
+            OB_UI_mini.Background = Brushes.LightGray;
+            main.UIStyle_Graphics_Update();
+        }
+
+        private void OB_UI_mini_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.uiStyle = (int)UIStyle.Mini;
+            OB_UI_alpha.Background = Brushes.LightGray;
+            OB_UI_mini.Background = Brushes.White;
+            main.UIStyle_Graphics_Update();
         }
     }
 }

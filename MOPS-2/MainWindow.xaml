@@ -20,10 +20,9 @@
         <ListBox x:Name="songs_listbox" HorizontalAlignment="Right" Margin="0,0,40,60" VerticalAlignment="Bottom" Width="500" Background="#4C000000" BorderBrush="#FF020202" Opacity="1" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="Change_Song" PreviewKeyDown="Songs_listbox_PreviewKeyDown" ItemTemplate="{DynamicResource DataTemplateHues}" Style="{DynamicResource ListBoxStyleHues}" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Visibility="Hidden"/>
         <ListBox x:Name="images_listbox" HorizontalAlignment="Right" Margin="0,0,172,60" VerticalAlignment="Bottom" Width="250" Background="#4C000000" BorderBrush="#FF020202" Opacity="1" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="Images_listbox_SelectionChanged" PreviewKeyDown="Images_listbox_PreviewKeyDown" ItemTemplate="{DynamicResource DataTemplateHues}" Style="{DynamicResource ListBoxStyleHues}" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Visibility="Hidden"/>
         <TextBlock x:Name="Message_textBlock" Visibility="Hidden" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Message" VerticalAlignment="Top"/>
-        <TextBlock x:Name="CornerBlock" Margin="10,10,0,0" TextWrapping="Wrap" Text="Warning: lots of flashing lights" VerticalAlignment="Top" HorizontalAlignment="Left" TextAlignment="Center" Height="31" Visibility="Hidden"/>
         <!--The line below should be always last-->
         <Grid x:Name="DisplayGrid">
-            <uc:UI_Alpha x:Name="Display_Alpha"></uc:UI_Alpha>
+            <!--<uc:UI_Alpha x:Name="Display_Alpha"></uc:UI_Alpha>-->
         </Grid>
         <uc:InnerWindow x:Name="InnerWin" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden"></uc:InnerWindow>
         <uc:Preloader x:Name="PreloaderWin" FontSize="15" Margin="-5"></uc:Preloader>

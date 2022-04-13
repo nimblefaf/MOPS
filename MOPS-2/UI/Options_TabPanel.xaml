@@ -8,41 +8,46 @@
              d:DesignHeight="398" d:DesignWidth="590"
              FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10">
     <Grid Background="#FFE5E5E5" Cursor="Arrow" Height="398" VerticalAlignment="Bottom">
-        <TextBlock x:Name="OTB_functionality" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Functionality" VerticalAlignment="Top" FontSize="16"/>
-        <TextBlock x:Name="OTB_playBuildups" HorizontalAlignment="Left" Margin="10,39,0,0" TextWrapping="Wrap" Text="Play buildups" VerticalAlignment="Top"/>
+        <TextBlock Text="Functionality" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
+        <TextBlock Text="Play buildups" HorizontalAlignment="Left" Margin="10,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_buildOff" Content="OFF" HorizontalAlignment="Left" Margin="10,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOffButton_Click" Width="46" Background="LightGray" Focusable="False"/>
         <Button x:Name="OB_buildOn" Content="ON" HorizontalAlignment="Left" Margin="129,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOnButton_Click" Width="43" Background="LightGray" Focusable="False"/>
         <Button x:Name="OB_buildOnce" Content="ONCE" HorizontalAlignment="Left" Margin="61,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_buildOnceButton_Click" Width="63" Background="LightGray" Focusable="False"/>
-        <TextBlock x:Name="OTB_colorSet" HorizontalAlignment="Left" Margin="10,208,0,0" TextWrapping="Wrap" Text="Color set" VerticalAlignment="Top"/>
+        <TextBlock Text="Color set" HorizontalAlignment="Left" Margin="10,208,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_colorNormal" Content="NORMAL" HorizontalAlignment="Left" Margin="10,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorNormal_Click" Background="LightGray" Focusable="False" Width="72"/>
         <Button x:Name="OB_colorPastel" Content="PASTEL" HorizontalAlignment="Left" Margin="87,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorPastel_Click" Width="75" Background="LightGray" Focusable="False"/>
         <Button x:Name="OB_colorWeed" Content="V4.20" HorizontalAlignment="Left" Margin="167,223,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorWeed_Click" Width="63" Background="LightGray" Focusable="False"/>
-        <TextBlock x:Name="OTB_graphics" HorizontalAlignment="Left" Margin="315,12,0,0" TextWrapping="Wrap" Text="Graphics" VerticalAlignment="Top" FontSize="16"/>
-        <TextBlock x:Name="OTB_colorBlendMode" HorizontalAlignment="Left" Margin="315,39,0,0" TextWrapping="Wrap" Text="Color blend mode" VerticalAlignment="Top"/>
+        <TextBlock Text="Graphics" HorizontalAlignment="Left" Margin="315,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
+        <TextBlock Text="Color blend mode" HorizontalAlignment="Left" Margin="315,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_colorBlend_Plain" Content="PLAIN" HorizontalAlignment="Left" Margin="315,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_Plain_Click" Background="LightGray" Focusable="False" Width="60"/>
         <Button x:Name="OB_colorBlend_Alpha" Content="ALPHA" HorizontalAlignment="Left" Margin="380,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_Alpha_Click" Width="60" Background="LightGray" Focusable="False"/>
         <Button x:Name="OB_colorBlend_HardLight" Content="HARD LIGHT" HorizontalAlignment="Left" Margin="445,54,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_colorBlend_HardLight_Click" Width="105" Background="LightGray" Focusable="False"/>
-        <TextBlock x:Name="OTB_DiscordMode" HorizontalAlignment="Left" Margin="10,335,0,0" TextWrapping="Wrap" Text="Discord rich presence" VerticalAlignment="Top"/>
+        <TextBlock Text="Discord rich presence" HorizontalAlignment="Left" Margin="10,335,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_DiscordOn" Content="ON" HorizontalAlignment="Left" Margin="61,350,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_DiscordOnButton_Click" Width="47" Background="LightGray" Focusable="False"/>
         <Button x:Name="OB_DiscordOff" Content="OFF" HorizontalAlignment="Left" Margin="10,350,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_DiscordOffButton_Click" Width="46" Background="LightGray" Focusable="False"/>
-        <TextBlock x:Name="OTB_BlurAmount" HorizontalAlignment="Left" Margin="315,85,0,0" TextWrapping="Wrap" Text="Blur amount" VerticalAlignment="Top"/>
+        <TextBlock Text="Blur amount" HorizontalAlignment="Left" Margin="315,85,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_BlurAmountLOW" Content="LOW" HorizontalAlignment="Left" Margin="315,100,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="44" Click="OB_BlurAmountLOW_Click"/>
         <Button x:Name="OB_BlurAmountMED" Content="MEDIUM" HorizontalAlignment="Left" Margin="364,100,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="71" Click="OB_BlurAmountMED_Click"/>
         <Button x:Name="OB_BlurAmountHIGH" Content="HIGH" HorizontalAlignment="Left" Margin="440,100,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="51" Click="OB_BlurAmountHIGH_Click"/>
-        <TextBlock x:Name="OTB_BlurDecay" HorizontalAlignment="Left" Margin="315,122,0,0" TextWrapping="Wrap" Text="Blur decay" VerticalAlignment="Top"/>
+        <TextBlock Text="Blur decay" HorizontalAlignment="Left" Margin="315,122,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_BlurDecaySLOW" Content="SLOW" HorizontalAlignment="Left" Margin="315,137,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="51" Click="OB_BlurDecaySLOW_Click"/>
         <Button x:Name="OB_BlurDecayMED" Content="MEDIUM" HorizontalAlignment="Left" Margin="371,137,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="69" Click="OB_BlurDecayMED_Click"/>
         <Button x:Name="OB_BlurDecayFAST" Content="FAST" HorizontalAlignment="Left" Margin="445,137,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="48" RenderTransformOrigin="0.062,0.643" Click="OB_BlurDecayFAST_Click"/>
         <Button x:Name="OB_BlurDecayEXFAST" Content="FASTER!" HorizontalAlignment="Left" Margin="498,137,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="84" Click="OB_BlurDecayEXFAST_Click"/>
-        <TextBlock x:Name="OTB_BlurQuality" HorizontalAlignment="Left" Margin="315,158,0,0" TextWrapping="Wrap" Text="Blur quality" VerticalAlignment="Top"/>
+        <TextBlock Text="Blur quality" HorizontalAlignment="Left" Margin="315,158,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_BlurQualLOW" Content="LOW" HorizontalAlignment="Left" Margin="315,170,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="44" Click="OB_BlurQualLOW_Click"/>
         <Button x:Name="OB_BlurQualMED" Content="MEDIUM" HorizontalAlignment="Left" Margin="364,170,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="71" Click="OB_BlurQualMED_Click"/>
         <Button x:Name="OB_BlurQualHIGH" Content="HIGH" HorizontalAlignment="Left" Margin="440,170,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="51" Click="OB_BlurQualHIGH_Click"/>
-        <TextBlock x:Name="OTB_SkipPreloadWarn" HorizontalAlignment="Left" Margin="10,79,0,0" TextWrapping="Wrap" Text="Skip preloader warning" VerticalAlignment="Top"/>
+        <TextBlock Text="Skip preloader warning" HorizontalAlignment="Left" Margin="10,79,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_SkipPreloadOff" Content="OFF" HorizontalAlignment="Left" Margin="10,95,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_SkipPreloadOff_Click" Width="46" Background="LightGray" Focusable="False"/>
         <Button x:Name="OB_SkipPreloadOn" Content="ON" HorizontalAlignment="Left" Margin="61,95,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_SkipPreloadOn_Click" Width="43" Background="LightGray" Focusable="False"/>
-        <TextBlock x:Name="OTB_ShuffleImages" HorizontalAlignment="Left" Margin="10,174,0,0" TextWrapping="Wrap" Text="Shuffle images" VerticalAlignment="Top"/>
+        <TextBlock Text="Shuffle images" HorizontalAlignment="Left" Margin="10,174,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button x:Name="OB_ShuffleImagesOff" Content="OFF" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_ShuffleImagesOff_Click" Width="46" Background="LightGray" Focusable="False"/>
         <Button x:Name="OB_ShuffleImagesOn" Content="ON" HorizontalAlignment="Left" Margin="61,189,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Click="OB_ShuffleImagesOn_Click" Width="43" Background="LightGray" Focusable="False"/>
+        <TextBlock Text="Interface" HorizontalAlignment="Left" Margin="315,195,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="16"/>
+        <TextBlock Text="UI style" HorizontalAlignment="Left" Margin="315,216,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <Button x:Name="OB_UI_alpha" Content="ALPHA" HorizontalAlignment="Left" Margin="315,231,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="60" Click="OB_UI_alpha_Click"/>
+        <Button x:Name="OB_UI_mini" Content="MINI" HorizontalAlignment="Left" Margin="380,231,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="55" Click="OB_UI_mini_Click"/>
+        <Button x:Name="OB_UI_retro" IsEnabled="False" Content="RETRO" HorizontalAlignment="Left" Margin="440,231,0,0" VerticalAlignment="Top" Template="{DynamicResource ButtonControlTemplate1}" Background="LightGray" Focusable="False" Width="58" Click="OB_BlurQualLOW_Click"/>
     </Grid>
 </UserControl>

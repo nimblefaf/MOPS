@@ -21,15 +21,10 @@ namespace MOPS.UI
     public partial class UI_Alpha : UserControl
     {
         MainWindow main;
-
-        public UI_Alpha()
+        public UI_Alpha(MainWindow MW)
         {
             InitializeComponent();
-        }
-
-        public void SetReference(MainWindow window)
-        {
-            main = window;
+            main = MW;
         }
 
         private void songs_TBB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

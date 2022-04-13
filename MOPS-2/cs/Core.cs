@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 using DiscordRPC;
 
@@ -10,26 +11,30 @@ namespace MOPS
 {
     internal class Core
     {
+        public MainWindow MainWin;
         public Core()
         {
             if (Properties.Settings.Default.discordMode) discord_rpc_init();
-            MainTimer.Tick += MainTimer_Tick;     
+            MainTimer.Tick += MainTimer_Tick;
         }
-
-        MainWindow main;
-        public void SetReference(MainWindow window)
+        public void SetReferences()
         {
-            main = window;
+            MainWin = (MainWindow)Application.Current.MainWindow;
+            UIHandler = new UIHandler();
         }
 
+        public RPManager RPM = new RPManager();
         Audio Player = new Audio();
+        public UIHandler UIHandler;
 
         public bool muted = false;
+        public int current_volume = 50;
         public int muted_volume;
         public int current_song_ind = 0;
         public int current_image_pos = 0;
         public string loop_rhythm;
         public string build_rhythm = "";
+        public string current_timeline = "";
         public int rhythm_pos = 1;
         public int b_rhythm_pos = 1;
         double correction = 0;
@@ -59,11 +64,11 @@ namespace MOPS
                 else discordRpcClient.SetPresence(new RichPresence()
                 {
                     Details = "Playing song",
-                    State = main.RPM.allSongs[current_song_ind].title,
+                    State = RPM.allSongs[current_song_ind].title,
                     Assets = new Assets()
                     {
                         LargeImageKey = "hues_csharp_main3",
-                        LargeImageText = "That's Kyubey, The Cutest Waifu",
+                        LargeImageText = "",
 
                     }
                 });
@@ -87,22 +92,20 @@ namespace MOPS
                 else MainTimer.Interval = TimeSpan.FromTicks(10);
             }
             TimeLine_Move(); //THIS MUST BE _AFTER_ THE TIMER.INTERVAL IS CORRECTED
-            //CornerBlock.Text = rhythm_pos.ToString();
         }
 
         /// <summary> Check if displayed rhythm is too short and fills it if neccessary </summary>
         private void TimelineLenghtFill()
         {
-            if (main.Display_Alpha.timeline_textBlock.Text.Length < 250)
-                main.Display_Alpha.timeline_textBlock.Text = main.Display_Alpha.timeline_textBlock.Text = string.Concat(main.Display_Alpha.timeline_textBlock.Text, loop_rhythm);
+            if (current_timeline.Length < 250) current_timeline += loop_rhythm;
         }
 
         private void TimeLine_Move()
         {
-            //CornerBlock.Text = rhythm_pos.ToString();
-            beat(main.Display_Alpha.timeline_textBlock.Text[2]);
-            main.Display_Alpha.timeline_textBlock.Text = main.Display_Alpha.timeline_textBlock.Text.Remove(2, 1);
+            beat(current_timeline[0]);
+            current_timeline = current_timeline.Remove(0, 1);
             TimelineLenghtFill();
+            UIHandler.UpdateTimeline(current_timeline);
             rhythm_pos += 1;
             if (rhythm_pos == loop_rhythm.Length) rhythm_pos = 0;
         }
@@ -110,82 +113,81 @@ namespace MOPS
         /// <summary> Plays the event according to char </summary>
         private void beat(char c)
         {
-            if (main.Blackout_Rectangle.Opacity != 0 & c != '.')
+            if (MainWin.Blackout_Rectangle.Opacity != 0 & c != '.')
             {
-                main.SB_Blackout.Stop();
-                main.blackouted = false;
-                main.Blackout_Rectangle.Opacity = 0;
+                MainWin.SB_Blackout.Stop();
+                MainWin.blackouted = false;
+                MainWin.Blackout_Rectangle.Opacity = 0;
             }
             if (c != '.') switch (c)
                 {
                     case 'o':
-                        main.timeline_o();
+                        MainWin.timeline_o();
                         break;
                     case 'O':
-                        main.timeline_blur_hor();
+                        MainWin.timeline_blur_hor();
                         break;
                     case 'x':
-                        main.timeline_x();
+                        MainWin.timeline_x();
                         break;
                     case 'X':
-                        main.timeline_blur_vert();
+                        MainWin.timeline_blur_vert();
                         break;
                     case '-':
-                        main.timeline_pic_and_color();
+                        MainWin.timeline_pic_and_color();
                         break;
                     case '‑'://YES THATS A DIFFERENT ONE. Thanks to tylup RP.
-                        main.timeline_pic_and_color();
+                        MainWin.timeline_pic_and_color();
                         break;
                     case '~':
-                        main.timeline_fade();
+                        MainWin.timeline_fade();
                         break;
                     case ':':
-                        main.timeline_color_change();
+                        MainWin.timeline_color_change();
                         break;
                     case '*':
-                        main.timeline_image_change();
+                        MainWin.timeline_image_change();
                         break;
                     case '|':
-                        main.timeline_blackout_short();
+                        MainWin.timeline_blackout_short();
                         break;
                     case '+':
-                        main.timeline_blackout();
+                        MainWin.timeline_blackout();
                         break;
                     case 'i':
-                        main.timeline_invert();
+                        MainWin.timeline_invert();
                         break;
                     case 'I':
-                        main.timeline_invert_w_image();
+                        MainWin.timeline_invert_w_image();
                         break;
                     case '=':
-                        main.timeline_fade_image();
+                        MainWin.timeline_fade_image();
                         break;
                     case '¤':
-                        main.timeline_whiteout();
+                        MainWin.timeline_whiteout();
                         break;
                 }
         }
 
         public void Change_Song(int i)
         {
-            if (main.RPM.allSongs[i].buffer != null) Player.loop_mem = main.RPM.allSongs[i].buffer;
-            else Player.loop_mem = main.RPM.GetAudioFromZip(main.RPM.ResPacks[main.RPM.Get_rp_of_song(i)].path, main.RPM.allSongs[i].filename);
+            if (RPM.allSongs[i].buffer != null) Player.loop_mem = RPM.allSongs[i].buffer;
+            else Player.loop_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].filename);
             if (Player.loop_mem.Length != 0)
             {
-                loop_rhythm = main.RPM.allSongs[i].rhythm;
-                main.Display_Alpha.song_textBlock.Text = main.RPM.allSongs[i].title.ToUpper();
-                main.Display_Alpha.timeline_textBlock.Text = main.RPM.allSongs[i].rhythm;
-                current_song_ind = main.songs_listbox.SelectedIndex;
+                loop_rhythm = RPM.allSongs[i].rhythm;
+                current_timeline = RPM.allSongs[i].rhythm;
+                current_song_ind = MainWin.songs_listbox.SelectedIndex;
 
                 rhythm_pos = 1;
                 b_rhythm_pos = 1;
-                if (main.RPM.allSongs[i].buildup_filename != null & ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.On | ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once & !main.RPM.allSongs[i].buildup_played)))
+                if (RPM.allSongs[i].buildup_filename != null & ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.On | ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
                 {
-                    if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) main.RPM.allSongs[i].buildup_played = true;
-                    if (main.RPM.allSongs[i].buffer != null) Player.build_mem = main.RPM.allSongs[i].buildup_buffer;
-                    else Player.build_mem = main.RPM.GetAudioFromZip(main.RPM.ResPacks[main.RPM.Get_rp_of_song(i)].path, main.RPM.allSongs[i].buildup_filename);
+                    if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
+                    if (RPM.allSongs[i].buffer != null) Player.build_mem = RPM.allSongs[i].buildup_buffer;
+                    else Player.build_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].buildup_filename);
                     Player.Play_With_Buildup();
-                    build_rhythm = main.RPM.allSongs[i].buildupRhythm;
+                    build_rhythm = RPM.allSongs[i].buildupRhythm;
                     int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
                     if (build_rhythm == null) //In case there is buildup music without beat string
                     {
@@ -195,31 +197,29 @@ namespace MOPS
                     {
                         build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
                     }
-                    if (main.Display_Alpha.timeline_textBlock.Text.Length < 250) main.Display_Alpha.timeline_textBlock.Text = string.Concat(build_rhythm, main.Display_Alpha.timeline_textBlock.Text);
-                    else main.Display_Alpha.timeline_textBlock.Text = build_rhythm;
+                    current_timeline = string.Concat(build_rhythm, loop_rhythm);
                     rhythm_pos = -expected_size;
                 }
                 else Player.Play_Without_Buildup();
-
-                main.Display_Alpha.timeline_textBlock.Text = ">>" + main.Display_Alpha.timeline_textBlock.Text;
+                UIHandler.UpdateSongInfo(RPM.allSongs[i]);
 
                 beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
 
                 TimelineLenghtFill();
                 //Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
                 MainTimer.Interval = TimeSpan.FromSeconds(beat_length);
-                main.ShortBlackoutTimer.Interval = MainTimer.Interval;
+                MainWin.ShortBlackoutTimer.Interval = MainTimer.Interval;
 
                 if (Properties.Settings.Default.discordMode)
                 {
                     discordRpcClient.SetPresence(new RichPresence()
                     {
                         Details = "Playing song",
-                        State = main.RPM.allSongs[i].title,
+                        State = RPM.allSongs[i].title,
                         Assets = new Assets()
                         {
                             LargeImageKey = "hues_csharp_main3",
-                            LargeImageText = "That's Kyubey, The Cutest Waifu",
+                            LargeImageText = "",
                         }
                     }
                     );
@@ -236,9 +236,8 @@ namespace MOPS
         {
             MainTimer.Stop();
             Player.Stop();
-            main.Display_Alpha.song_textBlock.Text = "NONE";
             beat_length = 0;
-            main.Display_Alpha.timeline_textBlock.Text = ">>.";
+            UIHandler.UpdateSongInfo(RPM.allSongs[0], true);
             if (Properties.Settings.Default.discordMode)
             {
                 discordRpcClient.SetPresence(new RichPresence()
@@ -248,8 +247,7 @@ namespace MOPS
                     Assets = new Assets()
                     {
                         LargeImageKey = "hues_csharp_main3",
-                        LargeImageText = "That's Kyubey, The Cutest Waifu",
-
+                        LargeImageText = "",
                     }
                 }
                 );
@@ -259,50 +257,54 @@ namespace MOPS
         public void ChangeVolume(int Delta)
         {
             if (muted) toggle_mute();
-            if (Delta < 0 & Player.Volume != 0)
+            if (Delta < 0 & current_volume != 0)
             {
-                Player.Volume -= 10;
-                main.Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
+                current_volume -= 10;
+                Player.Volume = current_volume;
+                UIHandler.UpdateVolumeDisplayed(Player.Volume);
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
             }
-            if (Delta > 0 & Player.Volume != 100)
+            if (Delta > 0 & current_volume != 100)
             {
                 if (muted) toggle_mute();
-                Player.Volume += 10;
-                main.Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
+                current_volume += 10;
+                Player.Volume = current_volume;
+                UIHandler.UpdateVolumeDisplayed(Player.Volume);
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
             }
         }
         public void toggle_mute()
         {
-            if (!muted)
+            if (muted)
             {
-                muted_volume = Player.Volume;
-                main.Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
-                Player.Volume = 0;
+                current_volume = muted_volume;
+                Player.Volume = muted_volume;
+                UIHandler.UpdateVolumeDisplayed(Player.Volume);
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
-                muted = true;
+                muted = false;
             }
             else
             {
-                Player.Volume = muted_volume;
-                main.Display_Alpha.volume_textBlock.Text = Player.Volume.ToString();
+                muted_volume = current_volume;
+                UIHandler.UpdateVolumeDisplayed(Player.Volume);
+                current_volume = 0;
+                Player.Volume = 0;
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
-                muted = false;
+                muted = true;
             }
         }
 
         public int CountDots()
         {
             int Count = 0;
-            int limit = build_rhythm.Length + (loop_rhythm.Length * 3);
+            int limit = build_rhythm.Length + (loop_rhythm.Length * 2);
             for (int i = 3; i < limit; i++)
             {
-                if (main.Display_Alpha.timeline_textBlock.Text[i] != '.') break;
+                if (current_timeline[i] != '.') break;
                 else
                 {
                     Count++;
-                    if (main.Display_Alpha.timeline_textBlock.Text.Length - 1 == i) main.Display_Alpha.timeline_textBlock.Text = main.Display_Alpha.timeline_textBlock.Text + loop_rhythm;
+                    if (current_timeline.Length - 1 == i) current_timeline += loop_rhythm;
                     if (i == limit - 1)
                     {
                         Count = 0;
@@ -312,5 +314,63 @@ namespace MOPS
             }
             return Count;
         }
+    }
+
+    /// <summary>
+    ///     The selected hue blend mode for drawing the image.
+    /// </summary>
+    public enum BlendMode
+    {
+        /// <summary>
+        /// Image is alpha-blended over the hue.
+        /// </summary>
+        Plain = 0,
+        /// <summary>
+        /// Image is alpha-blended over the hue at 70% opacity.
+        /// </summary>
+        Alpha = 1,
+        /// <summary>
+        /// Image is alpha-blended over a white background.The hue is blended over the image with "hard light" mode at 70% opacity.
+        /// </summary>
+        HardLight = 2
+    }
+    public enum BuildUpMode
+    {
+        Off = 0,
+        On = 1,
+        Once = 2
+    }
+    public enum ColorSet
+    {
+        Normal = 0,
+        Pastel = 1,
+        Weed = 2
+    }
+    public enum BlurAmount
+    {
+        Low = 0,
+        Medium = 1,
+        High = 2
+    }
+    public enum BlurDecay
+    {
+        Slow = 0,
+        Medium = 1,
+        Fast = 2,
+        Fastest = 3
+    }
+    public enum BlurQuality
+    {
+        Low = 0,
+        Medium = 1,
+        High = 2,
+    }
+    public enum UIStyle
+    {
+        Alpha = 0,
+        Mini = 1,
+        Retro = 2,
+        V420 = 3,
+        Modern = 4,
     }
 }

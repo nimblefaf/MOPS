@@ -9,16 +9,16 @@
              FontFamily="/MOPS;component/fonts/#Pet Me 128">
     <Grid>
         <TextBlock x:Name="timeline_textBlock" Margin="0,0,0,2" TextWrapping="NoWrap" Text=">>" Height="12" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="volume_textBlock" HorizontalAlignment="Left" Margin="0,0,0,19" TextWrapping="Wrap" Text="50" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="song_textBlock" HorizontalAlignment="Left" Margin="0,0,0,36" TextWrapping="Wrap" Text="No song" VerticalAlignment="Bottom" RenderTransformOrigin="0.603,0.944"/>
-        <TextBlock x:Name="color_textBlock" HorizontalAlignment="Left" Margin="0,0,0,53" TextWrapping="Wrap" Text="No color(?!)" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="character_textBlock" HorizontalAlignment="Left" Margin="0,0,0,70" TextWrapping="Wrap" Text="No image" VerticalAlignment="Bottom"/>
-        <TextBlock x:Name="nextSong_TBB" HorizontalAlignment="Right" Margin="0,0,2,19" TextWrapping="Wrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" Style="{DynamicResource TextBlockStyleHues}" Height="30" MouseLeftButtonDown="nextSong_TBB_MouseLeftButtonDown"/>
-        <TextBlock x:Name="prevSong_TBB" HorizontalAlignment="Right" Margin="0,0,113,19" TextWrapping="Wrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" Style="{DynamicResource TextBlockStyleHues}" Height="30" MouseLeftButtonDown="prevSong_TBB_MouseLeftButtonDown"/>
-        <TextBlock x:Name="songs_TBB" HorizontalAlignment="Right" Margin="0,0,43,27" TextWrapping="Wrap" Text="SONGS" VerticalAlignment="Bottom" FontSize="13" Style="{DynamicResource TextBlockStyleHues}" MouseLeftButtonDown="songs_TBB_MouseLeftButtonDown"/>
-        <TextBlock x:Name="nextImage_TBB" HorizontalAlignment="Right" Margin="0,0,154,19" TextWrapping="Wrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" Style="{DynamicResource TextBlockStyleHues}" Height="30" MouseLeftButtonDown="nextImage_TBB_MouseLeftButtonDown"/>
-        <TextBlock x:Name="prevImage_TBB" HorizontalAlignment="Right" Margin="0,0,317,19" TextWrapping="Wrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" Style="{DynamicResource TextBlockStyleHues}" Height="30" MouseLeftButtonDown="prevImage_TBB_MouseLeftButtonDown"/>
-        <TextBlock x:Name="fullAuto_TBB" HorizontalAlignment="Right" Margin="0,0,199,19" TextWrapping="Wrap" Text="FULL AUTO" VerticalAlignment="Bottom" FontSize="13" Style="{DynamicResource TextBlockStyleHues}" MouseLeftButtonDown="fullAuto_TBB_MouseLeftButtonDown"/>
-        <TextBlock x:Name="images_TBB_Copy" HorizontalAlignment="Right" Margin="0,0,214,36" TextWrapping="Wrap" Text="IMAGES" VerticalAlignment="Bottom" FontSize="13" Style="{DynamicResource TextBlockStyleHues}" MouseLeftButtonDown="images_TBB_Copy_MouseLeftButtonDown"/>
+        <TextBlock x:Name="volume_textBlock" HorizontalAlignment="Left" Margin="0,0,0,19" TextWrapping="NoWrap" Text="50" VerticalAlignment="Bottom"/>
+        <TextBlock x:Name="song_textBlock" HorizontalAlignment="Left" Margin="0,0,0,36" TextWrapping="NoWrap" Text="No song" VerticalAlignment="Bottom" RenderTransformOrigin="0.603,0.944"/>
+        <TextBlock x:Name="color_textBlock" HorizontalAlignment="Left" Margin="0,0,0,53" TextWrapping="NoWrap" Text="No color(?!)" VerticalAlignment="Bottom"/>
+        <TextBlock x:Name="character_textBlock" HorizontalAlignment="Left" Margin="0,0,0,70" TextWrapping="NoWrap" Text="No image" VerticalAlignment="Bottom"/>
+        <TextBlock x:Name="nextSong_TBB" HorizontalAlignment="Right" Margin="0,0,2,19" TextWrapping="NoWrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" Style="{DynamicResource TextBlockStyleHues}" Height="30" MouseLeftButtonDown="nextSong_TBB_MouseLeftButtonDown"/>
+        <TextBlock x:Name="prevSong_TBB" HorizontalAlignment="Right" Margin="0,0,113,19" TextWrapping="NoWrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" Style="{DynamicResource TextBlockStyleHues}" Height="30" MouseLeftButtonDown="prevSong_TBB_MouseLeftButtonDown"/>
+        <TextBlock x:Name="songs_TBB" HorizontalAlignment="Right" Margin="0,0,43,27" TextWrapping="NoWrap" Text="SONGS" VerticalAlignment="Bottom" FontSize="13" Style="{DynamicResource TextBlockStyleHues}" MouseLeftButtonDown="songs_TBB_MouseLeftButtonDown"/>
+        <TextBlock x:Name="nextImage_TBB" HorizontalAlignment="Right" Margin="0,0,154,19" TextWrapping="NoWrap" Text="&gt;" VerticalAlignment="Bottom" FontSize="36" Style="{DynamicResource TextBlockStyleHues}" Height="30" MouseLeftButtonDown="nextImage_TBB_MouseLeftButtonDown"/>
+        <TextBlock x:Name="prevImage_TBB" HorizontalAlignment="Right" Margin="0,0,317,19" TextWrapping="NoWrap" Text="&lt;" VerticalAlignment="Bottom" FontSize="36" Style="{DynamicResource TextBlockStyleHues}" Height="30" MouseLeftButtonDown="prevImage_TBB_MouseLeftButtonDown"/>
+        <TextBlock x:Name="fullAuto_TBB" HorizontalAlignment="Right" Margin="0,0,199,19" TextWrapping="NoWrap" Text="FULL AUTO" VerticalAlignment="Bottom" FontSize="13" Style="{DynamicResource TextBlockStyleHues}" MouseLeftButtonDown="fullAuto_TBB_MouseLeftButtonDown"/>
+        <TextBlock x:Name="images_TBB_Copy" HorizontalAlignment="Right" Margin="0,0,214,36" TextWrapping="NoWrap" Text="IMAGES" VerticalAlignment="Bottom" FontSize="13" Style="{DynamicResource TextBlockStyleHues}" MouseLeftButtonDown="images_TBB_Copy_MouseLeftButtonDown"/>
     </Grid>
 </UserControl>
