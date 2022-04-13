@@ -17,9 +17,9 @@
         </Style>
         
         <DataTemplate x:Key="DataTemplateHues">
-            <Border BorderThickness="2,1,2,1" BorderBrush="Black" Margin="-3,0,0,0">
-                <TextBlock Text="{Binding Name}" Opacity="1" TextWrapping="Wrap" Width="500" HorizontalAlignment="Left"/>
-            </Border>
+            <!--<Border BorderThickness="2,1,2,1" BorderBrush="Black" Margin="-3,0,0,0">-->
+                <TextBlock Text="{Binding Name}" Opacity="1" Margin="2" TextWrapping="Wrap" Width="500" HorizontalAlignment="Left"/>
+            <!--</Border>-->
         </DataTemplate>
         <SolidColorBrush x:Key="ListBorder" Color="#828790"/>
         
