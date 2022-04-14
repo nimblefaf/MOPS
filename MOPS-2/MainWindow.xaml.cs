@@ -716,7 +716,7 @@ namespace MOPS
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (IsLoaded) Smart_Stretch();
+            if (Core.RPM.allPics.Length > 0) Smart_Stretch();
         }
     }
 
