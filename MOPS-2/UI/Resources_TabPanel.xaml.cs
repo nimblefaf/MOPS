@@ -176,6 +176,7 @@ namespace MOPS.UI
             }
             ProgBar.Value = 0;
             Status_textBlock.Text = "Done";
+            ui_reset_timer.Start();
             GC.Collect();
         }
         void BGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -517,7 +518,6 @@ namespace MOPS.UI
                 
             }
             WebClient_IsActive = false;
-            ui_reset_timer.Start();
         }
 
         private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
