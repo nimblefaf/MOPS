@@ -132,6 +132,11 @@ namespace MOPS
 
             Fade.FillBehavior = FillBehavior.Stop;
             Fade.BeginTime = TimeSpan.FromSeconds(0);
+            Fade.Completed += delegate (object sender, EventArgs e)
+            {
+                ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+                HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
+            };
 
             Blackout_Rectangle.Opacity = 0;
             Blackout_Short.BeginTime = new TimeSpan(0);
@@ -172,6 +177,11 @@ namespace MOPS
             Storyboard.SetTarget(Fade, ImageGrid);
             SB_Fade.Children.Add(Fade);
             SB_Fade.FillBehavior = FillBehavior.Stop;
+        }
+
+        private void Fade_Completed(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         public void ColorBlend_Graphics_Update()
@@ -464,17 +474,18 @@ namespace MOPS
         // '~' Fade color
         public void timeline_fade()
         {
-            Fade.Duration = TimeSpan.FromSeconds((Core.CountDots() + 1) * Core.beat_length);
+            GetRandomHue();
+            Fade.Duration = TimeSpan.FromSeconds((Core.CountDots() + 1) * Core.beat_length - (Core.beat_length / 100));
             if ((BlendMode)Properties.Settings.Default.blendMode == BlendMode.HardLight)
             {
                 Fade.From = HardLightEffect.Blend;
-                Fade.To = Color.FromArgb(179, ((SolidColorBrush)GetRandomHue().brush).Color.R, ((SolidColorBrush)GetRandomHue().brush).Color.G, ((SolidColorBrush)GetRandomHue().brush).Color.B);
+                Fade.To = Color.FromArgb(179, (hues[CurrentColorInd].brush).Color.R, (hues[CurrentColorInd].brush).Color.G, (hues[CurrentColorInd].brush).Color.B);
                 SB_Fade.Begin();
             }
             else
             {
                 Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
-                Fade.To = ((SolidColorBrush)GetRandomHue().brush).Color;
+                Fade.To = hues[CurrentColorInd].brush.Color;
             }
             Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name);
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
