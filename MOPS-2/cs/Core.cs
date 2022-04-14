@@ -118,6 +118,7 @@ namespace MOPS
                 MainWin.SB_Blackout.Stop();
                 MainWin.blackouted = false;
                 MainWin.Blackout_Rectangle.Opacity = 0;
+                MainWin.SB_Fade.Stop();
             }
             if (c != '.') switch (c)
                 {

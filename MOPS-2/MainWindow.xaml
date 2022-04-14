@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MOPS.Shaders"
         xmlns:uc="clr-namespace:MOPS.UI"
         mc:Ignorable="d"
-        Title="0x40 Hues of MOPS" Height="600" Width="800" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" KeyDown="Window_KeyDown" FontFamily="/MOPS;component/fonts/#Pet Me 128" Background="White" OpacityMask="Black" Closing="Window_Closing">
+        Title="0x40 Hues of MOPS" Height="600" Width="800" MouseDown="Window_MouseDown" Loaded="Window_Loaded" MouseWheel="Window_MouseWheel" KeyDown="Window_KeyDown" FontFamily="/MOPS;component/fonts/#Pet Me 128" Background="White" OpacityMask="Black" Closing="Window_Closing" SizeChanged="Window_SizeChanged">
 
     <Grid>
         <Border>

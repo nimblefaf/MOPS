@@ -118,7 +118,7 @@ namespace MOPS
         private DoubleAnimation Blackout_Blur = new DoubleAnimation();
         public ColorAnimation Fade = new ColorAnimation();
 
-        private Storyboard SB_Fade = new Storyboard();
+        public Storyboard SB_Fade = new Storyboard();
 
         private void Init_Animations()
         {
@@ -713,7 +713,11 @@ namespace MOPS
             Properties.Settings.Default.Save();
             Core.discordRpcClient.Dispose();
         }
-        
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (IsLoaded) Smart_Stretch();
+        }
     }
 
     /// <summary>
