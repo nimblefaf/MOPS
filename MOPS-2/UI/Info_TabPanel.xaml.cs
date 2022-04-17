@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace MOPS.UI
 {
@@ -24,6 +25,7 @@ namespace MOPS.UI
         public Info_TabPanel()
         {
             InitializeComponent();
+            InfoTextBlock1.Text = "0x40 Hues of C#, V" + Assembly.GetExecutingAssembly().GetName().Version.ToString().Remove(3);
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
