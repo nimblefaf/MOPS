@@ -32,9 +32,6 @@ namespace MOPS
         Shaders.HuesYBlur26Effect YBlur26 = new Shaders.HuesYBlur26Effect();
         Shaders.HuesXBlur26Effect XBlur26 = new Shaders.HuesXBlur26Effect();
 
-        //public UI.UI_Alpha Display_Alpha = new UI.UI_Alpha();
-        //public UI.UI_Mini Display_Mini = new UI.UI_Mini();
-
         public Hues.Palette[] hues;
 
         public int CurrentColorInd = 0;
@@ -89,16 +86,11 @@ namespace MOPS
 
             songs_listbox.ItemsSource = enabled_songs;
             images_listbox.ItemsSource = enabled_images;
-
-            //For Debug
-            //CornerBlock.Foreground = Brushes.Red;
-            //timeline_label.Foreground = Brushes.Red;
         }
 
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //set.Owner = this; //that was for window
             Core.SetReferences();
             Init_Animations();
             ColorBlend_Graphics_Update();
@@ -179,11 +171,6 @@ namespace MOPS
             SB_Fade.FillBehavior = FillBehavior.Stop;
         }
 
-        private void Fade_Completed(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ColorBlend_Graphics_Update()
         {
             switch ((BlendMode)Properties.Settings.Default.blendMode)
@@ -260,7 +247,6 @@ namespace MOPS
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            //if (e.ChangedButton == MouseButton.Left) timeline_noblur();
             if (e.ChangedButton == MouseButton.Right)
             {
                 if (InnerWin.IsVisible) InnerWin.Visibility = Visibility.Hidden;
@@ -624,9 +610,6 @@ namespace MOPS
                 int index = enabled_images[p].Ind;
                 image0.Source = Core.RPM.allPics[index].pic;
 
-                ////For debug:
-                //CornerBlock.Text = index + ": " + RPM.allPics[index].pic.Format.ToString();
-
                 if (Core.RPM.allPics[index].animation == null)
                 {
                     AnimTimer.Stop();
@@ -650,8 +633,6 @@ namespace MOPS
                     anim_ind = 1;
                     AnimTimer.Interval = TimeSpan.FromMilliseconds(Core.RPM.allPics[current_image_pos].frameDuration[0]);
                     AnimTimer.Start();
-                    ////For debug:
-                    //CornerBlock.Text = index + ": " + RPM.allPics[index].animation[0].Format.ToString();
 
                     switch (Core.RPM.allPics[index].align)
                     {
