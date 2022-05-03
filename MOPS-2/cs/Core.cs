@@ -24,7 +24,7 @@ namespace MOPS
         }
 
         public RPManager RPM = new RPManager();
-        Audio Player = new Audio();
+        public Audio Player = new Audio();
         public UIHandler UIHandler;
 
         public bool muted = false;
@@ -167,6 +167,12 @@ namespace MOPS
                     case '¤':
                         MainWin.timeline_whiteout();
                         break;
+                    //case '#':
+                    //    MainWin.timeline_color_change();
+                    //    break;
+                    default:
+                        MainWin.timeline_pic_and_color();
+                        break;
                 }
         }
 
@@ -229,6 +235,7 @@ namespace MOPS
                 Player.Play();
                 TimeLine_Move();
                 MainTimer.Start();
+                UIHandler.AudioTimer.Start();
             }
             else StopSong();
 
@@ -236,6 +243,7 @@ namespace MOPS
         public void StopSong()
         {
             MainTimer.Stop();
+            if ((UIStyle)Properties.Settings.Default.uiStyle == UIStyle.Retro) UIHandler.AudioTimer.Stop();
             Player.Stop();
             beat_length = 0;
             UIHandler.UpdateSongInfo(RPM.allSongs[0], true);
@@ -371,7 +379,7 @@ namespace MOPS
         Alpha = 0,
         Mini = 1,
         Retro = 2,
-        V420 = 3,
+        Weed = 3,
         Modern = 4,
     }
 }

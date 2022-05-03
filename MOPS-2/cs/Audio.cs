@@ -38,6 +38,7 @@ namespace MOPS
 
         long build_len;
         long loop_len;
+        public double time_of_build;
 
 
 
@@ -68,6 +69,7 @@ namespace MOPS
 
                 Stream_B = Bass.BASS_StreamCreateFile(point_B.AddrOfPinnedObject(), 0, build_mem.LongLength, BASSFlag.BASS_STREAM_DECODE);
                 build_len = Bass.BASS_ChannelGetLength(Stream_B, BASSMode.BASS_POS_BYTES);
+                time_of_build = GetTimeOfStream(Stream_B);
 
                 Stream_L = Bass.BASS_StreamCreateFile(point_L.AddrOfPinnedObject(), 0, loop_mem.LongLength, BASSFlag.BASS_STREAM_DECODE);
                 loop_len = Bass.BASS_ChannelGetLength(Stream_L);

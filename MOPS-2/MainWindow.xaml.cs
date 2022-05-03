@@ -101,7 +101,7 @@ namespace MOPS
         }
 
         private Storyboard BlurAnimSB = new Storyboard();
-        private DoubleAnimation BlurAnim = new DoubleAnimation();
+        public DoubleAnimation BlurAnim = new DoubleAnimation();
 
         public Storyboard SB_Blackout = new Storyboard();
         private DoubleAnimation Blackout = new DoubleAnimation();
@@ -195,19 +195,30 @@ namespace MOPS
         }
         public void UIStyle_Graphics_Update()
         {
+            songs_listbox.Visibility = Visibility.Hidden;
+            images_listbox.Visibility = Visibility.Hidden;
             switch ((UIStyle)Properties.Settings.Default.uiStyle)
             {
                 case UIStyle.Alpha:
                     DisplayGrid.Children.Add(Core.UIHandler.Display_Alpha);
+                    songs_listbox.Margin = new Thickness(0, 0, 40, 60);
+                    images_listbox.Margin = new Thickness(0, 0, 172, 60);
                     break;
                 case UIStyle.Mini:
                     DisplayGrid.Children.Add(Core.UIHandler.Display_Mini);
+                    break;
+                case UIStyle.Retro:
+                    DisplayGrid.Children.Add(Core.UIHandler.Display_Retro);
+                    if (Core.MainTimer.IsEnabled) Core.UIHandler.AudioTimer.Start();
+                    songs_listbox.Margin = new Thickness(0, 0, 40, 50);
+                    images_listbox.Margin = new Thickness(0, 0, 40, 50);
                     break;
             }
             if (DisplayGrid.Children.Count == 2)
             {
                 DisplayGrid.Children.RemoveAt(0);
                 Core.UIHandler.UpdateEverything();
+                if ((UIStyle)Properties.Settings.Default.uiStyle != UIStyle.Retro) Core.UIHandler.AudioTimer.Stop();
             }
         }
         public void BlurDecay_Upd()
@@ -249,9 +260,14 @@ namespace MOPS
         {
             if (e.ChangedButton == MouseButton.Right)
             {
-                if (InnerWin.IsVisible) InnerWin.Visibility = Visibility.Hidden;
-                else InnerWin.Visibility = Visibility.Visible;
+                ToggleInnerWindow();
             }
+        }
+
+        public void ToggleInnerWindow()
+        {
+            if (InnerWin.IsVisible) InnerWin.Visibility = Visibility.Hidden;
+            else InnerWin.Visibility = Visibility.Visible;
         }
 
         #region KeyControls
@@ -289,6 +305,9 @@ namespace MOPS
                     break;
                 case Key.N:
                     timeline_invert();
+                    break;
+                case Key.H:
+                    Core.UIHandler.ToggleHideUI();
                     break;
             }
         }
@@ -425,6 +444,7 @@ namespace MOPS
                         break;
                 }
             BlurAnimSB.Begin();
+            Core.UIHandler.TBAnimStart(true);
         }
 
         // 'O' Vertical blur only
@@ -443,6 +463,7 @@ namespace MOPS
                         break;
                 }
             BlurAnimSB.Begin();
+            Core.UIHandler.TBAnimStart(false);
         }
 
         // ')' Trippy cirle in

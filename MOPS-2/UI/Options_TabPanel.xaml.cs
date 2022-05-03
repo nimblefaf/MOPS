@@ -125,6 +125,9 @@ namespace MOPS.UI
                 case UIStyle.Mini:
                     OB_UI_mini.Background = Brushes.White;
                     break;
+                case UIStyle.Retro:
+                    OB_UI_retro.Background = Brushes.White;
+                    break;
             }
 
 
@@ -356,18 +359,38 @@ namespace MOPS.UI
 
         private void OB_UI_alpha_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.uiStyle = (int)UIStyle.Alpha;
-            OB_UI_alpha.Background = Brushes.White;
-            OB_UI_mini.Background = Brushes.LightGray;
-            main.UIStyle_Graphics_Update();
+            if (Properties.Settings.Default.uiStyle != (int)UIStyle.Alpha)
+            {
+                Properties.Settings.Default.uiStyle = (int)UIStyle.Alpha;
+                OB_UI_alpha.Background = Brushes.White;
+                OB_UI_mini.Background = Brushes.LightGray;
+                OB_UI_retro.Background = Brushes.LightGray;
+                main.UIStyle_Graphics_Update();
+            }
         }
 
         private void OB_UI_mini_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.uiStyle = (int)UIStyle.Mini;
-            OB_UI_alpha.Background = Brushes.LightGray;
-            OB_UI_mini.Background = Brushes.White;
-            main.UIStyle_Graphics_Update();
+            if (Properties.Settings.Default.uiStyle != (int)UIStyle.Mini)
+            {
+                Properties.Settings.Default.uiStyle = (int)UIStyle.Mini;
+                OB_UI_alpha.Background = Brushes.LightGray;
+                OB_UI_mini.Background = Brushes.White;
+                OB_UI_retro.Background = Brushes.LightGray;
+                main.UIStyle_Graphics_Update();
+            }
+        }
+
+        private void OB_UI_retro_Click(object sender, RoutedEventArgs e)
+        {
+            if (Properties.Settings.Default.uiStyle != (int)UIStyle.Retro)
+            {
+                Properties.Settings.Default.uiStyle = (int)UIStyle.Retro;
+                OB_UI_alpha.Background = Brushes.LightGray;
+                OB_UI_mini.Background = Brushes.LightGray;
+                OB_UI_retro.Background = Brushes.White;
+                main.UIStyle_Graphics_Update();
+            }
         }
     }
 }
