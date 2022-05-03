@@ -26,8 +26,8 @@
             <TextBlock x:Name="character_textBlock" HorizontalAlignment="Left" Margin="0,0,0,92" TextWrapping="NoWrap" Text="I=" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="TimeHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,82" TextWrapping="NoWrap" Text="T=" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="BHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,72" TextWrapping="NoWrap" Text="B=" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="XHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,62" TextWrapping="NoWrap" Text="X=0x00" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="YHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,52" TextWrapping="NoWrap" Text="Y=0x00" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="XHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,62" TextWrapping="NoWrap" Text="X=$0x00" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="YHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,52" TextWrapping="NoWrap" Text="Y=$0x00" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="colorHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,42" TextWrapping="NoWrap" Text="C=" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="versionHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,32" TextWrapping="NoWrap" Text="V=" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="color_textBlock" HorizontalAlignment="Left" Margin="0,0,0,22" TextWrapping="NoWrap" Text="Color" VerticalAlignment="Bottom"/>

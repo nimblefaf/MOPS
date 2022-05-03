@@ -218,8 +218,8 @@ namespace MOPS
             switch ((UIStyle)Properties.Settings.Default.uiStyle)
             {
                 case UIStyle.Retro:
-                    Display_Retro.XHex_textBlock.Text = "X=0x00";
-                    Display_Retro.YHex_textBlock.Text = "Y=0x00";
+                    Display_Retro.XHex_textBlock.Text = "X=$0x00";
+                    Display_Retro.YHex_textBlock.Text = "Y=$0x00";
                     break;
                 case UIStyle.Weed:
                     break;
@@ -243,7 +243,7 @@ namespace MOPS
                 switch ((UIStyle)Properties.Settings.Default.uiStyle)
                 {
                     case UIStyle.Retro:
-                        Display_Retro.YHex_textBlock.Text = "Y=0x" + hex;
+                        Display_Retro.YHex_textBlock.Text = "Y=$0x" + hex;
                     break;
                     case UIStyle.Weed:
                         break;
@@ -252,7 +252,7 @@ namespace MOPS
                 switch ((UIStyle)Properties.Settings.Default.uiStyle)
                 {
                     case UIStyle.Retro:
-                        Display_Retro.XHex_textBlock.Text = "X=0x" + hex;
+                        Display_Retro.XHex_textBlock.Text = "X=$0x" + hex;
                         break;
                     case UIStyle.Weed:
                         break;
