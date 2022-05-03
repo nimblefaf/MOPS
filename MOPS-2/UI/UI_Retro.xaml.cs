@@ -152,11 +152,13 @@ namespace MOPS.UI
         private void nextImage_button_Click(object sender, RoutedEventArgs e)
         {
             main.next_image();
+            updateImageModeText();
         }
 
         private void prevImage_button_Click(object sender, RoutedEventArgs e)
         {
             main.prev_image();
+            updateImageModeText();
         }
 
         private void fullAutoMode_button_Click(object sender, RoutedEventArgs e)
