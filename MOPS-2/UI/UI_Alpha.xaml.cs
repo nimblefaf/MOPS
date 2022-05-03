@@ -27,7 +27,17 @@ namespace MOPS.UI
             main = MW;
         }
 
-        private void songs_TBB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void nextSong_button_Click(object sender, RoutedEventArgs e)
+        {
+            main.next_song();
+        }
+
+        private void prevSong_button_Click(object sender, RoutedEventArgs e)
+        {
+            main.prev_song();
+        }
+
+        private void songs_button_Click(object sender, RoutedEventArgs e)
         {
             if (main.songs_listbox.Visibility == Visibility.Hidden)
             {
@@ -37,7 +47,22 @@ namespace MOPS.UI
             else main.songs_listbox.Visibility = Visibility.Hidden;
         }
 
-        private void images_TBB_Copy_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void nextImage_button_Click(object sender, RoutedEventArgs e)
+        {
+            main.next_image();
+        }
+
+        private void prevImage_button_Click(object sender, RoutedEventArgs e)
+        {
+            main.prev_image();
+        }
+
+        private void fullAuto_button_Click(object sender, RoutedEventArgs e)
+        {
+            main.full_auto_mode = true;
+        }
+
+        private void images_button_Click(object sender, RoutedEventArgs e)
         {
             if (main.images_listbox.Visibility == Visibility.Hidden)
             {
@@ -45,31 +70,6 @@ namespace MOPS.UI
                 main.songs_listbox.Visibility = Visibility.Hidden;
             }
             else main.images_listbox.Visibility = Visibility.Hidden;
-        }
-
-        private void fullAuto_TBB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            main.full_auto_mode = true;
-        }
-
-        private void nextSong_TBB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            main.next_song();
-        }
-
-        private void prevSong_TBB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            main.prev_song();
-        }
-
-        private void nextImage_TBB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            main.next_image();
-        }
-
-        private void prevImage_TBB_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            main.prev_image();
         }
     }
 }
