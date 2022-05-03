@@ -124,11 +124,11 @@ namespace MOPS
 
             Fade.FillBehavior = FillBehavior.Stop;
             Fade.BeginTime = TimeSpan.FromSeconds(0);
-            Fade.Completed += delegate (object sender, EventArgs e)
-            {
-                ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
-                HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
-            };
+            //Fade.Completed += delegate (object sender, EventArgs e)
+            //{
+            //    ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+            //    HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
+            //};
 
             Blackout_Rectangle.Opacity = 0;
             Blackout_Short.BeginTime = new TimeSpan(0);
@@ -496,6 +496,8 @@ namespace MOPS
             }
             Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name);
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
+            ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+            HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
         }
 
         // '=' Fade and change image
