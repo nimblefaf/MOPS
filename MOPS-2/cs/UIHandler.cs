@@ -226,12 +226,10 @@ namespace MOPS
             }
             TextBlockTimer.Start();
         }
+        private double BlurState = 0;
         private int GetPercented()
         {
-            double BlurState = 0;
-            string what = MainWin.DirtyHack_textBlock.Text;
-            what = what.Replace('.', ',');
-            Double.TryParse(what, out BlurState);
+            double.TryParse(MainWin.DirtyHack_textBlock.Text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out BlurState);
             double perc_BlurState = BlurState / (double)MainWin.BlurAnim.From;
             return Convert.ToInt32(153 * perc_BlurState);
         }
