@@ -46,25 +46,35 @@ namespace MOPS.UI
             else mode_textBlock.Text = "M=NORMAL";
         }
 
+
+
+
+        #region HideUI
+        private bool HideAnimationInProgress = false;
         public void ToggleHideUI()
         {
-            if (MainGrid.Opacity == 1)
+            if (!HideAnimationInProgress)
             {
-                LilButtonGrid.Visibility = Visibility.Visible;
-                MainGrid.BeginAnimation(OpacityProperty, HideMainGridAnimation);
-                LilButtonGrid.BeginAnimation(OpacityProperty, ShowLilButtonAnimation);
-                MainGrid.Opacity = 0;
-                MainGrid.IsEnabled = false;
-                LilButtonGrid.Opacity = 1;
-            }
-            else
-            {
-                MainGrid.Visibility = Visibility.Visible;
-                MainGrid.BeginAnimation(OpacityProperty, ShowMainGridAnimation);
-                LilButtonGrid.BeginAnimation(OpacityProperty, HideLilButtonAnimation);
-                MainGrid.Opacity = 1;
-                LilButtonGrid.IsEnabled = false;
-                LilButtonGrid.Opacity = 0;
+                if (MainGrid.Opacity == 1)
+                {
+                    LilButtonGrid.Visibility = Visibility.Visible;
+                    MainGrid.BeginAnimation(OpacityProperty, HideMainGridAnimation);
+                    LilButtonGrid.BeginAnimation(OpacityProperty, ShowLilButtonAnimation);
+                    MainGrid.Opacity = 0;
+                    MainGrid.IsEnabled = false;
+                    LilButtonGrid.Opacity = 1;
+                    HideAnimationInProgress = true;
+                }
+                else
+                {
+                    MainGrid.Visibility = Visibility.Visible;
+                    MainGrid.BeginAnimation(OpacityProperty, ShowMainGridAnimation);
+                    LilButtonGrid.BeginAnimation(OpacityProperty, HideLilButtonAnimation);
+                    MainGrid.Opacity = 1;
+                    LilButtonGrid.IsEnabled = false;
+                    LilButtonGrid.Opacity = 0;
+                    HideAnimationInProgress = true;
+                }
             }
         }
 
@@ -89,6 +99,7 @@ namespace MOPS.UI
             ShowMainGridAnimation.Completed += delegate (object sender, EventArgs e) 
             { 
                 MainGrid.IsEnabled = true;
+                HideAnimationInProgress = false;
             };
 
             HideLilButtonAnimation.From = 1;
@@ -105,10 +116,13 @@ namespace MOPS.UI
             ShowLilButtonAnimation.Completed += delegate (object sender, EventArgs e)
             {
                 LilButtonGrid.IsEnabled = true;
+                HideAnimationInProgress = false;
             };
         }
+        #endregion
 
-#region Button Clicks
+
+        #region Button Clicks
         private void settings_button_Click(object sender, RoutedEventArgs e)
         {
             main.ToggleInnerWindow();
