@@ -155,7 +155,7 @@ namespace MOPS
 
                     break;
                 case UIStyle.Mini:
-
+                    Display_Mini.ToggleHideUI();
                     break;
                 case UIStyle.Retro:
                     Display_Retro.ToggleHideUI();

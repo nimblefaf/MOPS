@@ -6,8 +6,13 @@
              xmlns:local="clr-namespace:MOPS.UI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             FontFamily="/MOPS;component/fonts/#Pet Me 128">
+             FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10">
     <Grid>
-        <TextBlock x:Name="timeline_textBlock" Margin="0,0,0,2" TextWrapping="NoWrap" Text=">>" Height="12" VerticalAlignment="Bottom"/>
+        <Grid x:Name="LilButtonGrid" Opacity="0" Visibility="Hidden">
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="showUI_TBB" HorizontalAlignment="Right" Margin="0,0,4,4" Content="▲" VerticalAlignment="Bottom" FontSize="26" Click="showUI_TBB_Click"/>
+        </Grid>
+        <Grid x:Name="TimelineGrid" Opacity="1" Visibility="Visible">
+            <TextBlock x:Name="timeline_textBlock" Margin="0,0,0,2" TextWrapping="NoWrap" Text="&gt;&gt;" VerticalAlignment="Bottom"/>
+        </Grid>
     </Grid>
 </UserControl>
