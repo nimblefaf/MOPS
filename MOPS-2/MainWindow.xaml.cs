@@ -122,7 +122,7 @@ namespace MOPS
             BlurAnimSB.Children.Add(BlurAnim);
             BlurAnimSB.FillBehavior = FillBehavior.Stop;
 
-            Fade.FillBehavior = FillBehavior.Stop;
+            Fade.FillBehavior = FillBehavior.HoldEnd;
             Fade.BeginTime = TimeSpan.FromSeconds(0);
             //Fade.Completed += delegate (object sender, EventArgs e)
             //{
@@ -168,7 +168,7 @@ namespace MOPS
             Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
             Storyboard.SetTarget(Fade, ImageGrid);
             SB_Fade.Children.Add(Fade);
-            SB_Fade.FillBehavior = FillBehavior.Stop;
+            SB_Fade.FillBehavior = FillBehavior.Stop; //NOTE: SETTING THIS TO "HoldEnd" WILL LOCK COLOR CHANGE ON HARDLIGHT SHADER ONLY FOR ANIMATION
         }
 
         public void ColorBlend_Graphics_Update()
@@ -496,7 +496,7 @@ namespace MOPS
             }
             Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name);
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
-            ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
+            //ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
             HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
         }
 
