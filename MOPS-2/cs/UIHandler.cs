@@ -229,7 +229,7 @@ namespace MOPS
         private int GetPercented()
         {
             double BlurState = 0;
-            string what = MainWin.Message_textBlock.Text;
+            string what = MainWin.DirtyHack_textBlock.Text;
             what = what.Replace('.', ',');
             Double.TryParse(what, out BlurState);
             double perc_BlurState = BlurState / (double)MainWin.BlurAnim.From;
