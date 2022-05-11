@@ -5,6 +5,8 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
+        <FontFamily x:Key="HuesExtra">pack://application:,,,/fonts/#icomoon</FontFamily>
+
         <Style x:Key="TextBlockStyleHues" TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="NoWrap"/>
             <Setter Property="TextTrimming" Value="None"/>

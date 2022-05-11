@@ -224,6 +224,7 @@
     <Resource Include="effects\HuesYBlur8Effect.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="fonts\HuesExtra.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
