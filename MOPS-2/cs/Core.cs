@@ -225,7 +225,7 @@ namespace MOPS
                 beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
 
                 TimelineCheckAndFill();
-                MainWin.ShortBlackoutTimer.Interval = MainTimer.Interval;
+                MainWin.ShortBlackoutTimer.Interval = TimeSpan.FromSeconds(beat_length);
 
                 if (Properties.Settings.Default.discordMode)
                 {
