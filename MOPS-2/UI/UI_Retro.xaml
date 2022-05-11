@@ -12,7 +12,7 @@
             <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="showUI_TBB" HorizontalAlignment="Right" Margin="0,0,4,4" Content="▲" VerticalAlignment="Bottom" FontSize="26" Click="showUI_TBB_Click"/>
         </Grid>
         <Grid x:Name="MainGrid" Opacity="1" Visibility="Visible">
-            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="settings_button" HorizontalAlignment="Right" Margin="0,0,3,100" Content="S" VerticalAlignment="Bottom" FontSize="26" Click="settings_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="settings_button" HorizontalAlignment="Right" Margin="0,0,3,103" Content="&#xE900;" VerticalAlignment="Bottom" FontSize="26" FontFamily="{StaticResource HuesExtra}" Click="settings_button_Click"/>
             <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="chars_button" HorizontalAlignment="Right" Margin="0,0,3,72" Content="C" VerticalAlignment="Bottom" FontSize="26" Click="chars_button_Click"/>
             <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="hideUI_button" HorizontalAlignment="Right" Margin="0,0,4,43" Content="▼" VerticalAlignment="Bottom" FontSize="26" Click="hideUI_button_Click"/>
             <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="nextSong_button" HorizontalAlignment="Right" Margin="0,0,0,12" Content="&gt;" VerticalAlignment="Bottom" FontSize="30" Click="nextSong_button_Click"/>
