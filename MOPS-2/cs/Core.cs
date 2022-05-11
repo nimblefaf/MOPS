@@ -16,6 +16,7 @@ namespace MOPS
         {
             if (Properties.Settings.Default.discordMode) discord_rpc_init();
             MainTimer.Tick += MainTimer_Tick;
+            MainTimer.Interval = TimeSpan.FromTicks(10);
         }
         public void SetReferences()
         {
@@ -28,6 +29,7 @@ namespace MOPS
         public UIHandler UIHandler;
 
         public bool muted = false;
+        private bool build_is_playing = false;
         public int current_volume = 50;
         public int muted_volume;
         public int current_song_ind = 0;
@@ -37,7 +39,6 @@ namespace MOPS
         public string current_timeline = "";
         public int rhythm_pos = 1;
         public int b_rhythm_pos = 1;
-        double correction = 0;
         public double beat_length = 0;
         public DispatcherTimer MainTimer = new DispatcherTimer(DispatcherPriority.Send);
 
@@ -75,43 +76,52 @@ namespace MOPS
             }
         }
 
-
         private void MainTimer_Tick(object sender, EventArgs e)
         {
-            if (rhythm_pos >= 0)
+            if (rhythm_pos > 0)
             {
-                if (rhythm_pos != 1) correction = beat_length * (rhythm_pos - 1) - Player.GetPosOfStream(Player.Stream_L);
-                if (correction > 0) MainTimer.Interval = TimeSpan.FromSeconds(correction);
-                else if (rhythm_pos > 2) MainTimer.Interval = TimeSpan.FromTicks(10);
+                if (beat_length * rhythm_pos < Player.GetPosOfStream(Player.Stream_L) | beat_length * (rhythm_pos-1) > Player.GetPosOfStream(Player.Stream_L)) 
+                    TimeLine_Move();
+            }
+            else if (rhythm_pos == 0 & build_is_playing)
+            {
+                if (Player.GetPosOfStream(Player.Stream_L) > 0)
+                {
+                    TimeLine_Move();
+                    build_is_playing = false;
+                }
+            }
+            else if (rhythm_pos == 0)
+            {
+                if (Player.GetPosOfStream(Player.Stream_L) < beat_length)
+                    TimeLine_Move();
             }
             else
             {
-                b_rhythm_pos += 1;
-                correction = beat_length * (build_rhythm.Length + rhythm_pos) - Player.GetPosOfStream(Player.Stream_B);
-                if (correction > 0) MainTimer.Interval = TimeSpan.FromSeconds(correction);
-                else MainTimer.Interval = TimeSpan.FromTicks(10);
+                if (beat_length * b_rhythm_pos < Player.GetPosOfStream(Player.Stream_B)) 
+                    TimeLine_Move();
             }
-            TimeLine_Move(); //THIS MUST BE _AFTER_ THE TIMER.INTERVAL IS CORRECTED
         }
 
         /// <summary> Check if displayed rhythm is too short and fills it if neccessary </summary>
-        private void TimelineLenghtFill()
+        private void TimelineCheckAndFill()
         {
             if (current_timeline.Length < 250) current_timeline += loop_rhythm;
         }
 
         private void TimeLine_Move()
         {
-            beat(current_timeline[0]);
+            Beat(current_timeline[0]);
             current_timeline = current_timeline.Remove(0, 1);
-            TimelineLenghtFill();
+            TimelineCheckAndFill();
             UIHandler.UpdateTimeline(current_timeline);
             rhythm_pos += 1;
+            if (rhythm_pos < 0) b_rhythm_pos++;
             if (rhythm_pos == loop_rhythm.Length) rhythm_pos = 0;
         }
 
         /// <summary> Plays the event according to char </summary>
-        private void beat(char c)
+        private void Beat(char c)
         {
             if (MainWin.Blackout_Rectangle.Opacity != 0 & c != '.')
             {
@@ -183,11 +193,12 @@ namespace MOPS
             if (Player.loop_mem.Length != 0)
             {
                 loop_rhythm = RPM.allSongs[i].rhythm;
+                build_rhythm = "";
                 current_timeline = RPM.allSongs[i].rhythm;
                 current_song_ind = MainWin.songs_listbox.SelectedIndex;
 
-                rhythm_pos = 1;
-                b_rhythm_pos = 1;
+                rhythm_pos = 0;
+                b_rhythm_pos = 0;
                 if (RPM.allSongs[i].buildup_filename != null & ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.On | ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once & !RPM.allSongs[i].buildup_played)))
                 {
                     if ((BuildUpMode)Properties.Settings.Default.buildUpMode == BuildUpMode.Once) RPM.allSongs[i].buildup_played = true;
@@ -202,19 +213,18 @@ namespace MOPS
                     }
                     else if (build_rhythm.Length < expected_size)
                     {
-                        build_rhythm += new string('.', expected_size - build_rhythm.Length - 1);
+                        build_rhythm += new string('.', expected_size - build_rhythm.Length);
                     }
                     current_timeline = string.Concat(build_rhythm, loop_rhythm);
                     rhythm_pos = -expected_size;
+                    build_is_playing = true;
                 }
                 else Player.Play_Without_Buildup();
                 UIHandler.UpdateSongInfo(RPM.allSongs[i]);
 
                 beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
 
-                TimelineLenghtFill();
-                //Timer.Interval = TimeSpan.FromTicks(Convert.ToInt64(beat_length * 1000 * 10000));
-                MainTimer.Interval = TimeSpan.FromSeconds(beat_length);
+                TimelineCheckAndFill();
                 MainWin.ShortBlackoutTimer.Interval = MainTimer.Interval;
 
                 if (Properties.Settings.Default.discordMode)
@@ -233,7 +243,6 @@ namespace MOPS
                 }
 
                 Player.Play();
-                TimeLine_Move();
                 MainTimer.Start();
                 UIHandler.AudioTimer.Start();
             }
