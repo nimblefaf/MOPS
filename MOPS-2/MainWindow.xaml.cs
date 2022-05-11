@@ -309,6 +309,25 @@ namespace MOPS
                 case Key.H:
                     Core.UIHandler.ToggleHideUI();
                     break;
+                case Key.W:
+                    ToggleInnerWindow();
+                    break;
+                case Key.R:
+                    if (InnerWin.Visibility != Visibility.Visible) ToggleInnerWindow();
+                    InnerWin.tabControl.SelectedIndex = 0;
+                    break;
+                case Key.E:
+                    if (InnerWin.Visibility != Visibility.Visible) ToggleInnerWindow();
+                    InnerWin.tabControl.SelectedIndex = 1;
+                    break;
+                case Key.O:
+                    if (InnerWin.Visibility != Visibility.Visible) ToggleInnerWindow();
+                    InnerWin.tabControl.SelectedIndex = 2;
+                    break;
+                case Key.I:
+                    if (InnerWin.Visibility != Visibility.Visible) ToggleInnerWindow();
+                    InnerWin.tabControl.SelectedIndex = 3;
+                    break;
             }
         }
 
