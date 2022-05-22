@@ -411,6 +411,7 @@ namespace MOPS
         // '|'
         public void timeline_blackout_short()
         {
+            Blackout_Rectangle.Fill = Brushes.Black;
             Blackout_Rectangle.Opacity = 1;
             timeline_pic_and_color();
             ShortBlackoutTimer.Start();
