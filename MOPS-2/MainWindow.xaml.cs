@@ -118,7 +118,7 @@ namespace MOPS
             BlurAnim.To = 0;
             BlurAnim.Duration = TimeSpan.FromSeconds(0.5);
             Storyboard.SetTargetProperty(BlurAnim, new PropertyPath("Effect.BlurAmount"));
-            Storyboard.SetTarget(BlurAnim, image0);
+            Storyboard.SetTarget(BlurAnim, ImageGrid);
             BlurAnimSB.Children.Add(BlurAnim);
             BlurAnimSB.FillBehavior = FillBehavior.Stop;
 
@@ -162,7 +162,7 @@ namespace MOPS
             SB_Blackout.Children.Add(Blackout);
             SB_Blackout.Children.Add(Blackout_Blur);
             Storyboard.SetTarget(Blackout, Blackout_Rectangle);
-            Storyboard.SetTarget(Blackout_Blur, image0);
+            Storyboard.SetTarget(Blackout_Blur, ImageGrid);
             SB_Blackout.FillBehavior = FillBehavior.Stop;
 
             Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
@@ -473,14 +473,14 @@ namespace MOPS
         public void timeline_blackout()
         {
             Blackout_Rectangle.Fill = Brushes.Black;
-            image0.Effect = XBlur8;
+            ImageGrid.Effect = XBlur8;
             SB_Blackout.Begin();
         }
         // '¤'
         public void timeline_whiteout()
         {
             Blackout_Rectangle.Fill = Brushes.White;
-            image0.Effect = XBlur8;
+            ImageGrid.Effect = XBlur8;
             SB_Blackout.Begin();
         }
         // '|'
@@ -529,13 +529,13 @@ namespace MOPS
             if (enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
                     case BlurQuality.Low:
-                        image0.Effect = YBlur8;
+                        ImageGrid.Effect = YBlur8;
                         break;
                     case BlurQuality.Medium:
-                        image0.Effect = YBlur14;
+                        ImageGrid.Effect = YBlur14;
                         break;
                     case BlurQuality.High:
-                        image0.Effect = YBlur26;
+                        ImageGrid.Effect = YBlur26;
                         break;
                 }
             BlurAnimSB.Begin();
@@ -548,13 +548,13 @@ namespace MOPS
             if (enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
                     case BlurQuality.Low:
-                        image0.Effect = XBlur8;
+                        ImageGrid.Effect = XBlur8;
                         break;
                     case BlurQuality.Medium:
-                        image0.Effect = XBlur14;
+                        ImageGrid.Effect = XBlur14;
                         break;
                     case BlurQuality.High:
-                        image0.Effect = XBlur26;
+                        ImageGrid.Effect = XBlur26;
                         break;
                 }
             BlurAnimSB.Begin();
