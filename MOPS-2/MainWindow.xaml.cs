@@ -121,6 +121,7 @@ namespace MOPS
             Storyboard.SetTarget(BlurAnim, ImageGrid);
             BlurAnimSB.Children.Add(BlurAnim);
             BlurAnimSB.FillBehavior = FillBehavior.Stop;
+            BlurAnimSB.DecelerationRatio = 1;
 
             Fade.FillBehavior = FillBehavior.HoldEnd;
             Fade.BeginTime = TimeSpan.FromSeconds(0);
