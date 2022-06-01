@@ -130,12 +130,7 @@ namespace MOPS.UI
 
         private void chars_button_Click(object sender, RoutedEventArgs e)
         {
-            if (main.images_listbox.Visibility == Visibility.Hidden)
-            {
-                main.images_listbox.Visibility = Visibility.Visible;
-                main.songs_listbox.Visibility = Visibility.Hidden;
-            }
-            else main.images_listbox.Visibility = Visibility.Hidden;
+            main.ToggleCharList();
         }
 
         private void hideUI_button_Click(object sender, RoutedEventArgs e)
@@ -155,12 +150,7 @@ namespace MOPS.UI
 
         private void songs_button_Click(object sender, RoutedEventArgs e)
         {
-            if (main.songs_listbox.Visibility == Visibility.Hidden)
-            {
-                main.songs_listbox.Visibility = Visibility.Visible;
-                main.images_listbox.Visibility = Visibility.Hidden;
-            }
-            else main.songs_listbox.Visibility = Visibility.Hidden;
+            main.ToggleSongList();
         }
 
         private void nextImage_button_Click(object sender, RoutedEventArgs e)

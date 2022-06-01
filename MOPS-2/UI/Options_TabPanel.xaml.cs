@@ -40,7 +40,7 @@ namespace MOPS.UI
         }
 
 
-        private void Options_UI_Update() //to update UI after loading settings
+        public void Options_UI_Update() //to update UI after loading settings
         {
             switch ((BuildUpMode)Properties.Settings.Default.buildUpMode)
             {
@@ -121,11 +121,17 @@ namespace MOPS.UI
             {
                 case UIStyle.Alpha:
                     OB_UI_alpha.Background = Brushes.White;
+                    OB_UI_mini.Background = Brushes.LightGray;
+                    OB_UI_retro.Background = Brushes.LightGray;
                     break;
                 case UIStyle.Mini:
+                    OB_UI_alpha.Background = Brushes.LightGray;
                     OB_UI_mini.Background = Brushes.White;
+                    OB_UI_retro.Background = Brushes.LightGray;
                     break;
                 case UIStyle.Retro:
+                    OB_UI_alpha.Background = Brushes.LightGray;
+                    OB_UI_mini.Background = Brushes.LightGray;
                     OB_UI_retro.Background = Brushes.White;
                     break;
             }

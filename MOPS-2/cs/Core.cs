@@ -188,13 +188,15 @@ namespace MOPS
 
         public void Change_Song(int i)
         {
+            Player.build_mem = null;
+            Player.loop_mem = null;
             if (RPM.allSongs[i].buffer != null) Player.loop_mem = RPM.allSongs[i].buffer;
             else Player.loop_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].filename);
             if (Player.loop_mem.Length != 0)
             {
                 loop_rhythm = RPM.allSongs[i].rhythm;
                 build_rhythm = "";
-                current_timeline = RPM.allSongs[i].rhythm;
+                current_timeline = loop_rhythm;
                 current_song_ind = MainWin.songs_listbox.SelectedIndex;
 
                 rhythm_pos = 0;
@@ -270,6 +272,29 @@ namespace MOPS
                 }
                 );
             }
+        }
+
+        public void StartAgain()
+        {
+            MainTimer.Stop();
+            rhythm_pos = 0;
+            b_rhythm_pos = 0;
+            if (Player.build_mem != null)
+            {
+                Player.Play_With_Buildup();
+                int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
+                current_timeline = string.Concat(build_rhythm, loop_rhythm);
+                rhythm_pos = -expected_size;
+                build_is_playing = true;
+            }
+            else
+            {
+                Player.Play_Without_Buildup();
+                current_timeline = loop_rhythm;
+            }
+            TimelineCheckAndFill();
+            MainTimer.Start();
+            Player.Play();
         }
 
         public void ChangeVolume(int Delta)

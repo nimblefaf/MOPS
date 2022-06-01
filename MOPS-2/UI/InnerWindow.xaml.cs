@@ -22,7 +22,7 @@ namespace MOPS.UI
     {
         MainWindow main;
 
-        Options_TabPanel options_TabPanel;
+        public Options_TabPanel options_TabPanel;
         public Resources_TabPanel resources_TabPanel;
 
         public InnerWindow()

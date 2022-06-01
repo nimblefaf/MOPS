@@ -166,7 +166,7 @@ namespace MOPS
             SB_Blackout.FillBehavior = FillBehavior.Stop;
 
             Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
-            Storyboard.SetTarget(Fade, ImageGrid);
+            Storyboard.SetTarget(Fade, RenderGrid);
             SB_Fade.Children.Add(Fade);
             SB_Fade.FillBehavior = FillBehavior.Stop; //NOTE: SETTING THIS TO "HoldEnd" WILL LOCK COLOR CHANGE ON HARDLIGHT SHADER ONLY FOR ANIMATION
         }
@@ -178,17 +178,17 @@ namespace MOPS
                 case BlendMode.Plain:
                     image0.Opacity = 1;
                     ColorOverlap_Rectangle.Visibility = Visibility.Visible;
-                    ImageGrid.Effect = null;
+                    RenderGrid.Effect = null;
                     break;
                 case BlendMode.Alpha:
                     image0.Opacity = 0.7;
                     ColorOverlap_Rectangle.Visibility = Visibility.Visible;
-                    ImageGrid.Effect = null;
+                    RenderGrid.Effect = null;
                     break;
                 case BlendMode.HardLight:
                     image0.Opacity = 1;
                     ColorOverlap_Rectangle.Visibility = Visibility.Hidden;
-                    ImageGrid.Effect = HardLightEffect;
+                    RenderGrid.Effect = HardLightEffect;
                     Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
                     break;
             }
@@ -270,6 +270,25 @@ namespace MOPS
             else InnerWin.Visibility = Visibility.Visible;
         }
 
+        public void ToggleCharList()
+        {
+            if (images_listbox.Visibility == Visibility.Hidden)
+            {
+                images_listbox.Visibility = Visibility.Visible;
+                songs_listbox.Visibility = Visibility.Hidden;
+            }
+            else images_listbox.Visibility = Visibility.Hidden;
+        }
+        public void ToggleSongList()
+        {
+            if (songs_listbox.Visibility == Visibility.Hidden)
+            {
+                songs_listbox.Visibility = Visibility.Visible;
+                images_listbox.Visibility = Visibility.Hidden;
+            }
+            else songs_listbox.Visibility = Visibility.Hidden;
+        }
+
         #region KeyControls
 
         //
@@ -303,9 +322,6 @@ namespace MOPS
                 case Key.Space:
                     timeline_pic_and_color();
                     break;
-                case Key.N:
-                    timeline_invert();
-                    break;
                 case Key.H:
                     Core.UIHandler.ToggleHideUI();
                     break;
@@ -313,20 +329,79 @@ namespace MOPS
                     ToggleInnerWindow();
                     break;
                 case Key.R:
-                    if (InnerWin.Visibility != Visibility.Visible) ToggleInnerWindow();
+                    if (InnerWin.Visibility == Visibility.Hidden) ToggleInnerWindow();
                     InnerWin.tabControl.SelectedIndex = 0;
                     break;
                 case Key.E:
-                    if (InnerWin.Visibility != Visibility.Visible) ToggleInnerWindow();
+                    if (InnerWin.Visibility == Visibility.Hidden) ToggleInnerWindow();
                     InnerWin.tabControl.SelectedIndex = 1;
                     break;
                 case Key.O:
-                    if (InnerWin.Visibility != Visibility.Visible) ToggleInnerWindow();
+                    if (InnerWin.Visibility == Visibility.Hidden) ToggleInnerWindow();
                     InnerWin.tabControl.SelectedIndex = 2;
                     break;
                 case Key.I:
-                    if (InnerWin.Visibility != Visibility.Visible) ToggleInnerWindow();
+                    if (InnerWin.Visibility == Visibility.Hidden) ToggleInnerWindow();
                     InnerWin.tabControl.SelectedIndex = 3;
+                    break;
+                case Key.D0:
+                    if (Properties.Settings.Default.uiStyle != (int)UIStyle.Alpha)
+                    {
+                        Properties.Settings.Default.uiStyle = (int)UIStyle.Alpha;
+                        UIStyle_Graphics_Update();
+                        InnerWin.options_TabPanel.Options_UI_Update();
+                    }
+                    break;
+                case Key.D1:
+                    if (Properties.Settings.Default.uiStyle != (int)UIStyle.Retro)
+                    {
+                        Properties.Settings.Default.uiStyle = (int)UIStyle.Retro;
+                        UIStyle_Graphics_Update();
+                        InnerWin.options_TabPanel.Options_UI_Update();
+                    }
+                    break;
+                case Key.D2:
+                    //weed
+                    break;
+                case Key.D3:
+                    //modern
+                    break;
+                case Key.D4:
+                    //XMAS
+                    break;
+                case Key.D5:
+                    //HLWN
+                    break;
+                case Key.D6:
+                    if (Properties.Settings.Default.uiStyle != (int)UIStyle.Mini)
+                    {
+                        Properties.Settings.Default.uiStyle = (int)UIStyle.Mini;
+                        UIStyle_Graphics_Update();
+                        InnerWin.options_TabPanel.Options_UI_Update();
+                    }
+                    break;
+                case Key.B://PLAY FROM BUILDUP
+                    Core.StartAgain();
+                    break;
+                case Key.F://TOGGLE AUTO MODE
+                    if (full_auto_mode) full_auto_mode = false;
+                    else full_auto_mode = true;
+                    Core.UIHandler.UpdateMiscInfo();
+                    break;
+                case Key.N://RANDOM SONG
+                    if (enabled_songs.Count != 0)
+                    {
+                        songs_listbox.SelectedIndex = (songs_listbox.SelectedIndex + rnd.Next(1, enabled_songs.Count - 1)) % enabled_songs.Count;
+                    }
+                    break;
+                case Key.C:
+                    ToggleCharList();
+                    break;
+                case Key.S:
+                    ToggleSongList();
+                    break;
+                case Key.L:
+                    InnerWin.resources_TabPanel.load_local_RP();
                     break;
             }
         }
@@ -604,15 +679,7 @@ namespace MOPS
         //tied to the songs_listbox on SelectionChanged
         private void Change_Song(object sender, SelectionChangedEventArgs e)
         {
-            if (Colors_Inverted)
-            {
-                timeline_invert();
-            }
-            if (Blackout_Rectangle.Opacity != 0)
-            {
-                SB_Blackout.Stop();
-                Blackout_Rectangle.Opacity = 0;
-            }
+            Events_Stop();
             if (songs_listbox.SelectedIndex != -1)
             {
                 int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
@@ -624,6 +691,19 @@ namespace MOPS
                 {
                     Core.StopSong();
                 }
+            }
+        }
+
+        private void Events_Stop()
+        {
+            if (Colors_Inverted)
+            {
+                timeline_invert();
+            }
+            if (Blackout_Rectangle.Opacity != 0)
+            {
+                SB_Blackout.Stop();
+                Blackout_Rectangle.Opacity = 0;
             }
         }
         

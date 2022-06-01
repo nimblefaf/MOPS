@@ -133,6 +133,10 @@ namespace MOPS.UI
 
         private void load_rp_button_Click(object sender, RoutedEventArgs e)
         {
+            load_local_RP();
+        }
+        public void load_local_RP()
+        {
             OpenFileDialog openFile = new OpenFileDialog
             {
                 DefaultExt = ".zip",

@@ -57,7 +57,7 @@ namespace MOPS
             }
         }
 
-        private void UpdateMiscInfo()
+        public void UpdateMiscInfo()
         {
             switch ((UIStyle)Properties.Settings.Default.uiStyle)
             {
