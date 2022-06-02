@@ -179,7 +179,7 @@ namespace MOPS
             else
             {
                 res = "-0x";
-                num = MainWin.Core.Player.time_of_build - num;
+                num = MainWin.Core.Player.build_len_seconds - num;
             }
 
 

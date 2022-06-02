@@ -15,30 +15,30 @@ namespace MOPS
         
         public static string err;
         public static bool check;
-        
+
         /// <summary>
-        /// Частота дискретизации
+        /// Frequency
         /// </summary>
         private static readonly int HZ = 44100;
         /// <summary>
-        /// Состояние инициалиации
+        /// Init state
         /// </summary>
         public static bool InitDefaultDevice;
         /// <summary>
-        /// Канал
+        /// Channel
         /// </summary>
         public int Stream_L;
         /// <summary>
-        /// Громкость
+        /// Volume
         /// </summary>
         public int Volume = 50;
 
         public int Channel;
         public int Stream_B;
 
-        long build_len;
+        long build_len_bytes;
         long loop_len;
-        public double time_of_build;
+        public double build_len_seconds;
 
 
 
@@ -68,14 +68,14 @@ namespace MOPS
                 point_L = GCHandle.Alloc(loop_mem, GCHandleType.Pinned);
 
                 Stream_B = Bass.BASS_StreamCreateFile(point_B.AddrOfPinnedObject(), 0, build_mem.LongLength, BASSFlag.BASS_STREAM_DECODE);
-                build_len = Bass.BASS_ChannelGetLength(Stream_B, BASSMode.BASS_POS_BYTES);
-                time_of_build = GetTimeOfStream(Stream_B);
+                build_len_bytes = Bass.BASS_ChannelGetLength(Stream_B, BASSMode.BASS_POS_BYTES);
+                build_len_seconds = GetTimeOfStream(Stream_B);
 
                 Stream_L = Bass.BASS_StreamCreateFile(point_L.AddrOfPinnedObject(), 0, loop_mem.LongLength, BASSFlag.BASS_STREAM_DECODE);
                 loop_len = Bass.BASS_ChannelGetLength(Stream_L);
 
                 BassMix.BASS_Mixer_StreamAddChannel(Channel, Stream_B, BASSFlag.BASS_DEFAULT);
-                BassMix.BASS_Mixer_StreamAddChannelEx(Channel, Stream_L, BASSFlag.BASS_MIXER_NORAMPIN, build_len, 0);
+                BassMix.BASS_Mixer_StreamAddChannelEx(Channel, Stream_L, BASSFlag.BASS_MIXER_NORAMPIN, Bass.BASS_ChannelSeconds2Bytes(Channel, build_len_seconds), 0);
                 
                 _loopSync = BassMix.BASS_Mixer_ChannelSetSync(Stream_L, BASSSync.BASS_SYNC_POS | BASSSync.BASS_SYNC_MIXTIME, loop_len, _loopSyncCallback, new IntPtr(1));
             }
@@ -110,7 +110,7 @@ namespace MOPS
         
 
         /// <summary>
-        /// Длительность канала в секундах
+        /// Length of channel in seconds
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
@@ -123,7 +123,7 @@ namespace MOPS
         }
 
         /// <summary>
-        /// Текущая позиция в секундах
+        /// Current position in seconds
         /// </summary>
         /// <param name="stream"></param>
         /// <returns></returns>
@@ -136,7 +136,7 @@ namespace MOPS
         }
 
         /// <summary>
-        /// Стоп
+        /// Stop
         /// </summary>
         public void Stop()
         {
@@ -161,7 +161,7 @@ namespace MOPS
             Bass.BASS_ChannelSetPosition(stream, (double)pos);
         }
         /// <summary>
-        /// Установка громкости
+        /// Setting volume
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="vol"></param>
