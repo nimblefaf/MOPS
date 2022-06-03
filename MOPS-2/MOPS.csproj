@@ -94,9 +94,9 @@
     </ApplicationDefinition>
     <Compile Include="cs\Core.cs" />
     <Compile Include="cs\UIHandler.cs" />
-    <Compile Include="effects\ColorBlend_HardLightEffect.cs" />
     <Compile Include="cs\hues.cs" />
     <Compile Include="cs\PicConverter.cs" />
+    <Compile Include="effects\HardLightEffect.cs" />
     <Compile Include="effects\HuesXBlur14Effect.cs" />
     <Compile Include="effects\HuesXBlur26Effect.cs" />
     <Compile Include="effects\HuesXBlur8Effect.cs" />
@@ -200,9 +200,6 @@
     <Resource Include="fonts\PetMe64.ttf" />
     <Resource Include="fonts\PetMe.ttf" />
     <Resource Include="fonts\PetMe128.ttf" />
-    <Resource Include="effects\ColorBlend_HardLightEffect.ps">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="effects\InvertColorEffect.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -225,6 +222,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="fonts\HuesExtra.ttf" />
+    <Resource Include="effects\HardLightEffect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -24,7 +24,7 @@ namespace MOPS
         public DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
 
         Shaders.InvertColorEffect invertColorEffect = new Shaders.InvertColorEffect();
-        public Shaders.ColorBlend_HardLightEffect HardLightEffect = new Shaders.ColorBlend_HardLightEffect();
+        public Shaders.HardLightEffect HardLightEffect = new Shaders.HardLightEffect();
         Shaders.HuesYBlur8Effect YBlur8 = new Shaders.HuesYBlur8Effect();
         Shaders.HuesXBlur8Effect XBlur8 = new Shaders.HuesXBlur8Effect();
         Shaders.HuesYBlur14Effect YBlur14 = new Shaders.HuesYBlur14Effect();
@@ -35,20 +35,12 @@ namespace MOPS
         public Hues.Palette[] hues;
 
         public int CurrentColorInd = 0;
-
-
-        public bool Colors_Inverted = false;
-
-        public bool full_auto_mode = true;
-
-        /// <summary>
-        /// How far away blur goes in WPF dots.
-        /// </summary>
-        public double blur_amount = 0.02;
-        public bool blackouted = false;
-
         public int current_image_pos = 0;
         private int anim_ind = 0;
+
+        public bool Colors_Inverted = false;
+        public bool full_auto_mode = true;
+        public bool blackouted = false;
 
         /// <summary>
         /// List of enabled songs displayed in songs_listbox.
@@ -65,8 +57,9 @@ namespace MOPS
 
             AnimTimer.Tick += new EventHandler(AnimTimer_Tick);
             ShortBlackoutTimer.Tick += new EventHandler(ShortBlackoutTimer_Tick);
+            VisualBrush blendBrush = new VisualBrush(ColorGrid);
+            HardLightEffect.Blend = blendBrush;
 
-            
             PreloaderWin.SetReference(this);
             InnerWin.SetReference(this);
             
@@ -109,8 +102,6 @@ namespace MOPS
         private DoubleAnimation Blackout_Short = new DoubleAnimation();
         private DoubleAnimation Blackout_Blur = new DoubleAnimation();
         public ColorAnimation Fade = new ColorAnimation();
-
-        public Storyboard SB_Fade = new Storyboard();
 
         private void Init_Animations()
         {
@@ -165,11 +156,6 @@ namespace MOPS
             Storyboard.SetTarget(Blackout, Blackout_Rectangle);
             Storyboard.SetTarget(Blackout_Blur, ImageGrid);
             SB_Blackout.FillBehavior = FillBehavior.Stop;
-
-            Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
-            Storyboard.SetTarget(Fade, RenderGrid);
-            SB_Fade.Children.Add(Fade);
-            SB_Fade.FillBehavior = FillBehavior.Stop; //NOTE: SETTING THIS TO "HoldEnd" WILL LOCK COLOR CHANGE ON HARDLIGHT SHADER ONLY FOR ANIMATION
         }
 
         public void ColorBlend_Graphics_Update()
@@ -178,19 +164,21 @@ namespace MOPS
             {
                 case BlendMode.Plain:
                     image0.Opacity = 1;
-                    ColorOverlap_Rectangle.Visibility = Visibility.Visible;
+                    ColorGrid.Opacity = 0.8;
+                    ImageGrid_Rectangle.Fill = Brushes.Transparent;
                     RenderGrid.Effect = null;
                     break;
                 case BlendMode.Alpha:
                     image0.Opacity = 0.7;
-                    ColorOverlap_Rectangle.Visibility = Visibility.Visible;
+                    ColorGrid.Opacity = 0.8;
+                    ImageGrid_Rectangle.Fill = Brushes.Transparent;
                     RenderGrid.Effect = null;
                     break;
                 case BlendMode.HardLight:
                     image0.Opacity = 1;
-                    ColorOverlap_Rectangle.Visibility = Visibility.Hidden;
+                    ColorGrid.Opacity = 1;
+                    ImageGrid_Rectangle.Fill = Brushes.White;
                     RenderGrid.Effect = HardLightEffect;
-                    Storyboard.SetTargetProperty(Fade, new PropertyPath("Effect.Blend"));
                     break;
             }
         }
@@ -501,9 +489,7 @@ namespace MOPS
         public void timeline_color_change()
         {
             GetRandomHue();
-            
             ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
-            HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
             Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name); 
         }
         // '*'
@@ -579,21 +565,11 @@ namespace MOPS
         {
             GetRandomHue();
             Fade.Duration = TimeSpan.FromSeconds((Core.CountDots() + 1) * Core.beat_length - (Core.beat_length / 100));
-            if ((BlendMode)Properties.Settings.Default.blendMode == BlendMode.HardLight)
-            {
-                Fade.From = HardLightEffect.Blend;
-                Fade.To = Color.FromArgb(179, (hues[CurrentColorInd].brush).Color.R, (hues[CurrentColorInd].brush).Color.G, (hues[CurrentColorInd].brush).Color.B);
-                SB_Fade.Begin();
-            }
-            else
-            {
-                Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
-                Fade.To = hues[CurrentColorInd].brush.Color;
-            }
+            Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
+            Fade.To = hues[CurrentColorInd].brush.Color;
             Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name);
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
             //ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
-            HardLightEffect.Blend = Color.FromArgb(179, hues[CurrentColorInd].brush.Color.R, hues[CurrentColorInd].brush.Color.G, hues[CurrentColorInd].brush.Color.B);
         }
 
         // '=' Fade and change image
