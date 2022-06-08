@@ -180,5 +180,32 @@ namespace MOPS.UI
             ToggleHideUI();
         }
         #endregion
+
+        #region hyperlinks
+
+        private string songSource = "";
+        public void songSourceUpdate(string source)
+        {
+            songSource = source;
+            if (songSource == null) song_textBlock.Cursor = Cursors.Arrow;
+            else song_textBlock.Cursor = Cursors.Hand;
+        }
+        private void song_textBlock_Click(object sender, RoutedEventArgs e)
+        {
+            if (songSource != null) System.Diagnostics.Process.Start(songSource);
+        }
+        string charSource = "";
+        public void charSourceUpdate(string source)
+        {
+            charSource = source;
+            if (charSource == "") character_textBlock.Cursor = Cursors.Arrow;
+            else character_textBlock.Cursor = Cursors.Hand;
+        }
+        public void character_textBlock_Click(object sender, RoutedEventArgs e)
+        {
+            if (charSource != null) System.Diagnostics.Process.Start(charSource);
+        }
+
+        #endregion
     }
 }

@@ -713,7 +713,7 @@ namespace MOPS
                 if (Core.RPM.allPics[index].animation == null)
                 {
                     AnimTimer.Stop();
-                    Core.UIHandler.UpdatePicName(Core.RPM.allPics[index].fullname);
+                    Core.UIHandler.UpdatePicName(Core.RPM.allPics[index]);
                     switch (Core.RPM.allPics[index].align)
                     {
                         case "left":
@@ -754,7 +754,7 @@ namespace MOPS
                 if (enabled_images.Count == 0)
                 {
                     image0.Source = null;
-                    Core.UIHandler.UpdatePicName("NONE");
+                    Core.UIHandler.UpdatePicName(new Pics());
                 }
             }
         }

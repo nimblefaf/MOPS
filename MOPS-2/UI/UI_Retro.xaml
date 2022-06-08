@@ -23,7 +23,7 @@
             <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="fullAutoMode_button" HorizontalAlignment="Right" Margin="0,0,140,16" Content="FULL AUTO" VerticalAlignment="Bottom" FontSize="9" Width="84" Click="fullAutoMode_button_Click"/>
             <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="normalMode_Button" HorizontalAlignment="Right" Margin="0,0,143,28" Content="NORMAL" VerticalAlignment="Bottom" FontSize="13" Click="normalMode_Button_Click"/>
             <TextBlock x:Name="mode_textBlock" HorizontalAlignment="Left" Margin="0,0,0,102" TextWrapping="NoWrap" Text="M=" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="character_textBlock" HorizontalAlignment="Left" Margin="0,0,0,92" TextWrapping="NoWrap" Text="I=" VerticalAlignment="Bottom"/>
+            <Button Style="{DynamicResource ClickableTextBoxRetro}" x:Name="character_textBlock" HorizontalAlignment="Left" Margin="0,0,0,92" Content="I=" VerticalAlignment="Bottom" Click="character_textBlock_Click"/>
             <TextBlock x:Name="TimeHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,82" TextWrapping="NoWrap" Text="T=" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="BHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,72" TextWrapping="NoWrap" Text="B=" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="XHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,62" TextWrapping="NoWrap" Text="X=$0x00" VerticalAlignment="Bottom"/>
@@ -31,7 +31,7 @@
             <TextBlock x:Name="colorHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,42" TextWrapping="NoWrap" Text="C=" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="versionHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,32" TextWrapping="NoWrap" Text="V=" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="color_textBlock" HorizontalAlignment="Left" Margin="0,0,0,22" TextWrapping="NoWrap" Text="Color" VerticalAlignment="Bottom"/>
-            <TextBlock x:Name="song_textBlock" Margin="0,0,0,12" TextWrapping="NoWrap" Text="Song" VerticalAlignment="Bottom" RenderTransformOrigin="0.603,0.944" HorizontalAlignment="Left"/>
+            <Button Style="{DynamicResource ClickableTextBoxRetro}" x:Name="song_textBlock" Margin="0,0,0,12" Content="Song" VerticalAlignment="Bottom" RenderTransformOrigin="0.603,0.944" HorizontalAlignment="Left" Click="song_textBlock_Click"/>
             <TextBlock x:Name="timeline_textBlock" Margin="0,0,0,2" TextWrapping="NoWrap" Text="&gt;&gt;" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>

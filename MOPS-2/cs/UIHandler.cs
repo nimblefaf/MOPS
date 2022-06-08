@@ -52,7 +52,7 @@ namespace MOPS
                 UpdateSongInfo(MainWin.Core.RPM.allSongs[MainWin.Core.current_song_ind]);
                 UpdateVolumeDisplayed(MainWin.Core.current_volume);
                 UpdateColorName(MainWin.hues[MainWin.CurrentColorInd].name);
-                UpdatePicName(MainWin.Core.RPM.allPics[MainWin.Core.current_image_pos].fullname);
+                UpdatePicName(MainWin.Core.RPM.allPics[MainWin.Core.current_image_pos]);
                 UpdateMiscInfo();
             }
         }
@@ -80,7 +80,7 @@ namespace MOPS
                         break;
                     case UIStyle.Retro:
                         Display_Retro.timeline_textBlock.Text = ">>.";
-                        Display_Retro.song_textBlock.Text = "NONE";
+                        Display_Retro.song_textBlock.Content = "NONE";
                         break;
                 }
             else switch ((UIStyle)Properties.Settings.Default.uiStyle)
@@ -91,7 +91,8 @@ namespace MOPS
                     case UIStyle.Mini:
                         break;
                     case UIStyle.Retro:
-                        Display_Retro.song_textBlock.Text = song.title.ToUpper();
+                        Display_Retro.song_textBlock.Content = song.title.ToUpper();
+                        Display_Retro.songSourceUpdate(song.source);
                         break;
                 }
         }
@@ -118,15 +119,17 @@ namespace MOPS
                     break;
             }
         }
-        public void UpdatePicName(string PicName)
+        public void UpdatePicName(Pics pic)
         {
             switch ((UIStyle)Properties.Settings.Default.uiStyle)
             {
                 case UIStyle.Alpha:
-                    Display_Alpha.character_textBlock.Text = PicName.ToUpper();
+                    Display_Alpha.character_textBlock.Text = pic.fullname.ToUpper();
                     break;
                 case UIStyle.Retro:
-                    Display_Retro.character_textBlock.Text = "I=" + PicName.ToUpper();
+                    if (pic.fullname == null) Display_Retro.character_textBlock.Content = "I=" + "NONE";
+                    else Display_Retro.character_textBlock.Content = "I=" + pic.fullname.ToUpper();
+                    Display_Retro.charSourceUpdate(pic.source);
                     break;
             }
         }
