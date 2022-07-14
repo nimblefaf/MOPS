@@ -15,6 +15,7 @@ namespace MOPS
             MainWin = (MainWindow)Application.Current.MainWindow;
             Display_Alpha = new UI.UI_Alpha(MainWin);
             Display_Retro = new UI.UI_Retro(MainWin);
+            Display_Weed = new UI.UI_Weed(MainWin);
 
             AudioTimer = new DispatcherTimer();
             AudioTimer.Interval = TimeSpan.FromMilliseconds(25);
@@ -26,6 +27,7 @@ namespace MOPS
                         Display_Retro.TimeHex_textBlock.Text = "T=" + HexifyTime(GetPosOfSong(), 5);
                         break;
                     case UIStyle.Weed:
+                        Display_Weed.TimeHex_textBlock.Text = "T=" + HexifyTime(GetPosOfSong(), 5);
                         break;
                 }
             };
@@ -40,6 +42,7 @@ namespace MOPS
         public UI.UI_Alpha Display_Alpha;
         public UI.UI_Mini Display_Mini = new UI.UI_Mini();
         public UI.UI_Retro Display_Retro;
+        public UI.UI_Weed Display_Weed;
 
         public DispatcherTimer AudioTimer;
 
@@ -52,7 +55,7 @@ namespace MOPS
                 UpdateSongInfo(MainWin.Core.RPM.allSongs[MainWin.Core.current_song_ind]);
                 UpdateVolumeDisplayed(MainWin.Core.current_volume);
                 UpdateColorName(MainWin.hues[MainWin.CurrentColorInd].name);
-                UpdatePicName(MainWin.Core.RPM.allPics[MainWin.Core.current_image_pos]);
+                UpdatePicName(MainWin.Core.RPM.allPics[MainWin.current_image_pos]);
                 UpdateMiscInfo();
             }
         }
@@ -63,6 +66,9 @@ namespace MOPS
             {
                 case UIStyle.Retro:
                     Display_Retro.updateImageModeText();
+                    break;
+                case UIStyle.Weed:
+                    Display_Weed.updateImageModeText();
                     break;
             }
         }
@@ -82,6 +88,12 @@ namespace MOPS
                         Display_Retro.timeline_textBlock.Text = ">>.";
                         Display_Retro.song_textBlock.Content = "NONE";
                         break;
+                    case UIStyle.Weed:
+                        Display_Weed.timelineLeft_textBlock.Text = "";
+                        Display_Weed.timelineRight_textBlock.Text = "";
+                        Display_Weed.song_textBlock.Content = "NONE";
+                        break;
+
                 }
             else switch ((UIStyle)Properties.Settings.Default.uiStyle)
                 {
@@ -93,6 +105,10 @@ namespace MOPS
                     case UIStyle.Retro:
                         Display_Retro.song_textBlock.Content = song.title.ToUpper();
                         Display_Retro.songSourceUpdate(song.source);
+                        break;
+                    case UIStyle.Weed:
+                        Display_Weed.song_textBlock.Content = song.title.ToUpper();
+                        Display_Weed.songSourceUpdate(song.source);
                         break;
                 }
         }
@@ -117,6 +133,10 @@ namespace MOPS
                     Display_Retro.color_textBlock.Text = ColorName.ToUpper();
                     Display_Retro.colorHex_textBlock.Text = "C=" + Hexify(MainWin.CurrentColorInd, 2);
                     break;
+                case UIStyle.Weed:
+                    Display_Weed.color_textBlock.Text = ColorName.ToUpper();
+                    Display_Weed.colorHex_textBlock.Text = "C=" + Hexify(MainWin.CurrentColorInd, 2);
+                    break;
             }
         }
         public void UpdatePicName(Pics pic)
@@ -130,6 +150,11 @@ namespace MOPS
                     if (pic.fullname == null) Display_Retro.character_textBlock.Content = "I=" + "NONE";
                     else Display_Retro.character_textBlock.Content = "I=" + pic.fullname.ToUpper();
                     Display_Retro.charSourceUpdate(pic.source);
+                    break;
+                case UIStyle.Weed:
+                    if (pic.fullname == null) Display_Weed.character_textBlock.Content = "I=" + "NONE";
+                    else Display_Weed.character_textBlock.Content = "I=" + pic.fullname.ToUpper();
+                    Display_Weed.charSourceUpdate(pic.source);
                     break;
             }
         }
@@ -147,6 +172,10 @@ namespace MOPS
                     Display_Retro.timeline_textBlock.Text = ">>" + Timeline;
                     Display_Retro.BHex_textBlock.Text = "B=" + Hexify(MainWin.Core.rhythm_pos, 4);
                     break;
+                case UIStyle.Weed:
+                    Display_Weed.updateTimeline(Timeline);
+                    Display_Weed.BHex_textBlock.Text = "B=" + Hexify(MainWin.Core.rhythm_pos, 4);
+                    break;
             }
         }
 
@@ -162,6 +191,9 @@ namespace MOPS
                     break;
                 case UIStyle.Retro:
                     Display_Retro.ToggleHideUI();
+                    break;
+                case UIStyle.Weed:
+                    Display_Weed.ToggleHideUI();
                     break;
             }
         }
@@ -225,6 +257,8 @@ namespace MOPS
                     Display_Retro.YHex_textBlock.Text = "Y=$0x00";
                     break;
                 case UIStyle.Weed:
+                    Display_Weed.XHex_textBlock.Text = "X=$0x00";
+                    Display_Weed.YHex_textBlock.Text = "Y=$0x00";
                     break;
             }
             TextBlockTimer.Start();
@@ -247,6 +281,7 @@ namespace MOPS
                         Display_Retro.YHex_textBlock.Text = "Y=$0x" + hex;
                     break;
                     case UIStyle.Weed:
+                        Display_Weed.YHex_textBlock.Text = "Y=$0x" + hex;
                         break;
                 }
             else
@@ -256,6 +291,7 @@ namespace MOPS
                         Display_Retro.XHex_textBlock.Text = "X=$0x" + hex;
                         break;
                     case UIStyle.Weed:
+                        Display_Weed.XHex_textBlock.Text = "X=$0x" + hex;
                         break;
                 }
         }

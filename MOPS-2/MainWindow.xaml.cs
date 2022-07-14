@@ -24,7 +24,7 @@ namespace MOPS
         public DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
 
         Shaders.InvertColorEffect invertColorEffect = new Shaders.InvertColorEffect();
-        public Shaders.HardLightEffect HardLightEffect = new Shaders.HardLightEffect();
+        Shaders.HardLightEffect HardLightEffect = new Shaders.HardLightEffect();
         Shaders.HuesYBlur8Effect YBlur8 = new Shaders.HuesYBlur8Effect();
         Shaders.HuesXBlur8Effect XBlur8 = new Shaders.HuesXBlur8Effect();
         Shaders.HuesYBlur14Effect YBlur14 = new Shaders.HuesYBlur14Effect();
@@ -202,12 +202,18 @@ namespace MOPS
                     songs_listbox.Margin = new Thickness(0, 0, 40, 50);
                     images_listbox.Margin = new Thickness(0, 0, 40, 50);
                     break;
+                case UIStyle.Weed:
+                    DisplayGrid.Children.Add(Core.UIHandler.Display_Weed);
+                    if (Core.MainTimer.IsEnabled) Core.UIHandler.AudioTimer.Start();
+                    songs_listbox.Margin = new Thickness(0, 0, 40, 38);
+                    images_listbox.Margin = new Thickness(0, 0, 40, 38);
+                    break;
             }
             if (DisplayGrid.Children.Count == 2)
             {
                 DisplayGrid.Children.RemoveAt(0);
                 Core.UIHandler.UpdateEverything();
-                if ((UIStyle)Properties.Settings.Default.uiStyle != UIStyle.Retro) Core.UIHandler.AudioTimer.Stop();
+                if ((UIStyle)Properties.Settings.Default.uiStyle != UIStyle.Retro & (UIStyle)Properties.Settings.Default.uiStyle != UIStyle.Weed) Core.UIHandler.AudioTimer.Stop();
             }
         }
         public void BlurDecay_Upd()
@@ -350,7 +356,12 @@ namespace MOPS
                     }
                     break;
                 case Key.D2:
-                    //weed
+                    if (Properties.Settings.Default.uiStyle != (int)UIStyle.Weed)
+                    {
+                        Properties.Settings.Default.uiStyle = (int)UIStyle.Weed;
+                        UIStyle_Graphics_Update();
+                        InnerWin.options_TabPanel.Options_UI_Update();
+                    }
                     break;
                 case Key.D3:
                     //modern

@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="MOPS.UI.UI_Weed"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MOPS.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10">
+    <Grid>
+        <Grid x:Name="LilButtonGrid" Opacity="0" Visibility="Hidden">
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="showUI_TBB" HorizontalAlignment="Right" Margin="0,0,4,4" Content="▲" VerticalAlignment="Bottom" FontSize="26" Click="showUI_TBB_Click"/>
+        </Grid>
+        <Grid x:Name="MainGrid" Opacity="1" Visibility="Visible">
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="settings_button" HorizontalAlignment="Right" Margin="0,0,3,91" Content="&#xE900;" VerticalAlignment="Bottom" FontSize="26" FontFamily="{StaticResource HuesExtra}" Click="settings_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="chars_button" HorizontalAlignment="Right" Margin="0,0,3,62" Content="C" VerticalAlignment="Bottom" FontSize="26" Click="chars_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="hideUI_button" HorizontalAlignment="Right" Margin="0,0,4,33" Content="▼" VerticalAlignment="Bottom" FontSize="26" Click="hideUI_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="nextSong_button" HorizontalAlignment="Right" Content="&gt;" VerticalAlignment="Bottom" FontSize="30" Click="nextSong_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="prevSong_button" HorizontalAlignment="Right" Margin="0,0,86,0" Content="&lt;" VerticalAlignment="Bottom" FontSize="30" Height="30" Click="prevSong_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="songs_button" HorizontalAlignment="Right" Margin="0,0,26,10" Content="SONGS" VerticalAlignment="Bottom" FontSize="13" Click="songs_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="nextImage_button" HorizontalAlignment="Right" Margin="0,0,116,0" Content="&gt;" VerticalAlignment="Bottom" FontSize="30" Height="30" Click="nextImage_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="prevImage_button" HorizontalAlignment="Right" Margin="0,0,183,0" Content="&lt;" VerticalAlignment="Bottom" FontSize="30" Height="30" Click="prevImage_button_Click" Width="25"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="fullAutoMode_button" HorizontalAlignment="Right" Margin="0,0,143,4" Content="MANY" VerticalAlignment="Bottom" FontSize="9" Width="39" Click="fullAutoMode_button_Click"/>
+            <Button Style="{DynamicResource ButtonStyleRetro}" x:Name="normalMode_Button" HorizontalAlignment="Right" Margin="0,0,143,16" Content="ONE" VerticalAlignment="Bottom" FontSize="13" Click="normalMode_Button_Click"/>
+            <TextBlock x:Name="mode_textBlock" HorizontalAlignment="Left" Margin="0,0,0,92" TextWrapping="NoWrap" Text="M=" VerticalAlignment="Bottom"/>
+            <Button Style="{DynamicResource ClickableTextBoxRetro}" x:Name="character_textBlock" HorizontalAlignment="Left" Margin="0,0,0,82" Content="I=" VerticalAlignment="Bottom" Click="character_textBlock_Click"/>
+            <TextBlock x:Name="TimeHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,72" TextWrapping="NoWrap" Text="T=" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="BHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,62" TextWrapping="NoWrap" Text="B=" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="XHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,52" TextWrapping="NoWrap" Text="X=$0x00" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="YHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,42" TextWrapping="NoWrap" Text="Y=$0x00" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="colorHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,32" TextWrapping="NoWrap" Text="C=" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="versionHex_textBlock" HorizontalAlignment="Left" Margin="0,0,0,22" TextWrapping="NoWrap" Text="V=" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="color_textBlock" HorizontalAlignment="Left" Margin="0,0,0,12" TextWrapping="NoWrap" Text="Color" VerticalAlignment="Bottom"/>
+            <Button Style="{DynamicResource ClickableTextBoxRetro}" x:Name="song_textBlock" Content="Song" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="song_textBlock_Click" Margin="0,0,0,2"/>
+            <Grid x:Name="TimelineGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="timelineLeft_textBlock" Margin="0,2,10,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Height="10" Grid.Column="1" Grid.ColumnSpan="2">
+                    <TextBlock.RenderTransform>
+                        <ScaleTransform ScaleX="-1"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+                <TextBlock x:Name="timelineRight_textBlock" Grid.Column="2" Margin="0,2,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Height="10"/>
+                <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="-20,17,0,0" TextWrapping="NoWrap" Text="X" VerticalAlignment="Top" Grid.Column="2" FontSize="30" Visibility="Hidden"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

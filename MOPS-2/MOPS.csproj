@@ -129,6 +129,9 @@
     <Compile Include="UI\UI_Retro.xaml.cs">
       <DependentUpon>UI_Retro.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\UI_Weed.xaml.cs">
+      <DependentUpon>UI_Weed.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -172,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\UI_Retro.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\UI_Weed.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
