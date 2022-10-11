@@ -208,6 +208,12 @@ namespace MOPS
                     songs_listbox.Margin = new Thickness(0, 0, 40, 38);
                     images_listbox.Margin = new Thickness(0, 0, 40, 38);
                     break;
+                case UIStyle.Modern:
+                    DisplayGrid.Children.Add(Core.UIHandler.Display_Modern);
+                    if (Core.MainTimer.IsEnabled) Core.UIHandler.AudioTimer.Start();
+                    songs_listbox.Margin = new Thickness(0, 0, 15, 60);
+                    images_listbox.Margin = new Thickness(0, 0, 15, 60);
+                    break;
             }
             if (DisplayGrid.Children.Count == 2)
             {
@@ -336,8 +342,7 @@ namespace MOPS
                     InnerWin.tabControl.SelectedIndex = 2;
                     break;
                 case Key.I:
-                    if (InnerWin.Visibility == Visibility.Hidden) ToggleInnerWindow();
-                    InnerWin.tabControl.SelectedIndex = 3;
+                    show_info_page();
                     break;
                 case Key.D0:
                     if (Properties.Settings.Default.uiStyle != (int)UIStyle.Alpha)
@@ -364,7 +369,12 @@ namespace MOPS
                     }
                     break;
                 case Key.D3:
-                    //modern
+                    if (Properties.Settings.Default.uiStyle != (int)UIStyle.Modern)
+                    {
+                        Properties.Settings.Default.uiStyle = (int)UIStyle.Modern;
+                        UIStyle_Graphics_Update();
+                        InnerWin.options_TabPanel.Options_UI_Update();
+                    }
                     break;
                 case Key.D4:
                     //XMAS
@@ -389,10 +399,7 @@ namespace MOPS
                     Core.UIHandler.UpdateMiscInfo();
                     break;
                 case Key.N://RANDOM SONG
-                    if (enabled_songs.Count != 0)
-                    {
-                        songs_listbox.SelectedIndex = (songs_listbox.SelectedIndex + rnd.Next(1, enabled_songs.Count - 1)) % enabled_songs.Count;
-                    }
+                    random_song();
                     break;
                 case Key.C:
                     ToggleCharList();
@@ -421,6 +428,20 @@ namespace MOPS
                 if (songs_listbox.SelectedIndex <= 0) songs_listbox.SelectedIndex = songs_listbox.Items.Count - 1;
                 else songs_listbox.SelectedIndex -= 1;
             }
+        }
+
+        public void random_song()
+        {
+            if (enabled_songs.Count != 0)
+            {
+                songs_listbox.SelectedIndex = (songs_listbox.SelectedIndex + rnd.Next(1, enabled_songs.Count - 1)) % enabled_songs.Count;
+            }
+        }
+
+        public void show_info_page()
+        {
+            if (InnerWin.Visibility == Visibility.Hidden) ToggleInnerWindow();
+            InnerWin.tabControl.SelectedIndex = 3;
         }
 
         

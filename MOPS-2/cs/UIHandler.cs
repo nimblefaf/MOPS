@@ -16,6 +16,7 @@ namespace MOPS
             Display_Alpha = new UI.UI_Alpha(MainWin);
             Display_Retro = new UI.UI_Retro(MainWin);
             Display_Weed = new UI.UI_Weed(MainWin);
+            Display_Modern = new UI.UI_Modern(MainWin);
 
             AudioTimer = new DispatcherTimer();
             AudioTimer.Interval = TimeSpan.FromMilliseconds(25);
@@ -28,6 +29,9 @@ namespace MOPS
                         break;
                     case UIStyle.Weed:
                         Display_Weed.TimeHex_textBlock.Text = "T=" + HexifyTime(GetPosOfSong(), 5);
+                        break;
+                    case UIStyle.Modern:
+                        Display_Modern.TimeHex_textBlock.Text = "T=" + HexifyTime(GetPosOfSong(), 5);
                         break;
                 }
             };
@@ -43,6 +47,7 @@ namespace MOPS
         public UI.UI_Mini Display_Mini = new UI.UI_Mini();
         public UI.UI_Retro Display_Retro;
         public UI.UI_Weed Display_Weed;
+        public UI.UI_Modern Display_Modern;
 
         public DispatcherTimer AudioTimer;
 
@@ -70,6 +75,9 @@ namespace MOPS
                 case UIStyle.Weed:
                     Display_Weed.updateImageModeText();
                     break;
+                case UIStyle.Modern: 
+                    Display_Modern.updateImageModeText();
+                    break;
             }
         }
 
@@ -93,6 +101,11 @@ namespace MOPS
                         Display_Weed.timelineRight_textBlock.Text = "";
                         Display_Weed.song_textBlock.Content = "NONE";
                         break;
+                    case UIStyle.Modern:
+                        Display_Modern.timelineLeft_textBlock.Text = "";
+                        Display_Modern.timelineRight_textBlock.Text = "";
+                        Display_Modern.song_textBlock.Content = "NONE";
+                        break;
 
                 }
             else switch ((UIStyle)Properties.Settings.Default.uiStyle)
@@ -110,6 +123,10 @@ namespace MOPS
                         Display_Weed.song_textBlock.Content = song.title.ToUpper();
                         Display_Weed.songSourceUpdate(song.source);
                         break;
+                    case UIStyle.Modern:
+                        Display_Modern.song_textBlock.Content = song.title.ToUpper();
+                        Display_Modern.songSourceUpdate(song.source);
+                        break;
                 }
         }
 
@@ -119,6 +136,9 @@ namespace MOPS
             {
                 case UIStyle.Alpha:
                     Display_Alpha.volume_textBlock.Text = Volume.ToString();
+                    break;
+                case UIStyle.Modern:
+                    Display_Modern.updateVolumeText(Volume);
                     break;
             }
         }
@@ -136,6 +156,9 @@ namespace MOPS
                 case UIStyle.Weed:
                     Display_Weed.color_textBlock.Text = ColorName.ToUpper();
                     Display_Weed.colorHex_textBlock.Text = "C=" + Hexify(MainWin.CurrentColorInd, 2);
+                    break;
+                case UIStyle.Modern:
+                    Display_Modern.color_textBlock.Text= ColorName.ToUpper();
                     break;
             }
         }
@@ -155,6 +178,11 @@ namespace MOPS
                     if (pic.fullname == null) Display_Weed.character_textBlock.Content = "I=" + "NONE";
                     else Display_Weed.character_textBlock.Content = "I=" + pic.fullname.ToUpper();
                     Display_Weed.charSourceUpdate(pic.source);
+                    break;
+                case UIStyle.Modern:
+                    if (pic.fullname == null) Display_Modern.character_textBlock.Content = pic.name;
+                    else Display_Modern.character_textBlock.Content = pic.fullname.ToUpper();
+                    Display_Modern.charSourceUpdate(pic.source);
                     break;
             }
         }
@@ -176,6 +204,10 @@ namespace MOPS
                     Display_Weed.updateTimeline(Timeline);
                     Display_Weed.BHex_textBlock.Text = "B=" + Hexify(MainWin.Core.rhythm_pos, 4);
                     break;
+                case UIStyle.Modern:
+                    Display_Modern.updateTimeline(Timeline);
+                    Display_Modern.BHex_textBlock.Text = "B=" + Hexify(MainWin.Core.rhythm_pos, 4);
+                    break;
             }
         }
 
@@ -194,6 +226,9 @@ namespace MOPS
                     break;
                 case UIStyle.Weed:
                     Display_Weed.ToggleHideUI();
+                    break;
+                case UIStyle.Modern:
+                    Display_Modern.ToggleHideUI();
                     break;
             }
         }
@@ -260,6 +295,11 @@ namespace MOPS
                     Display_Weed.XHex_textBlock.Text = "X=$0x00";
                     Display_Weed.YHex_textBlock.Text = "Y=$0x00";
                     break;
+                case UIStyle.Modern:
+                    Display_Modern.XHex_textBlock.Text = "X=$0x00";
+                    Display_Modern.YHex_textBlock.Text = "Y=$0x00";
+                    break;
+
             }
             TextBlockTimer.Start();
         }
@@ -279,9 +319,12 @@ namespace MOPS
                 {
                     case UIStyle.Retro:
                         Display_Retro.YHex_textBlock.Text = "Y=$0x" + hex;
-                    break;
+                        break;
                     case UIStyle.Weed:
                         Display_Weed.YHex_textBlock.Text = "Y=$0x" + hex;
+                        break;
+                    case UIStyle.Modern:
+                        Display_Modern.YHex_textBlock.Text = "Y=$0x" + hex;
                         break;
                 }
             else
@@ -292,6 +335,9 @@ namespace MOPS
                         break;
                     case UIStyle.Weed:
                         Display_Weed.XHex_textBlock.Text = "X=$0x" + hex;
+                        break;
+                    case UIStyle.Modern:
+                        Display_Modern.XHex_textBlock.Text = "X=$0x" + hex;
                         break;
                 }
         }

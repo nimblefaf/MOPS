@@ -124,24 +124,35 @@ namespace MOPS.UI
                     OB_UI_mini.Background = Brushes.LightGray;
                     OB_UI_retro.Background = Brushes.LightGray;
                     OB_UI_weed.Background = Brushes.LightGray;
+                    OB_UI_modern.Background = Brushes.LightGray;
                     break;
                 case UIStyle.Mini:
                     OB_UI_alpha.Background = Brushes.LightGray;
                     OB_UI_mini.Background = Brushes.White;
                     OB_UI_retro.Background = Brushes.LightGray;
                     OB_UI_weed.Background = Brushes.LightGray;
+                    OB_UI_modern.Background = Brushes.LightGray;
                     break;
                 case UIStyle.Retro:
                     OB_UI_alpha.Background = Brushes.LightGray;
                     OB_UI_mini.Background = Brushes.LightGray;
                     OB_UI_retro.Background = Brushes.White;
                     OB_UI_weed.Background = Brushes.LightGray;
+                    OB_UI_modern.Background = Brushes.LightGray;
                     break;
                 case UIStyle.Weed:
                     OB_UI_alpha.Background = Brushes.LightGray;
                     OB_UI_mini.Background = Brushes.LightGray;
                     OB_UI_retro.Background = Brushes.LightGray;
                     OB_UI_weed.Background = Brushes.White;
+                    OB_UI_modern.Background = Brushes.LightGray;
+                    break;
+                case UIStyle.Modern:
+                    OB_UI_alpha.Background = Brushes.LightGray;
+                    OB_UI_mini.Background = Brushes.LightGray;
+                    OB_UI_retro.Background = Brushes.LightGray;
+                    OB_UI_weed.Background = Brushes.LightGray;
+                    OB_UI_modern.Background = Brushes.White;
                     break;
             }
 
@@ -381,6 +392,7 @@ namespace MOPS.UI
                 OB_UI_mini.Background = Brushes.LightGray;
                 OB_UI_retro.Background = Brushes.LightGray;
                 OB_UI_weed.Background = Brushes.LightGray;
+                OB_UI_modern.Background = Brushes.LightGray;
                 main.UIStyle_Graphics_Update();
             }
         }
@@ -394,6 +406,7 @@ namespace MOPS.UI
                 OB_UI_mini.Background = Brushes.White;
                 OB_UI_retro.Background = Brushes.LightGray;
                 OB_UI_weed.Background = Brushes.LightGray;
+                OB_UI_modern.Background = Brushes.LightGray;
                 main.UIStyle_Graphics_Update();
             }
         }
@@ -407,6 +420,7 @@ namespace MOPS.UI
                 OB_UI_mini.Background = Brushes.LightGray;
                 OB_UI_retro.Background = Brushes.White;
                 OB_UI_weed.Background = Brushes.LightGray;
+                OB_UI_modern.Background = Brushes.LightGray;
                 main.UIStyle_Graphics_Update();
             }
         }
@@ -420,6 +434,21 @@ namespace MOPS.UI
                 OB_UI_mini.Background = Brushes.LightGray;
                 OB_UI_retro.Background = Brushes.LightGray;
                 OB_UI_weed.Background = Brushes.White;
+                OB_UI_modern.Background = Brushes.LightGray;
+                main.UIStyle_Graphics_Update();
+            }
+        }
+
+        private void OB_UI_modern_Click(object sender, RoutedEventArgs e)
+        {
+            if (Properties.Settings.Default.uiStyle != (int)UIStyle.Modern)
+            {
+                Properties.Settings.Default.uiStyle = (int)UIStyle.Modern;
+                OB_UI_alpha.Background = Brushes.LightGray;
+                OB_UI_mini.Background = Brushes.LightGray;
+                OB_UI_retro.Background = Brushes.LightGray;
+                OB_UI_weed.Background = Brushes.LightGray;
+                OB_UI_modern.Background = Brushes.White;
                 main.UIStyle_Graphics_Update();
             }
         }

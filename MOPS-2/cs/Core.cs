@@ -315,6 +315,13 @@ namespace MOPS
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
             }
         }
+        public void SetVolume(int Volume)
+        {
+            current_volume = Volume;
+            Player.Volume = current_volume;
+            Player.SetVolumeToStream(Player.Channel, Player.Volume);
+            UIHandler.UpdateVolumeDisplayed(Player.Volume);
+        }
         public void toggle_mute()
         {
             if (muted)
@@ -334,6 +341,7 @@ namespace MOPS
                 Player.SetVolumeToStream(Player.Channel, Player.Volume);
                 muted = true;
             }
+            UIHandler.UpdateVolumeDisplayed(current_volume);
         }
 
         public int CountDots()
