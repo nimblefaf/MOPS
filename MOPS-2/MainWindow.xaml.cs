@@ -219,7 +219,7 @@ namespace MOPS
             {
                 DisplayGrid.Children.RemoveAt(0);
                 Core.UIHandler.UpdateEverything();
-                if ((UIStyle)Properties.Settings.Default.uiStyle != UIStyle.Retro & (UIStyle)Properties.Settings.Default.uiStyle != UIStyle.Weed) Core.UIHandler.AudioTimer.Stop();
+                if ((UIStyle)Properties.Settings.Default.uiStyle == UIStyle.Mini & (UIStyle)Properties.Settings.Default.uiStyle == UIStyle.Alpha) Core.UIHandler.AudioTimer.Stop();
             }
         }
         public void BlurDecay_Upd()
@@ -520,7 +520,7 @@ namespace MOPS
         // ':'
         public void timeline_color_change()
         {
-            GetRandomHue();
+            RandomHue();
             ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
             Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name); 
         }
@@ -595,9 +595,10 @@ namespace MOPS
         // '~' Fade color
         public void timeline_fade()
         {
-            GetRandomHue();
+            SolidColorBrush oldColor = hues[CurrentColorInd].brush;
+            RandomHue();
             Fade.Duration = TimeSpan.FromSeconds((Core.CountDots() + 1) * Core.beat_length - (Core.beat_length / 100));
-            Fade.From = ((SolidColorBrush)ColorOverlap_Rectangle.Fill).Color;
+            Fade.From = oldColor.Color;
             Fade.To = hues[CurrentColorInd].brush.Color;
             Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name);
             ColorOverlap_Rectangle.Fill.BeginAnimation(SolidColorBrush.ColorProperty, Fade);
@@ -813,10 +814,9 @@ namespace MOPS
             e.Handled = true;
         }
 
-        private Hues.Palette GetRandomHue()
+        private void RandomHue()
         {
             CurrentColorInd = (CurrentColorInd + rnd.Next(1, hues.Length - 2)) % hues.Length;
-            return hues[CurrentColorInd];
         }
 
 
