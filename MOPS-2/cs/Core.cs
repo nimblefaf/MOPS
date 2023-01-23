@@ -187,6 +187,7 @@ namespace MOPS
 
         public void Change_Song(int i)
         {
+            MainWin.Events_Stop();
             Player.build_mem = null;
             Player.loop_mem = null;
             if (RPM.allSongs[i].buffer != null) Player.loop_mem = RPM.allSongs[i].buffer;
@@ -196,7 +197,7 @@ namespace MOPS
                 loop_rhythm = RPM.allSongs[i].rhythm;
                 build_rhythm = "";
                 current_timeline = loop_rhythm;
-                current_song_ind = MainWin.songs_listbox.SelectedIndex;
+                //current_song_ind = MainWin.songs_listbox.SelectedIndex;
 
                 rhythm_pos = 0;
                 b_rhythm_pos = 0;

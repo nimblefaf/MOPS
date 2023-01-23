@@ -45,11 +45,11 @@ namespace MOPS
         /// <summary>
         /// List of enabled songs displayed in songs_listbox.
         /// </summary>
-        public static ObservableCollection<rdata> enabled_songs = new ObservableCollection<rdata>();
+        public ObservableCollection<rdata> enabled_songs = new ObservableCollection<rdata>();
         /// <summary>
         /// List of enabled images displayed in images_listbox.
         /// </summary>
-        public static ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
+        public ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
         public MainWindow()
         {
@@ -76,9 +76,6 @@ namespace MOPS
                     hues = Hues.hues_weed;
                     break;
             }
-
-            songs_listbox.ItemsSource = enabled_songs;
-            images_listbox.ItemsSource = enabled_images;
         }
 
 
@@ -184,14 +181,10 @@ namespace MOPS
         }
         public void UIStyle_Graphics_Update()
         {
-            songs_listbox.Visibility = Visibility.Hidden;
-            images_listbox.Visibility = Visibility.Hidden;
             switch ((UIStyle)Properties.Settings.Default.uiStyle)
             {
                 case UIStyle.Alpha:
                     DisplayGrid.Children.Add(Core.UIHandler.Display_Alpha);
-                    songs_listbox.Margin = new Thickness(0, 0, 40, 60);
-                    images_listbox.Margin = new Thickness(0, 0, 172, 60);
                     break;
                 case UIStyle.Mini:
                     DisplayGrid.Children.Add(Core.UIHandler.Display_Mini);
@@ -199,20 +192,14 @@ namespace MOPS
                 case UIStyle.Retro:
                     DisplayGrid.Children.Add(Core.UIHandler.Display_Retro);
                     if (Core.MainTimer.IsEnabled) Core.UIHandler.AudioTimer.Start();
-                    songs_listbox.Margin = new Thickness(0, 0, 40, 50);
-                    images_listbox.Margin = new Thickness(0, 0, 40, 50);
                     break;
                 case UIStyle.Weed:
                     DisplayGrid.Children.Add(Core.UIHandler.Display_Weed);
                     if (Core.MainTimer.IsEnabled) Core.UIHandler.AudioTimer.Start();
-                    songs_listbox.Margin = new Thickness(0, 0, 40, 38);
-                    images_listbox.Margin = new Thickness(0, 0, 40, 38);
                     break;
                 case UIStyle.Modern:
                     DisplayGrid.Children.Add(Core.UIHandler.Display_Modern);
                     if (Core.MainTimer.IsEnabled) Core.UIHandler.AudioTimer.Start();
-                    songs_listbox.Margin = new Thickness(0, 0, 15, 60);
-                    images_listbox.Margin = new Thickness(0, 0, 15, 60);
                     break;
             }
             if (DisplayGrid.Children.Count == 2)
@@ -269,25 +256,6 @@ namespace MOPS
         {
             if (InnerWin.IsVisible) InnerWin.Visibility = Visibility.Hidden;
             else InnerWin.Visibility = Visibility.Visible;
-        }
-
-        public void ToggleCharList()
-        {
-            if (images_listbox.Visibility == Visibility.Hidden)
-            {
-                images_listbox.Visibility = Visibility.Visible;
-                songs_listbox.Visibility = Visibility.Hidden;
-            }
-            else images_listbox.Visibility = Visibility.Hidden;
-        }
-        public void ToggleSongList()
-        {
-            if (songs_listbox.Visibility == Visibility.Hidden)
-            {
-                songs_listbox.Visibility = Visibility.Visible;
-                images_listbox.Visibility = Visibility.Hidden;
-            }
-            else songs_listbox.Visibility = Visibility.Hidden;
         }
 
         #region KeyControls
@@ -402,10 +370,10 @@ namespace MOPS
                     random_song();
                     break;
                 case Key.C:
-                    ToggleCharList();
+                    Core.UIHandler.ToggleCharList();
                     break;
                 case Key.S:
-                    ToggleSongList();
+                    Core.UIHandler.ToggleSongList();
                     break;
                 case Key.L:
                     InnerWin.resources_TabPanel.load_local_RP();
@@ -417,16 +385,16 @@ namespace MOPS
         {
             if (enabled_songs.Count > 1)
             {
-                if (songs_listbox.SelectedIndex == enabled_songs.Count - 1) songs_listbox.SelectedIndex = 0;
-                else songs_listbox.SelectedIndex += 1;
+                //if ( == enabled_songs.Count - 1) songs_listbox.SelectedIndex = 0;
+                //else songs_listbox.SelectedIndex += 1;
             }
         }
         public void prev_song()
         {
             if (enabled_songs.Count > 1)
             {
-                if (songs_listbox.SelectedIndex <= 0) songs_listbox.SelectedIndex = songs_listbox.Items.Count - 1;
-                else songs_listbox.SelectedIndex -= 1;
+                //if (songs_listbox.SelectedIndex <= 0) songs_listbox.SelectedIndex = songs_listbox.Items.Count - 1;
+                //else songs_listbox.SelectedIndex -= 1;
             }
         }
 
@@ -434,7 +402,7 @@ namespace MOPS
         {
             if (enabled_songs.Count != 0)
             {
-                songs_listbox.SelectedIndex = (songs_listbox.SelectedIndex + rnd.Next(1, enabled_songs.Count - 1)) % enabled_songs.Count;
+                //songs_listbox.SelectedIndex = (songs_listbox.SelectedIndex + rnd.Next(1, enabled_songs.Count - 1)) % enabled_songs.Count;
             }
         }
 
@@ -450,8 +418,8 @@ namespace MOPS
         {
             if (enabled_images.Count > 1)
             {
-                if (current_image_pos == images_listbox.Items.Count - 1) images_listbox.SelectedIndex = 0;
-                else images_listbox.SelectedIndex = current_image_pos + 1;
+                //if (current_image_pos == images_listbox.Items.Count - 1) images_listbox.SelectedIndex = 0;
+                //else images_listbox.SelectedIndex = current_image_pos + 1;
                 full_auto_mode = false;
             }
         }
@@ -459,8 +427,8 @@ namespace MOPS
         {
             if (enabled_images.Count > 1)
             {
-                if (current_image_pos == 0) images_listbox.SelectedIndex = images_listbox.Items.Count - 1;
-                else images_listbox.SelectedIndex = current_image_pos - 1;
+                //if (current_image_pos == 0) images_listbox.SelectedIndex = images_listbox.Items.Count - 1;
+                //else images_listbox.SelectedIndex = current_image_pos - 1;
                 full_auto_mode = false;
             }
         }
@@ -687,24 +655,22 @@ namespace MOPS
 
 
         //tied to the songs_listbox on SelectionChanged
-        private void Change_Song(object sender, SelectionChangedEventArgs e)
+        public void SongPicker_SelectionChanged(int ind)
+        {
+            ImageChange(ind);
+        }
+        private void Change_Song(int i)
         {
             Events_Stop();
-            if (songs_listbox.SelectedIndex != -1)
+            Core.Change_Song(enabled_songs[i].Ind);
+
+            if (enabled_songs.Count == 0)
             {
-                int i = enabled_songs[songs_listbox.SelectedIndex].Ind;
-                Core.Change_Song(i);
-            }
-            else
-            {
-                if (enabled_songs.Count == 0)
-                {
-                    Core.StopSong();
-                }
+                Core.StopSong();
             }
         }
 
-        private void Events_Stop()
+        public void Events_Stop()
         {
             if (Colors_Inverted)
             {
@@ -716,22 +682,11 @@ namespace MOPS
                 Blackout_Rectangle.Opacity = 0;
             }
         }
-        
 
-        private void full_auto_be_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public void PicPicker_SelectionChanged(int ind)
         {
-            full_auto_mode = true;
-        }
-
-
-        private void Images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (images_listbox.SelectedIndex != -1)
-            {
-                ImageChange(images_listbox.SelectedIndex);
-                full_auto_mode = false;
-                images_listbox.SelectedIndex = -1;
-            }
+            ImageChange(ind);
+            full_auto_mode = false;
         }
 
         public void ImageChange(int p)

@@ -24,6 +24,8 @@ namespace MOPS.UI
         MainWindow main;
         string nextChar = "";
         Random rnd = new Random();
+        PicPicker picPicker = new PicPicker();
+        SongPicker songPicker = new SongPicker();
         public UI_Weed(MainWindow MW)
         {
             InitializeComponent();
@@ -31,6 +33,25 @@ namespace MOPS.UI
             versionHex_textBlock.Text = "V=$" + HexifyVersion(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
             updateImageModeText();
             InitHideAnimation();
+            InitPickers();
+        }
+        private void InitPickers()
+        {
+            picPicker.HorizontalAlignment = HorizontalAlignment.Right;
+            picPicker.VerticalAlignment = VerticalAlignment.Bottom;
+            picPicker.MaxHeight = 200;
+            picPicker.Width = 250;
+            picPicker.Visibility = Visibility.Hidden;
+            picPicker.Margin = new Thickness(0, 0, 40, 38);
+            MainGrid.Children.Add(picPicker);
+            
+            songPicker.HorizontalAlignment = HorizontalAlignment.Right;
+            songPicker.VerticalAlignment = VerticalAlignment.Bottom;
+            songPicker.MaxHeight = 200;
+            songPicker.Width = 400;
+            songPicker.Visibility = Visibility.Hidden;
+            songPicker.Margin = new Thickness(0, 0, 40, 38);
+            MainGrid.Children.Add(songPicker);
         }
 
         private string HexifyVersion(string verstr)
@@ -189,9 +210,18 @@ namespace MOPS.UI
             main.ToggleInnerWindow();
         }
 
-        private void chars_button_Click(object sender, RoutedEventArgs e)
+        private void images_button_Click(object sender, RoutedEventArgs e)
         {
-            main.ToggleCharList();
+            TogglePicPickerVisivility();
+        }
+        public void TogglePicPickerVisivility()
+        {
+            if (picPicker.Visibility == Visibility.Visible) picPicker.Visibility = Visibility.Hidden;
+            else
+            {
+                if (songPicker.Visibility == Visibility.Visible) songPicker.Visibility = Visibility.Hidden;
+                picPicker.Visibility = Visibility.Visible;
+            }
         }
 
         private void hideUI_button_Click(object sender, RoutedEventArgs e)
@@ -211,7 +241,16 @@ namespace MOPS.UI
 
         private void songs_button_Click(object sender, RoutedEventArgs e)
         {
-            main.ToggleSongList();
+            ToggleSongPickerVisivility();
+        }
+        public void ToggleSongPickerVisivility()
+        {
+            if (songPicker.Visibility == Visibility.Visible) songPicker.Visibility = Visibility.Hidden;
+            else
+            {
+                if (picPicker.Visibility == Visibility.Visible) picPicker.Visibility = Visibility.Hidden;
+                songPicker.Visibility = Visibility.Visible;
+            }
         }
 
         private void nextImage_button_Click(object sender, RoutedEventArgs e)

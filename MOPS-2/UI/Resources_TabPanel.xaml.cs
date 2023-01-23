@@ -174,7 +174,7 @@ namespace MOPS.UI
                 {
                     if (main.Core.RPM.ResPacks[0].name == "0x40 Hues v5.0 Defaults") main.ImageChange(55);
                     else if (main.Core.RPM.allPics.Length > 0) main.ImageChange(0);
-                    if (main.Core.RPM.allSongs.Length > 0) main.songs_listbox.SelectedIndex = 0;
+                    if (main.Core.RPM.allSongs.Length > 0) main.Core.Change_Song(0);
                 }
 
             }
@@ -198,10 +198,10 @@ namespace MOPS.UI
 
                 if (main.Core.RPM.ResPacks[main.Core.RPM.ResPacks.Length - j].songs_count > 0)
                     for (int i = main.Core.RPM.ResPacks[main.Core.RPM.ResPacks.Length - j].songs_start; i < main.Core.RPM.ResPacks[main.Core.RPM.ResPacks.Length - j].songs_start + main.Core.RPM.ResPacks[main.Core.RPM.ResPacks.Length - j].songs_count; i++)
-                        MainWindow.enabled_songs.Add(new rdata() { Name = main.Core.RPM.allSongs[i].title, Ind = i });
+                        main.enabled_songs.Add(new rdata() { Name = main.Core.RPM.allSongs[i].title, Ind = i });
                 if (main.Core.RPM.ResPacks[main.Core.RPM.ResPacks.Length - j].pics_count > 0)
                     for (int i = main.Core.RPM.ResPacks[main.Core.RPM.ResPacks.Length - j].pics_start; i < main.Core.RPM.ResPacks[main.Core.RPM.ResPacks.Length - j].pics_start + main.Core.RPM.ResPacks[main.Core.RPM.ResPacks.Length - j].pics_count; i++)
-                        MainWindow.enabled_images.Add(new rdata() { Name = main.Core.RPM.allPics[i].name, Ind = i });
+                        main.enabled_images.Add(new rdata() { Name = main.Core.RPM.allPics[i].name, Ind = i });
             }
             stat_update();
         }
@@ -224,8 +224,8 @@ namespace MOPS.UI
         /// </summary>
         public void stat_update()
         {
-            ImagesNumber_label.Content = MainWindow.enabled_images.Count() + "/" + main.Core.RPM.allPics.Length;
-            SongNumber_label.Content = MainWindow.enabled_songs.Count().ToString() + "/" + main.Core.RPM.allSongs.Length.ToString();
+            ImagesNumber_label.Content = main.enabled_images.Count() + "/" + main.Core.RPM.allPics.Length;
+            SongNumber_label.Content = main.enabled_songs.Count().ToString() + "/" + main.Core.RPM.allSongs.Length.ToString();
         }
 
         private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -239,9 +239,9 @@ namespace MOPS.UI
                     Add_Enabled_Song(song_names[songs_listbox.SelectedIndex]);
                     stat_update();
                 }
-                for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
-                    if (MainWindow.enabled_songs[i].Ind == song_names[songs_listbox.SelectedIndex].Ind)
-                        main.songs_listbox.SelectedIndex = i;
+                for (int i = 0; i < main.enabled_songs.Count; i++)
+                    if (main.enabled_songs[i].Ind == song_names[songs_listbox.SelectedIndex].Ind)
+                        main.Core.Change_Song(i);
             }
 
         }
@@ -258,11 +258,11 @@ namespace MOPS.UI
                     Add_Enabled_Image(images_names[images_listbox.SelectedIndex]);
                     stat_update();
                 }
-                for (int i = 0; i < MainWindow.enabled_images.Count; i++)
-                    if (MainWindow.enabled_images[i].Ind == images_names[images_listbox.SelectedIndex].Ind)
+                for (int i = 0; i < main.enabled_images.Count; i++)
+                    if (main.enabled_images[i].Ind == images_names[images_listbox.SelectedIndex].Ind)
                     {
                         main.full_auto_mode = false;
-                        main.images_listbox.SelectedIndex = i;
+                        main.Core.Change_Song(i);
                     }
 
             }
@@ -285,11 +285,11 @@ namespace MOPS.UI
         private void Remove_Disabled_Song(setdata elem)
         {
             main.Core.RPM.allSongs[elem.Ind].enabled = false;
-            for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
+            for (int i = 0; i < main.enabled_songs.Count; i++)
             {
-                if (MainWindow.enabled_songs[i].Ind == elem.Ind)
+                if (main.enabled_songs[i].Ind == elem.Ind)
                 {
-                    MainWindow.enabled_songs.RemoveAt(i);
+                    main.enabled_songs.RemoveAt(i);
                     break;
                 }
             }
@@ -298,13 +298,13 @@ namespace MOPS.UI
         private void Add_Enabled_Song(setdata elem)
         {
             rdata copy = new rdata { Name = elem.Name, Ind = elem.Ind };
-            if (MainWindow.enabled_songs.Count == 0) MainWindow.enabled_songs.Add(copy);
-            else if (MainWindow.enabled_songs.Last().Ind < elem.Ind) MainWindow.enabled_songs.Add(copy);
-            else for (int i = 0; i < MainWindow.enabled_songs.Count; i++)
+            if (main.enabled_songs.Count == 0) main.enabled_songs.Add(copy);
+            else if (main.enabled_songs.Last().Ind < elem.Ind) main.enabled_songs.Add(copy);
+            else for (int i = 0; i < main.enabled_songs.Count; i++)
                 {
-                    if (MainWindow.enabled_songs[i].Ind > elem.Ind)
+                    if (main.enabled_songs[i].Ind > elem.Ind)
                     {
-                        MainWindow.enabled_songs.Insert(i, copy);
+                        main.enabled_songs.Insert(i, copy);
                         break;
                     }
                 }
@@ -328,12 +328,12 @@ namespace MOPS.UI
         private void Remove_Disabled_Image(setdata elem)
         {
             main.Core.RPM.allPics[elem.Ind].enabled = false;
-            for (int i = 0; i < MainWindow.enabled_images.Count; i++)
+            for (int i = 0; i < main.enabled_images.Count; i++)
             {
-                if (MainWindow.enabled_images[i].Ind == elem.Ind)
+                if (main.enabled_images[i].Ind == elem.Ind)
                 {
-                    MainWindow.enabled_images.RemoveAt(i);
-                    if (MainWindow.enabled_images.Count == 0) main.ImageChange(-1);
+                    main.enabled_images.RemoveAt(i);
+                    if (main.enabled_images.Count == 0) main.ImageChange(-1);
                     else if (i == main.current_image_pos) main.ImageChange(i - 1);
                     else if (i < main.current_image_pos) main.current_image_pos--;
                     break;
@@ -344,17 +344,17 @@ namespace MOPS.UI
         private void Add_Enabled_Image(setdata elem)
         {
             rdata copy = new rdata { Name = elem.Name, Ind = elem.Ind };
-            if (MainWindow.enabled_images.Count == 0)
+            if (main.enabled_images.Count == 0)
             {
-                MainWindow.enabled_images.Add(copy);
+                main.enabled_images.Add(copy);
                 main.ImageChange(0);
             }
-            else if (MainWindow.enabled_images.Last().Ind < elem.Ind) MainWindow.enabled_images.Add(copy);
-            else for (int i = 0; i < MainWindow.enabled_images.Count; i++)
+            else if (main.enabled_images.Last().Ind < elem.Ind) main.enabled_images.Add(copy);
+            else for (int i = 0; i < main.enabled_images.Count; i++)
                 {
-                    if (MainWindow.enabled_images[i].Ind > elem.Ind)
+                    if (main.enabled_images[i].Ind > elem.Ind)
                     {
-                        MainWindow.enabled_images.Insert(i, copy);
+                        main.enabled_images.Insert(i, copy);
                         if (i <= main.current_image_pos) main.current_image_pos++;
                         break;
                     }
@@ -465,7 +465,7 @@ namespace MOPS.UI
                     }
                 }
                 images_listbox.Items.Refresh();
-                if (MainWindow.enabled_images.Count == 0) main.ImageChange(-1);
+                if (main.enabled_images.Count == 0) main.ImageChange(-1);
                 else if (main.current_image_pos == -1) main.ImageChange(0);
             }
             stat_update();

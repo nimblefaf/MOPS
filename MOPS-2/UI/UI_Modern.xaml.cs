@@ -24,6 +24,8 @@ namespace MOPS.UI
         MainWindow main;
         string nextChar = "";
         DispatcherTimer timer = new DispatcherTimer();
+        PicPicker picPicker= new PicPicker();
+        SongPicker songPicker = new SongPicker();
         
         public UI_Modern(MainWindow MW)
         {
@@ -32,10 +34,26 @@ namespace MOPS.UI
             timer.Interval = TimeSpan.FromSeconds(0.1);
             timer.Tick += delegate { timer.Stop(); beatCenter.Visibility = Visibility.Hidden; };
             InitHideAnimation();
-            //versionHex_textBlock.Text = "V=$" + HexifyVersion(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            //updateImageModeText();
-            //InitHideAnimation();
+            InitPickers();
         }
+
+        private void InitPickers()
+        {
+            picPicker.HorizontalAlignment = HorizontalAlignment.Right;
+            picPicker.VerticalAlignment = VerticalAlignment.Bottom;
+            picPicker.MaxHeight = 200;
+            picPicker.Width = 250;
+            picPicker.Visibility= Visibility.Hidden;
+            pickersGrid.Children.Add(picPicker);
+
+            songPicker.HorizontalAlignment = HorizontalAlignment.Right;
+            songPicker.VerticalAlignment = VerticalAlignment.Bottom;
+            songPicker.MaxHeight = 200;
+            songPicker.Width = 400;
+            songPicker.Visibility = Visibility.Hidden;
+            pickersGrid.Children.Add(songPicker);
+        }
+
         private string HexifyVersion(string verstr)
         {
             int dot = verstr.IndexOf('.');
@@ -114,12 +132,30 @@ namespace MOPS.UI
 
         private void images_Button_Click(object sender, RoutedEventArgs e)
         {
-            main.ToggleCharList();
+            TogglePicPickerVisivility();
+        }
+        public void TogglePicPickerVisivility()
+        {
+            if (picPicker.Visibility == Visibility.Visible) picPicker.Visibility = Visibility.Hidden;
+            else
+            {
+                if (songPicker.Visibility == Visibility.Visible) songPicker.Visibility = Visibility.Hidden;
+                picPicker.Visibility = Visibility.Visible;
+            }
         }
 
         private void songs_Button_Click(object sender, RoutedEventArgs e)
         {
-            main.ToggleSongList();
+            ToggleSongPickerVisivility();
+        }
+        public void ToggleSongPickerVisivility()
+        {
+            if (songPicker.Visibility == Visibility.Visible) songPicker.Visibility = Visibility.Hidden;
+            else
+            {
+                if (picPicker.Visibility == Visibility.Visible) picPicker.Visibility = Visibility.Hidden;
+                songPicker.Visibility = Visibility.Visible;
+            }
         }
 
         private void randomSong_Button_Click(object sender, RoutedEventArgs e)

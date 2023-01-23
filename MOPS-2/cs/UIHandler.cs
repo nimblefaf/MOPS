@@ -18,6 +18,10 @@ namespace MOPS
             Display_Weed = new UI.UI_Weed(MainWin);
             Display_Modern = new UI.UI_Modern(MainWin);
 
+            songPicker = new UI.SongPicker();
+            picPicker = new UI.PicPicker();
+
+
             AudioTimer = new DispatcherTimer();
             AudioTimer.Interval = TimeSpan.FromMilliseconds(25);
             AudioTimer.Tick += delegate (object sender, EventArgs e)
@@ -48,6 +52,9 @@ namespace MOPS
         public UI.UI_Retro Display_Retro;
         public UI.UI_Weed Display_Weed;
         public UI.UI_Modern Display_Modern;
+
+        public UI.SongPicker songPicker;
+        public UI.PicPicker picPicker;
 
         public DispatcherTimer AudioTimer;
 
@@ -229,6 +236,55 @@ namespace MOPS
                     break;
                 case UIStyle.Modern:
                     Display_Modern.ToggleHideUI();
+                    break;
+            }
+        }
+
+        public void ToggleCharList()
+        {
+            //if (images_listbox.Visibility == Visibility.Hidden)
+            //{
+            //    images_listbox.Visibility = Visibility.Visible;
+            //    songs_listbox.Visibility = Visibility.Hidden;
+            //}
+            //else images_listbox.Visibility = Visibility.Hidden;
+            switch ((UIStyle)Properties.Settings.Default.uiStyle)
+            {
+                case UIStyle.Alpha:
+                    Display_Alpha.TogglePicPickerVisivility();
+                    break;
+                case UIStyle.Mini:
+                    //Display_Mini.TogglePicPickerVisivility();
+                    break;
+                case UIStyle.Retro:
+                    Display_Retro.TogglePicPickerVisivility();
+                    break;
+                case UIStyle.Weed:
+                    Display_Weed.TogglePicPickerVisivility();
+                    break;
+                case UIStyle.Modern:
+                    Display_Modern.TogglePicPickerVisivility();
+                    break;
+            }
+        }
+        public void ToggleSongList()
+        {
+            switch ((UIStyle)Properties.Settings.Default.uiStyle)
+            {
+                case UIStyle.Alpha:
+                    Display_Alpha.ToggleSongPickerVisivility();
+                    break;
+                case UIStyle.Mini:
+                    //Display_Mini.TogglePicPickerVisivility();
+                    break;
+                case UIStyle.Retro:
+                    Display_Retro.ToggleSongPickerVisivility();
+                    break;
+                case UIStyle.Weed:
+                    Display_Weed.ToggleSongPickerVisivility();
+                    break;
+                case UIStyle.Modern:
+                    Display_Modern.ToggleSongPickerVisivility();
                     break;
             }
         }

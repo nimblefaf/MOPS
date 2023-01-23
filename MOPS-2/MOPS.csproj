@@ -114,11 +114,17 @@
     <Compile Include="UI\Options_TabPanel.xaml.cs">
       <DependentUpon>Options_TabPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\PicPicker.xaml.cs">
+      <DependentUpon>PicPicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Preloader.xaml.cs">
       <DependentUpon>Preloader.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Resources_TabPanel.xaml.cs">
       <DependentUpon>Resources_TabPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SongPicker.xaml.cs">
+      <DependentUpon>SongPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\UI_Alpha.xaml.cs">
       <DependentUpon>UI_Alpha.xaml</DependentUpon>
@@ -161,11 +167,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\PicPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Preloader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Resources_TabPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\SongPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

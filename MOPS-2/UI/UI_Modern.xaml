@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MOPS.UI"
+             xmlns:uc="clr-namespace:MOPS.UI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10">
@@ -40,12 +41,19 @@
         <Grid x:Name="LilBottomGrid">
             <Button Style="{DynamicResource ButtonModernUIToggle}" x:Name="ToggleUIBottomButton" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Click="ToggleUIBottomButton_Click" MinWidth="500" MaxWidth="1000" Height="37" Margin="10,0,10,0"></Button>
         </Grid>
+        <Grid x:Name="pickersGrid" Visibility="Visible" HorizontalAlignment="Stretch" Margin="10,0,10,60.5" VerticalAlignment="Bottom" MinWidth="500" MaxWidth="1000">
+            <!--<uc:PicPicker x:Name="picPicker" HorizontalAlignment="Right" VerticalAlignment="Bottom" MaxHeight="200" Width="250" Visibility="Hidden"/>-->
+            <!--<uc:SongPicker x:Name="songPicker" HorizontalAlignment="Right" VerticalAlignment="Bottom" MaxHeight="200" Width="400" Visibility="Hidden"/>-->
+            <!--Putting these two into the codebehind, since XAML designer is giving nonsensical errors-->
+        </Grid>
         <Grid x:Name="BottomGrid" Visibility="Visible" HorizontalAlignment="Stretch" Height="57" Margin="10,0,10,0" VerticalAlignment="Bottom" MinWidth="500" MaxWidth="1000">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="197"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="197"/>
             </Grid.ColumnDefinitions>
+
+            
 
             <Rectangle Fill="Gray" Opacity="0.5" Grid.ColumnSpan="3"/>
 

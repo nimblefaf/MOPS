@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="MOPS.UI.PicPicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MOPS.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="250">
+    <Grid>
+        <ListBox x:Name="images_listbox" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#7FD3D3D3" BorderBrush="#FF020202" Opacity="1" ItemsSource="{Binding Source}" MaxHeight="200" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="Images_listbox_SelectionChanged" PreviewKeyDown="Images_listbox_PreviewKeyDown" ItemTemplate="{DynamicResource DataTemplateHues}" Style="{DynamicResource ListBoxStyleHues}" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Visibility="Visible"/>
+    </Grid>
+</UserControl>

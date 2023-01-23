@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              FontFamily="/MOPS;component/fonts/#Pet Me 128">
-    <Grid>
+    <Grid x:Name="MainGrid">
         <TextBlock x:Name="timeline_textBlock" Margin="0,0,0,2" TextWrapping="NoWrap" Text=">>" Height="12" VerticalAlignment="Bottom"/>
         <TextBlock x:Name="volume_textBlock" HorizontalAlignment="Left" Margin="0,0,0,19" TextWrapping="NoWrap" Text="50" VerticalAlignment="Bottom"/>
         <TextBlock x:Name="song_textBlock" HorizontalAlignment="Left" Margin="0,0,0,36" TextWrapping="NoWrap" Text="No song" VerticalAlignment="Bottom" RenderTransformOrigin="0.603,0.944"/>
