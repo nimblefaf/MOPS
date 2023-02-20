@@ -640,17 +640,8 @@ namespace MOPS
 
         private void Smart_Stretch()
         {
-            if (WindowState == WindowState.Maximized)
-            {
-                if (SystemParameters.MaximizedPrimaryScreenWidth / SystemParameters.MaximizedPrimaryScreenHeight > Core.RPM.allPics[current_image_pos].pic.Width / Core.RPM.allPics[current_image_pos].pic.Height)
-                    image0.Stretch = Stretch.Uniform;
-                else image0.Stretch = Stretch.UniformToFill;
-            }
-            else
-            {
-                if (Width / Height > Core.RPM.allPics[current_image_pos].pic.Width / Core.RPM.allPics[current_image_pos].pic.Height) image0.Stretch = Stretch.Uniform;
-                else image0.Stretch = Stretch.UniformToFill;
-            }
+            if (ActualWidth / ActualHeight > Core.RPM.allPics[current_image_pos].pic.Width / Core.RPM.allPics[current_image_pos].pic.Height) image0.Stretch = Stretch.Uniform;
+            else image0.Stretch = Stretch.UniformToFill;
         }
 
 
