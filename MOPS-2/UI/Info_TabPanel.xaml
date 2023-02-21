@@ -27,5 +27,20 @@
                 mon
             </Hyperlink>
         </TextBlock>
+        <TabControl x:Name="tabControl" Margin="10,140,10,10">
+            <TabItem Header="KEYBOARD SHORTCUTS" Margin="0,-2,0,0" HorizontalAlignment="Center" Width="283">
+                <TextBox x:Name="shortcutsTextBox" Background="#FFB4B4B4" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" FontSize="13" TextBlock.LineHeight="16" TextBlock.LineStackingStrategy="BlockLineHeight">
+                    <!--SHOULD BE ADDED THROUGH CODEBEHIND-->
+                    SOMETHING WENT WRONG
+                </TextBox>
+            </TabItem>
+            <TabItem Header="BEAT GLOSSARY" Margin="0,-2,0,0" Width="282" HorizontalAlignment="Center">
+                <TextBox x:Name="glossaryTextBox" Background="#FFB4B4B4" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" FontSize="13"  TextBlock.LineHeight="16" TextBlock.LineStackingStrategy="BlockLineHeight">
+                    <!--SHOULD BE ADDED THROUGH CODEBEHIND-->
+                    SOMETHING WENT WRONG
+                </TextBox>
+            </TabItem>
+        </TabControl>
+
     </Grid>
 </UserControl>
