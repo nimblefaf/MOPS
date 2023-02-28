@@ -231,12 +231,12 @@ namespace MOPS.UI
 
         private void nextSong_button_Click(object sender, RoutedEventArgs e)
         {
-            main.next_song();
+            main.Core.next_song();
         }
 
         private void prevSong_button_Click(object sender, RoutedEventArgs e)
         {
-            main.prev_song();
+            main.Core.prev_song();
         }
 
         private void songs_button_Click(object sender, RoutedEventArgs e)
@@ -255,25 +255,21 @@ namespace MOPS.UI
 
         private void nextImage_button_Click(object sender, RoutedEventArgs e)
         {
-            main.next_image();
-            updateImageModeText();
+            main.Core.next_image();
         }
 
         private void prevImage_button_Click(object sender, RoutedEventArgs e)
         {
-            main.prev_image();
-            updateImageModeText();
+            main.Core.prev_image();
         }
 
         private void fullAutoMode_button_Click(object sender, RoutedEventArgs e)
         {
             main.full_auto_mode = true;
-            updateImageModeText();
         }
         private void normalMode_Button_Click(object sender, RoutedEventArgs e)
         {
             main.full_auto_mode = false;
-            updateImageModeText();
         }
         private void showUI_TBB_Click(object sender, RoutedEventArgs e)
         {

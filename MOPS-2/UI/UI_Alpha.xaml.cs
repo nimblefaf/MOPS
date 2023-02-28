@@ -51,12 +51,12 @@ namespace MOPS.UI
 
         private void nextSong_button_Click(object sender, RoutedEventArgs e)
         {
-            main.next_song();
+            main.Core.next_song();
         }
 
         private void prevSong_button_Click(object sender, RoutedEventArgs e)
         {
-            main.prev_song();
+            main.Core.prev_song();
         }
 
         private void songs_button_Click(object sender, RoutedEventArgs e)
@@ -66,12 +66,12 @@ namespace MOPS.UI
 
         private void nextImage_button_Click(object sender, RoutedEventArgs e)
         {
-            main.next_image();
+            main.Core.next_image();
         }
 
         private void prevImage_button_Click(object sender, RoutedEventArgs e)
         {
-            main.prev_image();
+            main.Core.prev_image();
         }
 
         private void fullAuto_button_Click(object sender, RoutedEventArgs e)

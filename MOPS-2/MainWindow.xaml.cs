@@ -35,21 +35,20 @@ namespace MOPS
         public Hues.Palette[] hues;
 
         public int CurrentColorInd = 0;
-        public int current_image_pos = 0;
         private int anim_ind = 0;
 
         public bool Colors_Inverted = false;
-        public bool full_auto_mode = true;
+        public bool full_auto_mode
+        {
+            get { return _Full_auto_mode; }
+            set 
+            { 
+                _Full_auto_mode = value;
+                Core.UIHandler.UpdateMiscInfo();
+            }
+        }
+        private bool _Full_auto_mode = true;
         public bool blackouted = false;
-
-        /// <summary>
-        /// List of enabled songs displayed in songs_listbox.
-        /// </summary>
-        public ObservableCollection<rdata> enabled_songs = new ObservableCollection<rdata>();
-        /// <summary>
-        /// List of enabled images displayed in images_listbox.
-        /// </summary>
-        public ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
         public MainWindow()
         {
@@ -277,16 +276,16 @@ namespace MOPS
                     Core.toggle_mute();
                     break;
                 case Key.Up:
-                    next_song();
+                    Core.next_song();
                     break;
                 case Key.Down:
-                    prev_song();
+                    Core.prev_song();
                     break;
                 case Key.Right:
-                    next_image();
+                    Core.next_image();
                     break;
                 case Key.Left:
-                    prev_image();
+                    Core.prev_image();
                     break;
                 case Key.Space:
                     timeline_pic_and_color();
@@ -367,7 +366,7 @@ namespace MOPS
                     Core.UIHandler.UpdateMiscInfo();
                     break;
                 case Key.N://RANDOM SONG
-                    random_song();
+                    Core.random_song();
                     break;
                 case Key.C:
                     Core.UIHandler.ToggleCharList();
@@ -381,56 +380,11 @@ namespace MOPS
             }
         }
 
-        public void next_song()
-        {
-            if (enabled_songs.Count > 1)
-            {
-                //if ( == enabled_songs.Count - 1) songs_listbox.SelectedIndex = 0;
-                //else songs_listbox.SelectedIndex += 1;
-            }
-        }
-        public void prev_song()
-        {
-            if (enabled_songs.Count > 1)
-            {
-                //if (songs_listbox.SelectedIndex <= 0) songs_listbox.SelectedIndex = songs_listbox.Items.Count - 1;
-                //else songs_listbox.SelectedIndex -= 1;
-            }
-        }
-
-        public void random_song()
-        {
-            if (enabled_songs.Count != 0)
-            {
-                //songs_listbox.SelectedIndex = (songs_listbox.SelectedIndex + rnd.Next(1, enabled_songs.Count - 1)) % enabled_songs.Count;
-            }
-        }
 
         public void show_info_page()
         {
             if (InnerWin.Visibility == Visibility.Hidden) ToggleInnerWindow();
             InnerWin.tabControl.SelectedIndex = 3;
-        }
-
-        
-
-        public void next_image()
-        {
-            if (enabled_images.Count > 1)
-            {
-                //if (current_image_pos == images_listbox.Items.Count - 1) images_listbox.SelectedIndex = 0;
-                //else images_listbox.SelectedIndex = current_image_pos + 1;
-                full_auto_mode = false;
-            }
-        }
-        public void prev_image()
-        {
-            if (enabled_images.Count > 1)
-            {
-                //if (current_image_pos == 0) images_listbox.SelectedIndex = images_listbox.Items.Count - 1;
-                //else images_listbox.SelectedIndex = current_image_pos - 1;
-                full_auto_mode = false;
-            }
         }
 
         #endregion
@@ -495,12 +449,12 @@ namespace MOPS
         // '*'
         public void timeline_image_change()
         {
-            if (full_auto_mode & enabled_images.Count != 1)
+            if (full_auto_mode & Core.enabled_images.Count != 1)
             {
-                if (enabled_images.Count != 0)
+                if (Core.enabled_images.Count != 0)
                 {
-                    if (Properties.Settings.Default.shuffleImages) ImageChange((current_image_pos + rnd.Next(1, enabled_images.Count - 1)) % enabled_images.Count);
-                    else ImageChange(++current_image_pos % enabled_images.Count);
+                    if (Properties.Settings.Default.shuffleImages) ImageChange((Core.current_image_pos + rnd.Next(1, Core.enabled_images.Count - 1)) % Core.enabled_images.Count);
+                    else ImageChange(++Core.current_image_pos % Core.enabled_images.Count);
                 }
                 else ImageChange(-1);
             }
@@ -513,7 +467,7 @@ namespace MOPS
         // 'X' Vertical blur only
         public void timeline_blur_vert()
         {
-            if (enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
+            if (Core.enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
                     case BlurQuality.Low:
                         ImageGrid.Effect = YBlur8;
@@ -532,7 +486,7 @@ namespace MOPS
         // 'O' Vertical blur only
         public void timeline_blur_hor()
         {
-            if (enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
+            if (Core.enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
                     case BlurQuality.Low:
                         ImageGrid.Effect = XBlur8;
@@ -640,7 +594,7 @@ namespace MOPS
 
         private void Smart_Stretch()
         {
-            if (ActualWidth / ActualHeight > Core.RPM.allPics[current_image_pos].pic.Width / Core.RPM.allPics[current_image_pos].pic.Height) image0.Stretch = Stretch.Uniform;
+            if (ActualWidth / ActualHeight > Core.RPM.allPics[Core.current_image_pos].pic.Width / Core.RPM.allPics[Core.current_image_pos].pic.Height) image0.Stretch = Stretch.Uniform;
             else image0.Stretch = Stretch.UniformToFill;
         }
 
@@ -649,16 +603,6 @@ namespace MOPS
         public void SongPicker_SelectionChanged(int ind)
         {
             ImageChange(ind);
-        }
-        private void Change_Song(int i)
-        {
-            Events_Stop();
-            Core.Change_Song(enabled_songs[i].Ind);
-
-            if (enabled_songs.Count == 0)
-            {
-                Core.StopSong();
-            }
         }
 
         public void Events_Stop()
@@ -683,10 +627,10 @@ namespace MOPS
         public void ImageChange(int p)
         {
             BlurAnimSB.Stop();
-            current_image_pos = p;
+            Core.current_image_pos = p;
             if (p != -1)
             {
-                int index = enabled_images[p].Ind;
+                int index = Core.enabled_images[p].Ind;
                 image0.Source = Core.RPM.allPics[index].pic;
 
                 if (Core.RPM.allPics[index].animation == null)
@@ -710,7 +654,7 @@ namespace MOPS
                 else
                 {
                     anim_ind = 1;
-                    AnimTimer.Interval = TimeSpan.FromMilliseconds(Core.RPM.allPics[current_image_pos].frameDuration[0]);
+                    AnimTimer.Interval = TimeSpan.FromMilliseconds(Core.RPM.allPics[Core.current_image_pos].frameDuration[0]);
                     AnimTimer.Start();
 
                     switch (Core.RPM.allPics[index].align)
@@ -730,7 +674,7 @@ namespace MOPS
             }
             else
             {
-                if (enabled_images.Count == 0)
+                if (Core.enabled_images.Count == 0)
                 {
                     image0.Source = null;
                     Core.UIHandler.UpdatePicName(new Pics());
@@ -745,8 +689,8 @@ namespace MOPS
 
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            image0.Source = Core.RPM.allPics[current_image_pos].animation[anim_ind];
-            if (Core.RPM.allPics[current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
+            image0.Source = Core.RPM.allPics[Core.current_image_pos].animation[anim_ind];
+            if (Core.RPM.allPics[Core.current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
         }
 

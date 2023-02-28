@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ namespace MOPS
             UIHandler = new UIHandler();
         }
 
+        Random rnd = new Random();
+
         public RPManager RPM = new RPManager();
         public Audio Player = new Audio();
         public UIHandler UIHandler;
@@ -41,6 +44,15 @@ namespace MOPS
         public int b_rhythm_pos = 1;
         public double beat_length = 0;
         public DispatcherTimer MainTimer = new DispatcherTimer(DispatcherPriority.Send);
+
+        /// <summary>
+        /// List of enabled songs displayed in songs_listbox.
+        /// </summary>
+        public ObservableCollection<rdata> enabled_songs = new ObservableCollection<rdata>();
+        /// <summary>
+        /// List of enabled images displayed in images_listbox.
+        /// </summary>
+        public ObservableCollection<rdata> enabled_images = new ObservableCollection<rdata>();
 
 
         public DiscordRpcClient discordRpcClient = new DiscordRpcClient("842763717179342858");
@@ -185,8 +197,11 @@ namespace MOPS
                 }
         }
 
-        public void Change_Song(int i)
+        public void Change_Song(int SelectedSong)
         {
+            int i = enabled_songs[SelectedSong].Ind;
+            current_song_ind = SelectedSong;
+
             MainWin.Events_Stop();
             Player.build_mem = null;
             Player.loop_mem = null;
@@ -197,7 +212,6 @@ namespace MOPS
                 loop_rhythm = RPM.allSongs[i].rhythm;
                 build_rhythm = "";
                 current_timeline = loop_rhythm;
-                //current_song_ind = MainWin.songs_listbox.SelectedIndex;
 
                 rhythm_pos = 0;
                 b_rhythm_pos = 0;
@@ -271,6 +285,51 @@ namespace MOPS
                     }
                 }
                 );
+            }
+        }
+
+
+        public void next_song()
+        {
+            if (enabled_songs.Count > 1)
+            {
+                if (current_song_ind == enabled_songs.Count - 1) Change_Song(0);
+                else Change_Song(enabled_songs[current_song_ind + 1].Ind);
+            }
+        }
+        public void prev_song()
+        {
+            if (enabled_songs.Count > 1)
+            {
+                if (current_song_ind == 0) Change_Song(enabled_songs[enabled_songs.Count-1].Ind);
+                else Change_Song(enabled_songs[current_song_ind - 1].Ind);
+            }
+        }
+
+        public void random_song()
+        {
+            if (enabled_songs.Count != 0)
+            {
+                Change_Song((current_song_ind + rnd.Next(1, enabled_songs.Count - 1)) % enabled_songs.Count);
+            }
+        }
+
+        public void next_image()
+        {
+            if (enabled_images.Count > 1)
+            {
+                if (current_image_pos == enabled_images.Count - 1) MainWin.ImageChange(0);
+                else MainWin.ImageChange(current_image_pos + 1);
+                MainWin.full_auto_mode = false;
+            }
+        }
+        public void prev_image()
+        {
+            if (enabled_images.Count > 1)
+            {
+                if (current_image_pos == 0) MainWin.ImageChange(enabled_images.Count - 1);
+                else MainWin.ImageChange(current_image_pos - 1);
+                MainWin.full_auto_mode = false;
             }
         }
 

@@ -25,7 +25,7 @@ namespace MOPS.UI
         {
             InitializeComponent();
             main = (MainWindow)Application.Current.MainWindow;
-            images_listbox.ItemsSource = main.enabled_images;
+            images_listbox.ItemsSource = main.Core.enabled_images;
         }
 
         private void Images_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)

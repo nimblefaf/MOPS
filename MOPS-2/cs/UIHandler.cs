@@ -67,7 +67,7 @@ namespace MOPS
                 UpdateSongInfo(MainWin.Core.RPM.allSongs[MainWin.Core.current_song_ind]);
                 UpdateVolumeDisplayed(MainWin.Core.current_volume);
                 UpdateColorName(MainWin.hues[MainWin.CurrentColorInd].name);
-                UpdatePicName(MainWin.Core.RPM.allPics[MainWin.current_image_pos]);
+                UpdatePicName(MainWin.Core.RPM.allPics[MainWin.Core.current_image_pos]);
                 UpdateMiscInfo();
             }
         }

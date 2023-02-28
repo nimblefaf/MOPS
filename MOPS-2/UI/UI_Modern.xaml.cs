@@ -160,36 +160,33 @@ namespace MOPS.UI
 
         private void randomSong_Button_Click(object sender, RoutedEventArgs e)
         {
-            main.random_song();
+            main.Core.random_song();
         }
 
         private void fullautoToggle_Button_Click(object sender, RoutedEventArgs e)
         {
             if (main.full_auto_mode) main.full_auto_mode = false;
             else main.full_auto_mode = true;
-            updateImageModeText();
         }
 
         private void prevSong_Button_Click(object sender, RoutedEventArgs e)
         {
-            main.prev_song();
+            main.Core.prev_song();
         }
 
         private void nextSong_Button_Click(object sender, RoutedEventArgs e)
         {
-            main.next_song();
+            main.Core.next_song();
         }
 
         private void prevImage_Button_Click(object sender, RoutedEventArgs e)
         {
-            main.prev_image();
-            updateImageModeText();
+            main.Core.prev_image();
         }
 
         private void nextImage_Button_Click(object sender, RoutedEventArgs e)
         {
-            main.next_image();
-            updateImageModeText();
+            main.Core.next_image();
         }
 
         private void info_button_Click(object sender, RoutedEventArgs e)

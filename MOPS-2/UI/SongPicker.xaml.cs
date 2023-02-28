@@ -25,18 +25,15 @@ namespace MOPS.UI
         {
             InitializeComponent();
             main = (MainWindow)Application.Current.MainWindow;
-            songs_listbox.ItemsSource = main.enabled_songs;
+            songs_listbox.ItemsSource = main.Core.enabled_songs;
         }
 
         private void songs_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (songs_listbox.SelectedIndex != -1)
+            if (songs_listbox.SelectedIndex != -1 & songs_listbox.SelectedIndex != main.Core.current_song_ind)
             {
-                main.Core.Change_Song(main.enabled_songs[songs_listbox.SelectedIndex].Ind);
-            }
-            else
-            {
-                
+                main.Core.Change_Song(main.Core.enabled_songs[songs_listbox.SelectedIndex].Ind);
+                main.Core.current_song_ind = songs_listbox.SelectedIndex;
             }
         }
 
