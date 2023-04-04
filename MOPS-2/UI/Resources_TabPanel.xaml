@@ -11,7 +11,7 @@
             <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="Auto" TextWrapping="Wrap" Margin="2"/>
         </DataTemplate>
         <DataTemplate x:Key="DataTemplateCheckBoxed" x:Name="C_DataTemplateCheckBoxed">
-            <Grid Height="Auto"  Margin="0,2">
+            <Grid Height="Auto" Margin="0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -27,7 +27,7 @@
             <RowDefinition/>
             <RowDefinition Height="53"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="respack_listbox" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Height="163" VerticalAlignment="Top" Width="190" Margin="0,23,0,0" FontSize="10" SelectionChanged="respack_listbox_SelectionChanged" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}">
+        <ListBox x:Name="respack_listbox" BorderBrush="Black" BorderThickness="1.5" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Height="163" VerticalAlignment="Top" Width="190" Margin="0,23,0,0" FontSize="10" SelectionChanged="respack_listbox_SelectionChanged" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
@@ -46,7 +46,7 @@
         <Label x:Name="rp_name_label" Content="&lt;select resource pack&gt;" VerticalAlignment="Top" FontFamily="/MOPS;component/fonts/#Pet Me 128" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="195,0,0,0" FontSize="10"/>
         <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="190" Height="23"/>
         <TextBox x:Name="rp_description_textbox" Margin="195,39,0,7" Text="&lt;no description&gt;" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True"/>
-        <TabControl x:Name="ResTabControl" HorizontalAlignment="Left" Margin="195,1,0,5" Width="395" Grid.Row="1">
+        <TabControl x:Name="ResTabControl" BorderBrush="Black" BorderThickness="1.5" HorizontalAlignment="Left" Margin="195,1,0,5" Width="395" Grid.Row="1">
             <TabItem x:Name="Songs_tab" Header="Songs: &lt;&gt;" Width="200">
                 <Grid Background="#FFE5E5E5">
                     <ListBox x:Name="songs_listbox" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Background="#FFE2E2E2" ItemTemplate="{DynamicResource DataTemplateCheckBoxed}"/>
@@ -81,7 +81,7 @@
         <Label x:Name="ImagesNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" VerticalAlignment="Bottom"/>
         <TextBlock x:Name="Status_textBlock" HorizontalAlignment="Left" Margin="1,0,0,22" Grid.Row="2" TextWrapping="Wrap" Text="Status" VerticalAlignment="Bottom" Width="100" Height="11" FontSize="10"/>
         <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="0,0,0,148" Grid.Row="1" TextWrapping="Wrap" Text="Remote Respacks" VerticalAlignment="Bottom"/>
-        <ListBox x:Name="Remote_listBox" HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Row="1" Width="190" Height="138" VerticalAlignment="Bottom" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" Background="#FFE2E2E2" FontSize="8" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" SelectionChanged="Remote_listBox_SelectionChanged" ItemTemplate="{DynamicResource DataTemplateStateless}"/>
+        <ListBox x:Name="Remote_listBox" BorderBrush="Black" BorderThickness="1.5" HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Row="1" Width="190" Height="138" VerticalAlignment="Bottom" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" Background="#FFE2E2E2" FontSize="8" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" SelectionChanged="Remote_listBox_SelectionChanged" ItemTemplate="{DynamicResource DataTemplateStateless}"/>
         <Button x:Name="load_remote_button" Visibility="Hidden" Content="LOAD REMOTE" HorizontalAlignment="Left" Margin="94,0,0,36" Width="96" Grid.Row="2" Click="load_remote_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8"/>
         <TextBlock x:Name="bytesLoaded_textBlock" HorizontalAlignment="Left" Margin="1,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0b" VerticalAlignment="Bottom" Height="7" Width="64" FontSize="8" TextAlignment="Center"/>
         <TextBlock x:Name="bytesToLoad_textBlock" HorizontalAlignment="Left" Margin="70,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0b" VerticalAlignment="Bottom" Height="7" Width="72" FontSize="8" TextAlignment="Center"/>

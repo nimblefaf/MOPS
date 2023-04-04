@@ -7,8 +7,9 @@
              xmlns:uc="clr-namespace:MOPS.UI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="600" FontFamily="/MOPS;component/fonts/#Pet Me 128" Background="#FFC5C5C5" Opacity="0.8">
+    <Border BorderBrush="Black" BorderThickness="2">
     <Grid>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="435" VerticalAlignment="Top" Width="600" Margin="0,15,0,0" SelectionChanged="tabControl_SelectionChanged" Focusable="False">
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="435" VerticalAlignment="Top" Width="600" Margin="0,15,0,0" SelectionChanged="tabControl_SelectionChanged">
             <TabItem Name="res_tab" Header="RESOURCES" Cursor="Hand" FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10" Width="150" Height="25">
                 <uc:Resources_TabPanel/>
             </TabItem>
@@ -24,7 +25,7 @@
                 <uc:Info_TabPanel/>
             </TabItem>
         </TabControl>
-        <Button x:Name="hide_button" Content="X" HorizontalAlignment="Left" Margin="585,0,0,0" VerticalAlignment="Top" Width="15" Height="15" FontWeight="Bold" FontSize="6" FontFamily="SimHei" Foreground="White" Background="Black" BorderBrush="Black" Click="hide_button_Click" Cursor="Hand"/>
-
-    </Grid>
+            <Button x:Name="hide_button" Content="X" HorizontalAlignment="Left" Margin="585,0,0,0" VerticalAlignment="Top" Width="15" Height="15" FontWeight="Bold" FontSize="6" FontFamily="SimHei" Foreground="White" Background="Black" BorderBrush="Black" Click="hide_button_Click" Cursor="Hand"/>
+        </Grid>
+    </Border>
 </UserControl>

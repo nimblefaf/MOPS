@@ -50,10 +50,5 @@ namespace MOPS.UI
             this.Visibility = Visibility.Hidden;
         }
 
-        //  Unnecessary since MainWindow handles MouseDown event anyway
-        //private void InnerWin_MouseDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (e.ChangedButton == MouseButton.Right) this.Visibility = Visibility.Hidden;
-        //}
     }
 }
