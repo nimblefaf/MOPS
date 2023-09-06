@@ -257,6 +257,20 @@ namespace MOPS
             else InnerWin.Visibility = Visibility.Visible;
         }
 
+        private void FileDrop(object sender, DragEventArgs e)
+        {
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                // Note that you can have more than one file.
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                // Assuming you have one file that you care about, pass it off to whatever
+                // handling code you have defined.
+                InnerWin.resources_TabPanel.load_localRP_from_path(files[0]);
+            }
+        }
+
         #region KeyControls
 
         //

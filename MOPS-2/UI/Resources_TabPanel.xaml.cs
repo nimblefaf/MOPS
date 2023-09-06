@@ -144,10 +144,15 @@ namespace MOPS.UI
             };
             if (openFile.ShowDialog() == true)
             {
-                load_rp_button.IsEnabled = false;
-                Status_textBlock.Text = "Processing...";
-                backgroundLoader.RunWorkerAsync(new string[] { openFile.FileName });
+                load_localRP_from_path(openFile.FileName);
             }
+        }
+
+        public void load_localRP_from_path(string path)
+        {
+            load_rp_button.IsEnabled = false;
+            Status_textBlock.Text = "Processing...";
+            backgroundLoader.RunWorkerAsync(new string[] { path });
         }
 
         public void load_dowork(object sender, DoWorkEventArgs e)
