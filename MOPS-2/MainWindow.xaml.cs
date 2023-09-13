@@ -391,10 +391,29 @@ namespace MOPS
                 case Key.L:
                     InnerWin.resources_TabPanel.load_local_RP();
                     break;
+                case Key.F11:
+                    toggle_fullscreen();
+                    break;
             }
         }
 
-
+        private void toggle_fullscreen()
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+                this.WindowStyle = WindowStyle.SingleBorderWindow;
+                this.ResizeMode = ResizeMode.CanResize;
+            }
+            else
+            {
+                this.Visibility = Visibility.Collapsed;
+                this.WindowState = WindowState.Maximized;
+                this.WindowStyle = WindowStyle.None;
+                this.ResizeMode = ResizeMode.NoResize;
+                this.Visibility = Visibility.Visible;
+            }
+        }
         public void show_info_page()
         {
             if (InnerWin.Visibility == Visibility.Hidden) ToggleInnerWindow();
