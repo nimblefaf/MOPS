@@ -394,6 +394,10 @@ namespace MOPS
                 case Key.F11:
                     toggle_fullscreen();
                     break;
+                case Key.Escape:
+                    if (this.WindowState == WindowState.Maximized)
+                        toggle_fullscreen();
+                    break;
             }
         }
 
