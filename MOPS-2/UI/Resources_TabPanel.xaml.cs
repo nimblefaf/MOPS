@@ -111,7 +111,6 @@ namespace MOPS.UI
                 Songs_tab.Header = "Songs: " + main.Core.RPM.ResPacks[ind].songs_count;
                 Images_tab.Header = "Images: " + main.Core.RPM.ResPacks[ind].pics_count;
 
-                songs_listbox.ItemTemplate = (DataTemplate)Resources["DataTemplateCheckBoxed"]; //showing checkboxes
                 song_names.Clear();
                 int ceiling = main.Core.RPM.ResPacks[ind].songs_start + main.Core.RPM.ResPacks[ind].songs_count;
                 for (int i = main.Core.RPM.ResPacks[ind].songs_start; i < ceiling; i++)
@@ -119,7 +118,6 @@ namespace MOPS.UI
                     song_names.Add(new setdata() { Name = main.Core.RPM.allSongs[i].title, State = main.Core.RPM.allSongs[i].enabled, Ind = i });
                 }
 
-                images_listbox.ItemTemplate = (DataTemplate)Resources["DataTemplateCheckBoxed"];
                 images_names.Clear();
                 ceiling = main.Core.RPM.ResPacks[ind].pics_start + main.Core.RPM.ResPacks[ind].pics_count;
                 for (int i = main.Core.RPM.ResPacks[ind].pics_start; i < ceiling; i++)

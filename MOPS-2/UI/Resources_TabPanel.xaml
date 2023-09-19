@@ -10,28 +10,18 @@
         <DataTemplate x:Key="DataTemplateStateless" x:Name="C_DataTemplateStateless">
             <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="Auto" TextWrapping="Wrap" Margin="2"/>
         </DataTemplate>
-        <DataTemplate x:Key="DataTemplateCheckBoxed" x:Name="C_DataTemplateCheckBoxed">
-            <Grid Height="Auto" Margin="0,2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <CheckBox IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="345" TextWrapping="Wrap"/>
-            </Grid>
-        </DataTemplate>
     </UserControl.Resources>
     <Grid Background="#FFE5E5E5" Cursor="Arrow" HorizontalAlignment="Stretch" Margin="0,0,0,0" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="91*"/>
-            <ColumnDefinition Width="204*"/>
+            <ColumnDefinition Width="98*"/>
+            <ColumnDefinition Width="197*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" MinHeight="62"/>
+            <RowDefinition Height="Auto" MinHeight="58"/>
             <RowDefinition/>
             <RowDefinition Height="53"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="respack_listbox" BorderBrush="Black" BorderThickness="1.5" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Height="163" VerticalAlignment="Top" Width="190" Margin="0,23,0,0" FontSize="10" SelectionChanged="respack_listbox_SelectionChanged" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Grid.ColumnSpan="2" d:ItemsSource="{d:SampleData ItemCount=5}">
+        <ListBox x:Name="respack_listbox" BorderBrush="Black" BorderThickness="1.5" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Height="163" VerticalAlignment="Top" Width="190" Margin="0,23,0,0" FontSize="10" SelectionChanged="respack_listbox_SelectionChanged" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" d:ItemsSource="{d:SampleData ItemCount=5}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
@@ -39,21 +29,34 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="rp_checkbox" IsChecked="{Binding State, Mode=TwoWay}" Click="RPList_CheckBox_Clicked" VerticalAlignment="Center"></CheckBox>
+                        <CheckBox x:Name="rp_checkbox" IsChecked="{Binding State, Mode=TwoWay}" Click="RPList_CheckBox_Clicked" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" Width="175"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ProgressBar x:Name="ProgBar"  HorizontalAlignment="Left" Width="190" Grid.Row="2" Height="7" VerticalAlignment="Bottom" Value="-1" Margin="1,0,0,15" Grid.ColumnSpan="2"/>
+        <ProgressBar x:Name="ProgBar"  HorizontalAlignment="Center" Width="190" Grid.Row="2" Height="7" VerticalAlignment="Top" Value="-1" Margin="0,31,0,0"/>
         <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="1,0,0,36" Width="88" Grid.Row="2" Click="load_rp_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8"/>
-        <Label x:Name="rp_name_label" Content="select resource pack" VerticalAlignment="Top" FontFamily="/MOPS;component/fonts/#Pet Me 128" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="13,0,0,0" FontSize="10" Grid.Column="1"/>
-        <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="190" Height="23" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="rp_description_textbox" Margin="13,39,0,91" Text="no description" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True" Grid.Column="1"/>
-        <TabControl x:Name="ResTabControl" BorderBrush="Black" BorderThickness="1.5" HorizontalAlignment="Left" Margin="13,63,0,5" Width="395" Grid.Column="1" Grid.RowSpan="2">
+        <Label x:Name="rp_name_label" Content="select resource pack" VerticalAlignment="Top" FontFamily="/MOPS;component/fonts/#Pet Me 128" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="5,0,0,0" FontSize="10" Grid.Column="1"/>
+        <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="190" Height="23"/>
+        <TextBox x:Name="rp_description_textbox" Margin="5,39,0,5" Text="no description" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True" Grid.Column="1"/>
+        <TabControl x:Name="ResTabControl" BorderBrush="Black" BorderThickness="1.5" HorizontalAlignment="Left" Margin="5,0,0,5" Width="395" Grid.Column="1" Grid.Row="1">
             <TabItem x:Name="Songs_tab" Header="Songs: &lt;&gt;" Width="200">
                 <Grid Background="#FFE5E5E5">
-                    <ListBox x:Name="songs_listbox" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" Background="#FFE2E2E2" ItemTemplate="{DynamicResource DataTemplateCheckBoxed}" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                    <ListBox x:Name="songs_listbox" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" d:ItemsSource="{d:SampleData ItemCount=5 }">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="345" TextWrapping="Wrap"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </Grid>
             </TabItem>
             <TabItem x:Name="Images_tab" Header="Images: &lt;&gt;" Margin="-2,-2,-75,-1">
@@ -66,8 +69,8 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox IsChecked="{Binding State, Mode=TwoWay}" Click="Images_CheckBox_Click" VerticalAlignment="Center"></CheckBox>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="345" TextWrapping="Wrap"/>
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Images_CheckBox_Click" VerticalAlignment="Center"></CheckBox>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="auto" TextWrapping="Wrap"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -75,20 +78,20 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label x:Name="rp_author_label" Content="no author" HorizontalAlignment="Left" Margin="13,22,0,0" VerticalAlignment="Top" FontSize="8" Height="17" Width="290" Grid.Column="1"/>
+        <Label x:Name="rp_author_label" Content="no author" HorizontalAlignment="Left" Margin="5,22,0,0" VerticalAlignment="Top" FontSize="8" Height="17" Width="290" Grid.Column="1"/>
         <Label x:Name="label_ts" Content="Total Songs:" HorizontalAlignment="Left" Margin="23,21,0,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Width="130" Grid.Column="1"/>
         <Label x:Name="label" Content="Total Images:" HorizontalAlignment="Left" Margin="23,33,0,0" Grid.Row="2" VerticalAlignment="Top" Height="20" Width="140" Grid.Column="1"/>
         <Button x:Name="enableAll_button" Content="ENABLE ALL" HorizontalAlignment="Left" Margin="13,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="140" Click="enableAll_button_Click" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" Height="16" FontSize="8" Visibility="Hidden" Grid.Column="1"/>
         <Button x:Name="invert_button" Content="INVERT" HorizontalAlignment="Left" Margin="158,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="100" Click="invert_button_Click" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" Height="16" FontSize="8" Visibility="Hidden" Grid.Column="1"/>
         <Button x:Name="disabelAll_button" Content="DISABLE ALL" HorizontalAlignment="Left" Margin="263,0,0,0" Grid.Row="2" VerticalAlignment="Top" Width="140" Click="disabelAll_button_Click" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" Height="16" FontSize="8" Visibility="Hidden" Grid.Column="1"/>
-        <Label x:Name="SongNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,12" Grid.Row="2" VerticalAlignment="Bottom" Grid.Column="1"/>
-        <Label x:Name="ImagesNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" VerticalAlignment="Bottom" Grid.Column="1"/>
+        <Label x:Name="SongNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,12" Grid.Row="2" VerticalAlignment="Bottom" Grid.Column="1" Height="22" Width="70"/>
+        <Label x:Name="ImagesNumber_label" Content="Label" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" VerticalAlignment="Bottom" Grid.Column="1" Height="22" Width="70"/>
         <TextBlock x:Name="Status_textBlock" HorizontalAlignment="Left" Margin="1,0,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Status" VerticalAlignment="Center" Width="100" Height="11" FontSize="10"/>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Center" Margin="0,45,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Remote Respacks" FontSize="12" VerticalAlignment="Top"/>
-        <ListBox x:Name="Remote_listBox" BorderBrush="Black" BorderThickness="1.5" HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Row="1" Width="190" Height="138" VerticalAlignment="Bottom" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" Background="#FFE2E2E2" FontSize="8" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" SelectionChanged="Remote_listBox_SelectionChanged" ItemTemplate="{DynamicResource DataTemplateStateless}" d:ItemsSource="{d:SampleData ItemCount=5}" Grid.ColumnSpan="2"/>
-        <Button x:Name="load_remote_button" Visibility="Hidden" Content="LOAD REMOTE" HorizontalAlignment="Left" Margin="94,0,0,36" Width="96" Grid.Row="2" Click="load_remote_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8" Grid.ColumnSpan="2"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="0,0,0,145" Grid.Row="1" TextWrapping="Wrap" Text="Remote Respacks" FontSize="12" VerticalAlignment="Bottom" Height="12" Width="180"/>
+        <ListBox x:Name="Remote_listBox" BorderBrush="Black" BorderThickness="1.5" HorizontalAlignment="Left" Margin="0,0,0,5" Grid.Row="1" Width="190" Height="138" VerticalAlignment="Bottom" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False" Background="#FFE2E2E2" FontSize="8" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" SelectionChanged="Remote_listBox_SelectionChanged" ItemTemplate="{DynamicResource DataTemplateStateless}" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+        <Button x:Name="load_remote_button" Visibility="Hidden" Content="LOAD REMOTE" HorizontalAlignment="Left" Margin="94,0,0,36" Width="96" Grid.Row="2" Click="load_remote_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8"/>
         <TextBlock x:Name="bytesLoaded_textBlock" HorizontalAlignment="Left" Margin="1,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0b" VerticalAlignment="Bottom" Height="7" Width="64" FontSize="8" TextAlignment="Center"/>
         <TextBlock x:Name="bytesToLoad_textBlock" HorizontalAlignment="Left" Margin="70,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0b" VerticalAlignment="Bottom" Height="7" Width="72" FontSize="8" TextAlignment="Center"/>
-        <TextBlock x:Name="percentLoaded_textBlock" HorizontalAlignment="Left" Margin="147,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0%" VerticalAlignment="Bottom" Height="7" Width="44" FontSize="8" TextAlignment="Center" Grid.ColumnSpan="2"/>
+        <TextBlock x:Name="percentLoaded_textBlock" HorizontalAlignment="Left" Margin="147,0,0,3" Grid.Row="2" TextWrapping="Wrap" Text="0%" VerticalAlignment="Bottom" Height="7" Width="44" FontSize="8" TextAlignment="Center"/>
     </Grid>
 </UserControl>
