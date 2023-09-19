@@ -691,7 +691,7 @@ namespace MOPS
                 else
                 {
                     anim_ind = 1;
-                    AnimTimer.Interval = TimeSpan.FromMilliseconds(Core.RPM.allPics[Core.current_image_pos].frameDuration[0]);
+                    AnimTimer.Interval = TimeSpan.FromMilliseconds(Core.RPM.allPics[Core.enabled_images[Core.current_image_pos].Ind].frameDuration[0]);
                     AnimTimer.Start();
 
                     switch (Core.RPM.allPics[index].align)
@@ -726,8 +726,8 @@ namespace MOPS
 
         private void AnimTimer_Tick(object sender, EventArgs e)
         {
-            image0.Source = Core.RPM.allPics[Core.current_image_pos].animation[anim_ind];
-            if (Core.RPM.allPics[Core.current_image_pos].animation.Length == anim_ind + 1) anim_ind = 0;
+            image0.Source = Core.RPM.allPics[Core.enabled_images[Core.current_image_pos].Ind].animation[anim_ind];
+            if (Core.RPM.allPics[Core.enabled_images[Core.current_image_pos].Ind].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
         }
 
