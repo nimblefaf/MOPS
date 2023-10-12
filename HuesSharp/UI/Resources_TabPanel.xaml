@@ -37,7 +37,7 @@
         </ListBox>
         <ProgressBar x:Name="ProgBar"  HorizontalAlignment="Center" Width="190" Grid.Row="2" Height="7" VerticalAlignment="Top" Value="-1" Margin="0,31,0,0"/>
         <Button x:Name="load_rp_button" Content="LOAD ZIPS" HorizontalAlignment="Left" Margin="1,0,0,36" Width="88" Grid.Row="2" Click="load_rp_button_Click" Height="16" VerticalAlignment="Bottom" Background="LightGray" Template="{DynamicResource ButtonControlTemplate1}" FontSize="8"/>
-        <Label x:Name="rp_name_label" Content="select resource pack" VerticalAlignment="Top" FontFamily="/MOPS;component/fonts/#Pet Me 128" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="5,0,0,0" FontSize="10" Grid.Column="1"/>
+        <Label x:Name="rp_name_label" Content="select resource pack" VerticalAlignment="Top" MaxWidth="246" HorizontalAlignment="Left" Width="390" Height="23" Margin="5,0,0,0" FontSize="10" Grid.Column="1"/>
         <Label x:Name="label_1" Content="Current Respacks" HorizontalAlignment="Left" VerticalAlignment="Top" Width="190" Height="23"/>
         <TextBox x:Name="rp_description_textbox" Margin="5,39,0,5" Text="no description" TextWrapping="Wrap" MaxHeight="100" IsReadOnly="True" Grid.Column="1"/>
         <TabControl x:Name="ResTabControl" BorderBrush="Black" BorderThickness="1.5" HorizontalAlignment="Left" Margin="5,0,0,5" Width="395" Grid.Column="1" Grid.Row="1">
