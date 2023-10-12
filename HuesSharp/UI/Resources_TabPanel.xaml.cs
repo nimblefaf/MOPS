@@ -565,7 +565,8 @@ namespace HuesSharp.UI
         #region remote_list
 
         string url_new = "https://portal.0x40hu.es/resource_packs.json";
-        //string url_classic = "https://cdn.0x40.ga/getRespacks.php";
+        string url_classic = "https://cdn.0x40hu.es/getRespacks.php";
+                                
 
         private string error_message;
         private string hues_json;
@@ -578,8 +579,7 @@ namespace HuesSharp.UI
             {
                 try
                 {
-                    //hues_json = wc.DownloadString(url);
-                    hues_json = wc.DownloadString(url_new);
+                    hues_json = wc.DownloadString(url_classic);
                 }
                 catch (WebException WE)
                 {
