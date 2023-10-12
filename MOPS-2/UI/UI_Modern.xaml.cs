@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace MOPS.UI
+namespace HuesSharp.UI
 {
     /// <summary>
     /// Interaction logic for UI_Modern.xaml

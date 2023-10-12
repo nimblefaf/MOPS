@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using Un4seen.Bass.AddOn.Mix;
 
 
-namespace MOPS
+namespace HuesSharp
 {
     public class Audio
     {
@@ -68,7 +68,7 @@ namespace MOPS
                 point_L = GCHandle.Alloc(loop_mem, GCHandleType.Pinned);
 
                 Stream_B = Bass.BASS_StreamCreateFile(point_B.AddrOfPinnedObject(), 0, build_mem.LongLength, BASSFlag.BASS_STREAM_DECODE);
-                build_len_bytes = Bass.BASS_ChannelGetLength(Stream_B, BASSMode.BASS_POS_BYTES);
+                build_len_bytes = Bass.BASS_ChannelGetLength(Stream_B, BASSMode.BASS_POS_BYTE);
                 build_len_seconds = GetTimeOfStream(Stream_B);
 
                 Stream_L = Bass.BASS_StreamCreateFile(point_L.AddrOfPinnedObject(), 0, loop_mem.LongLength, BASSFlag.BASS_STREAM_DECODE);
@@ -98,7 +98,7 @@ namespace MOPS
             if (InitBass(HZ))
             {
                 Stream_L = Bass.BASS_SampleLoad(loop_mem, 0, loop_mem.Length, 1, BASSFlag.BASS_SAMPLE_LOOP);
-                Channel = Bass.BASS_SampleGetChannel(Stream_L, false);
+                Channel = Bass.BASS_SampleGetChannel(Stream_L, BASSFlag.BASS_SAMPLE_LOOP);
             }
         }
 
@@ -130,7 +130,7 @@ namespace MOPS
         public double GetPosOfStream(int stream)
         {
             long pos;
-            if (point_L.IsAllocated) pos = BassMix.BASS_Mixer_ChannelGetPosition(stream, BASSMode.BASS_POS_BYTES);
+            if (point_L.IsAllocated) pos = BassMix.BASS_Mixer_ChannelGetPosition(stream, BASSMode.BASS_POS_BYTE);
             else pos = Bass.BASS_ChannelGetPosition(stream);
             return Bass.BASS_ChannelBytes2Seconds(stream, pos);
         }

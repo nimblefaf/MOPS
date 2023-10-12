@@ -9,7 +9,7 @@ using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace MOPS
+namespace HuesSharp
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -19,7 +19,7 @@ namespace MOPS
         Random rnd = new Random();
 
         internal Core Core = new Core();
-        
+
         DispatcherTimer AnimTimer = new DispatcherTimer(DispatcherPriority.Render);
         public DispatcherTimer ShortBlackoutTimer = new DispatcherTimer(DispatcherPriority.Render);
 
@@ -41,8 +41,8 @@ namespace MOPS
         public bool full_auto_mode
         {
             get { return _Full_auto_mode; }
-            set 
-            { 
+            set
+            {
                 _Full_auto_mode = value;
                 Core.UIHandler.UpdateMiscInfo();
             }
@@ -61,7 +61,7 @@ namespace MOPS
 
             PreloaderWin.SetReference(this);
             InnerWin.SetReference(this);
-            
+
 
             switch ((ColorSet)Properties.Settings.Default.colorSet)
             {
@@ -128,7 +128,7 @@ namespace MOPS
             Storyboard.SetTargetProperty(Blackout_Short, new PropertyPath(OpacityProperty));
             SB_Blackout_Short.Children.Add(Blackout_Short);
             Storyboard.SetTarget(Blackout_Short, Blackout_Rectangle);
-            
+
             Blackout.BeginTime = new TimeSpan(0);
             Blackout.FillBehavior = FillBehavior.Stop;
             Blackout.From = 0;
@@ -232,7 +232,7 @@ namespace MOPS
             switch ((BlurAmount)Properties.Settings.Default.blurAmount)
             {
                 case BlurAmount.Low:
-                    BlurAnim.From = 0.005 / (Properties.Settings.Default.blurQuality+1);
+                    BlurAnim.From = 0.005 / (Properties.Settings.Default.blurQuality + 1);
                     break;
                 case BlurAmount.Medium:
                     BlurAnim.From = 0.01 / (Properties.Settings.Default.blurQuality + 1);
@@ -426,7 +426,7 @@ namespace MOPS
 
         #endregion
 
-        
+
 
         #region Timeline events
 
@@ -481,7 +481,7 @@ namespace MOPS
         {
             RandomHue();
             ColorOverlap_Rectangle.Fill = hues[CurrentColorInd].brush;
-            Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name); 
+            Core.UIHandler.UpdateColorName(hues[CurrentColorInd].name);
         }
         // '*'
         public void timeline_image_change()
@@ -718,7 +718,7 @@ namespace MOPS
                 }
             }
         }
-        
+
         private void image_SourceUpdated(object sender, DataTransferEventArgs e)
         {
             Smart_Stretch();

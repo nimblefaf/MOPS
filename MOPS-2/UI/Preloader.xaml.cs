@@ -17,7 +17,7 @@ using System.IO.Compression;
 using System.ComponentModel;
 using System.Windows.Media.Animation;
 
-namespace MOPS.UI
+namespace HuesSharp.UI
 {
     /// <summary>
     /// Interaction logic for Preloader.xaml

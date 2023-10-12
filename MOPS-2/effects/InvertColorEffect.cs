@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 
 
-namespace MOPS.Shaders {
+namespace HuesSharp.Shaders {
 	
 	/// <summary>An effect that inverts all colors.</summary>
 	public class InvertColorEffect : ShaderEffect {

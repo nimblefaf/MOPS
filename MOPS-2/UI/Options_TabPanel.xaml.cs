@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 
-namespace MOPS.UI
+namespace HuesSharp.UI
 {
     public class setdata
     {

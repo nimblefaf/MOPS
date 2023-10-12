@@ -1,6 +1,6 @@
 using System.Windows.Media;
 
-namespace MOPS
+namespace HuesSharp
 {
     public class Hues
     {

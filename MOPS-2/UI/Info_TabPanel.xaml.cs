@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace MOPS.UI
+namespace HuesSharp.UI
 {
     /// <summary>
     /// Interaction logic for Info_TabPanel.xaml

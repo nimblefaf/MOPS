@@ -15,7 +15,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Media3D;
 
 
-namespace MOPS.Shaders {
+namespace HuesSharp.Shaders {
 	
 	public class HardLightEffect : ShaderEffect {
 		public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(HardLightEffect), 0);

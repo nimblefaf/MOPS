@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MOPS.UI
+namespace HuesSharp.UI
 {
     /// <summary>
     /// Interaction logic for UI_Retro.xaml

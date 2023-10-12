@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="MOPS.UI.Options_TabPanel"
+﻿<UserControl x:Class="HuesSharp.UI.Options_TabPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MOPS.UI"
+             xmlns:local="clr-namespace:HuesSharp.UI"
              mc:Ignorable="d" 
              d:DesignHeight="398" d:DesignWidth="590"
-             FontFamily="/MOPS;component/fonts/#Pet Me 128" FontSize="10">
+             FontFamily="{StaticResource PetMe128}" FontSize="10">
     <Grid Background="#FFE5E5E5" Cursor="Arrow" VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="28*"/>

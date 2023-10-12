@@ -1,0 +1,92 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="bassmix.dll" />
+    <None Remove="effects\HardLightEffect.ps" />
+    <None Remove="effects\HuesXBlur14Effect.ps" />
+    <None Remove="effects\HuesXBlur26Effect.ps" />
+    <None Remove="effects\HuesXBlur8Effect.ps" />
+    <None Remove="effects\HuesYBlur14Effect.ps" />
+    <None Remove="effects\HuesYBlur26Effect.ps" />
+    <None Remove="effects\HuesYBlur8Effect.ps" />
+    <None Remove="effects\InvertColorEffect.ps" />
+    <None Remove="fonts\HuesExtra.ttf" />
+    <None Remove="fonts\PetMe.ttf" />
+    <None Remove="fonts\PetMe128.ttf" />
+    <None Remove="fonts\PetMe64.ttf" />
+    <None Remove="Packs\Defaults_v5.0.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bass.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bassmix.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Packs\Defaults_v5.0.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Bass.Net.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Bass.Net">
+      <HintPath>dll\Bass.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="effects\HardLightEffect.ps" />
+    <Resource Include="effects\HuesXBlur14Effect.ps" />
+    <Resource Include="effects\HuesXBlur26Effect.ps" />
+    <Resource Include="effects\HuesXBlur8Effect.ps" />
+    <Resource Include="effects\HuesYBlur14Effect.ps" />
+    <Resource Include="effects\HuesYBlur26Effect.ps" />
+    <Resource Include="effects\HuesYBlur8Effect.ps" />
+    <Resource Include="effects\InvertColorEffect.ps" />
+    <Content Include="fonts\HuesExtra.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fonts\PetMe.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fonts\PetMe128.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="fonts\PetMe64.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

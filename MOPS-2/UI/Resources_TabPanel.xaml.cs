@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 using System.Windows.Threading;
 using System.Timers;
 
-namespace MOPS.UI
+namespace HuesSharp.UI
 {
     class RemoteRP_Info
     {

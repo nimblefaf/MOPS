@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Threading;
 using DiscordRPC;
 
-namespace MOPS
+namespace HuesSharp
 {
     internal class Core
     {

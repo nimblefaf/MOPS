@@ -15,7 +15,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Media3D;
 
 
-namespace MOPS.Shaders {
+namespace HuesSharp.Shaders {
 	
 	public class HuesXBlur8Effect : ShaderEffect {
 		public static readonly DependencyProperty InputProperty = ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(HuesXBlur8Effect), 0);
