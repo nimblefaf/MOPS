@@ -7,6 +7,10 @@
         
         <FontFamily x:Key="HuesExtra">pack://application:,,,/fonts/#icomoon</FontFamily>
         <FontFamily x:Key="PetMe128">pack://application:,,,/fonts/#Pet Me 128</FontFamily>
+        <FontFamily x:Key="PetMe64">pack://application:,,,/fonts/#Pet Me 64</FontFamily>
+        <FontFamily x:Key="PetMe">pack://application:,,,/fonts/#Pet Me</FontFamily>
+
+
 
         <Style x:Key="TextBlockStyleHues" TargetType="{x:Type TextBlock}">
             <Setter Property="TextWrapping" Value="NoWrap"/>
