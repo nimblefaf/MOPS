@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
-using System.ComponentModel;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 
 namespace HuesSharp.UI
@@ -55,7 +47,7 @@ namespace HuesSharp.UI
             backgroundLoader.DoWork += new DoWorkEventHandler(main.InnerWin.resources_TabPanel.load_dowork);
         }
 
-        private void load_completed(object sender, RunWorkerCompletedEventArgs e) 
+        private void load_completed(object sender, RunWorkerCompletedEventArgs e)
         {
             Cursor = Cursors.Arrow;
             StartBlock.Text = "Completed";

@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HuesSharp.UI
 {
@@ -109,16 +100,16 @@ namespace HuesSharp.UI
             HideMainGridAnimation.From = 1;
             HideMainGridAnimation.To = 0;
             HideMainGridAnimation.Duration = TimeSpan.FromSeconds(0.6);
-            HideMainGridAnimation.Completed += delegate (object sender, EventArgs e) 
-            { 
+            HideMainGridAnimation.Completed += delegate (object sender, EventArgs e)
+            {
                 MainGrid.Visibility = Visibility.Hidden;
             };
-            
+
             ShowMainGridAnimation.From = 0;
             ShowMainGridAnimation.To = 1;
             ShowMainGridAnimation.Duration = TimeSpan.FromSeconds(0.6);
-            ShowMainGridAnimation.Completed += delegate (object sender, EventArgs e) 
-            { 
+            ShowMainGridAnimation.Completed += delegate (object sender, EventArgs e)
+            {
                 MainGrid.IsEnabled = true;
                 HideAnimationInProgress = false;
             };
@@ -204,7 +195,7 @@ namespace HuesSharp.UI
 
         private void fullAutoMode_button_Click(object sender, RoutedEventArgs e)
         {
-            main.full_auto_mode = true; 
+            main.full_auto_mode = true;
         }
         private void normalMode_Button_Click(object sender, RoutedEventArgs e)
         {

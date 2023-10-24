@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HuesSharp.UI
 {
@@ -44,7 +35,7 @@ namespace HuesSharp.UI
             picPicker.Visibility = Visibility.Hidden;
             picPicker.Margin = new Thickness(0, 0, 40, 38);
             MainGrid.Children.Add(picPicker);
-            
+
             songPicker.HorizontalAlignment = HorizontalAlignment.Right;
             songPicker.VerticalAlignment = VerticalAlignment.Bottom;
             songPicker.MaxHeight = 200;
@@ -113,7 +104,7 @@ namespace HuesSharp.UI
             thicknessAnim.To = new Thickness(-20, 50, 0, 0);
             thicknessAnim.Duration = TimeSpan.FromSeconds(duration);
             rotateAnim.From = 0;
-            rotateAnim.To = new int[]{ -20, 0, 20}[rnd.Next(0, 3)];
+            rotateAnim.To = new int[] { -20, 0, 20 }[rnd.Next(0, 3)];
             rotateAnim.Duration = TimeSpan.FromSeconds(duration);
             Storyboard.SetTarget(rotateAnim, tb);
             Storyboard.SetTargetProperty(rotateAnim, new PropertyPath("(TextBlock.RenderTransform).(RotateTransform.Angle)"));

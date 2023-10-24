@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace HuesSharp.UI
@@ -24,9 +15,9 @@ namespace HuesSharp.UI
         MainWindow main;
         string nextChar = "";
         DispatcherTimer timer = new DispatcherTimer();
-        PicPicker picPicker= new PicPicker();
+        PicPicker picPicker = new PicPicker();
         SongPicker songPicker = new SongPicker();
-        
+
         public UI_Modern(MainWindow MW)
         {
             InitializeComponent();
@@ -43,7 +34,7 @@ namespace HuesSharp.UI
             picPicker.VerticalAlignment = VerticalAlignment.Bottom;
             picPicker.MaxHeight = 200;
             picPicker.Width = 250;
-            picPicker.Visibility= Visibility.Hidden;
+            picPicker.Visibility = Visibility.Hidden;
             pickersGrid.Children.Add(picPicker);
 
             songPicker.HorizontalAlignment = HorizontalAlignment.Right;
@@ -256,7 +247,7 @@ namespace HuesSharp.UI
                     BottomGrid.Opacity = 1;
                     ToggleUIBottomButton.IsEnabled = false;
                     ToggleUIBottomButton.Opacity = 0;
-                    HideAnimationInProgress = true; 
+                    HideAnimationInProgress = true;
 
                     ui_State = UI_State.Shown;
                 }

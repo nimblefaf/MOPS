@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using System.Globalization;
-using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
-using System.Xml.Serialization;
+using System.Linq;
+using System.Text;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.ComponentModel;
+using System.Xml;
 
 namespace HuesSharp
 {
@@ -40,14 +35,14 @@ namespace HuesSharp
         }
     }
 
-    
+
 
     public struct Pics
     {
         public string name;
         public string fullname;
         public string source;
-        public string source_other; 
+        public string source_other;
         public string align;
         public BitmapSource pic;
         public BitmapSource[] animation;
@@ -82,7 +77,7 @@ namespace HuesSharp
                 using (FileStream zipToOpen = new FileStream(RP_path, FileMode.Open))
                 using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Read, false, Encoding.Default))
                     foreach (ZipArchiveEntry entry in archive.Entries.Where(e => e.FullName.Contains(filename)))
-                    using (var stream = entry.Open())
+                        using (var stream = entry.Open())
                         using (var memoryStream = new MemoryStream())
                         {
                             stream.CopyTo(memoryStream);
@@ -362,8 +357,8 @@ namespace HuesSharp
                                 using (var xmlread = XmlReader.Create(reader, readerSettings))
                                     info_xml.Load(xmlread);
                             }
-                                
-                            
+
+
 
                             if (entry.Name.ToLower() == "songs.xml")
                                 using (var stream = entry.Open())
@@ -433,8 +428,8 @@ namespace HuesSharp
                 {
                     if (node.Name == "name") ResPacks[ResPacks.Length - 1].name = node.InnerText;
                     else if (node.Name == "author") ResPacks[ResPacks.Length - 1].author = node.InnerText;
-                    else if(node.Name == "description") ResPacks[ResPacks.Length - 1].description = node.InnerText;
-                    else if(node.Name == "link") ResPacks[ResPacks.Length - 1].link = node.InnerText;
+                    else if (node.Name == "description") ResPacks[ResPacks.Length - 1].description = node.InnerText;
+                    else if (node.Name == "link") ResPacks[ResPacks.Length - 1].link = node.InnerText;
                 }
 
                 ResPacks[ResPacks.Length - 1].songs_start = allSongs.Length;
@@ -443,7 +438,7 @@ namespace HuesSharp
 
                 if (songs_xml.HasChildNodes) parseSongs(songs_xml, SongsBuffer, true);
                 else ResPacks[ResPacks.Length - 1].songs_count = 0;
-                
+
                 if (images_xml.HasChildNodes) parsePics(images_xml, PicsBuffer, ref Transfer);
                 else ResPacks[ResPacks.Length - 1].pics_count = 0;
                 PicsBuffer.Clear();
@@ -508,7 +503,7 @@ namespace HuesSharp
             ResPacks[ResPacks.Length - 1].songs_count = allSongs.Length - ResPacks[ResPacks.Length - 1].songs_start;
         }
 
-        private void parsePics(XmlDocument xml, Dictionary<string, BitmapImage> Buffer, ref Pics[] Transfer) 
+        private void parsePics(XmlDocument xml, Dictionary<string, BitmapImage> Buffer, ref Pics[] Transfer)
         {
             XmlElement xRoot = xml.DocumentElement;
             Pics tempPic;
@@ -543,15 +538,15 @@ namespace HuesSharp
                     {
                         tempPic.source_other = childnode.InnerText;
                     }
-                    else if(childnode.Name == "fullname")
+                    else if (childnode.Name == "fullname")
                     {
                         tempPic.fullname = childnode.InnerText;
                     }
-                    else if(childnode.Name == "align")
+                    else if (childnode.Name == "align")
                     {
                         tempPic.align = childnode.InnerText;
                     }
-                    else if(childnode.Name == "frameDuration")
+                    else if (childnode.Name == "frameDuration")
                     {
                         string MysteriousZero = "";
                         if (Buffer.ContainsKey(node.Attributes[0].Value + "_1")) MysteriousZero = "";
@@ -580,8 +575,8 @@ namespace HuesSharp
                         string text = childnode.InnerText;
                         tempPic.frameDuration = new int[tempPic.animation.Length];
                         int tempInt;
-                        if (int.TryParse(text, out tempInt)) 
-                            for (int i=0; i< tempPic.frameDuration.Length; i++) tempPic.frameDuration[i] = tempInt;
+                        if (int.TryParse(text, out tempInt))
+                            for (int i = 0; i < tempPic.frameDuration.Length; i++) tempPic.frameDuration[i] = tempInt;
                         else
                         {
                             string[] s_nums = text.Split(',');

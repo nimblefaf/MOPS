@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -43,8 +39,8 @@ namespace HuesSharp
         }
         private double GetPosOfSong()
         {
-            if (MainWin.Core.rhythm_pos >= 0) return MainWin.Core.Player.GetPosOfStream(MainWin.Core.Player.Stream_L);
-            else return MainWin.Core.Player.GetPosOfStream(MainWin.Core.Player.Stream_B);
+            if (MainWin.Core.rhythm_pos >= 0) return MainWin.Core.Player.GetPosOfStream(MainWin.Core.Player.Stream_Loop);
+            else return MainWin.Core.Player.GetPosOfStream(MainWin.Core.Player.Stream_Buildup);
         }
 
         public UI.UI_Alpha Display_Alpha;
@@ -82,7 +78,7 @@ namespace HuesSharp
                 case UIStyle.Weed:
                     Display_Weed.updateImageModeText();
                     break;
-                case UIStyle.Modern: 
+                case UIStyle.Modern:
                     Display_Modern.updateImageModeText();
                     break;
             }
@@ -165,7 +161,7 @@ namespace HuesSharp
                     Display_Weed.colorHex_textBlock.Text = "C=" + Hexify(MainWin.CurrentColorInd, 2);
                     break;
                 case UIStyle.Modern:
-                    Display_Modern.color_textBlock.Text= ColorName.ToUpper();
+                    Display_Modern.color_textBlock.Text = ColorName.ToUpper();
                     break;
             }
         }

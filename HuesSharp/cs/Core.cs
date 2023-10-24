@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DiscordRPC;
+using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using DiscordRPC;
 
 namespace HuesSharp
 {
@@ -92,12 +88,12 @@ namespace HuesSharp
         {
             if (rhythm_pos > 0)
             {
-                if (beat_length * rhythm_pos < Player.GetPosOfStream(Player.Stream_L) | beat_length * (rhythm_pos-1) > Player.GetPosOfStream(Player.Stream_L)) 
+                if (beat_length * rhythm_pos < Player.GetPosOfStream(Player.Stream_Loop) | beat_length * (rhythm_pos - 1) > Player.GetPosOfStream(Player.Stream_Loop))
                     TimeLine_Move();
             }
             else if (rhythm_pos == 0 & build_is_playing)
             {
-                if (Player.GetPosOfStream(Player.Stream_L) > 0)
+                if (Player.GetPosOfStream(Player.Stream_Loop) > 0)
                 {
                     TimeLine_Move();
                     build_is_playing = false;
@@ -105,12 +101,12 @@ namespace HuesSharp
             }
             else if (rhythm_pos == 0)
             {
-                if (Player.GetPosOfStream(Player.Stream_L) < beat_length)
+                if (Player.GetPosOfStream(Player.Stream_Loop) < beat_length)
                     TimeLine_Move();
             }
             else
             {
-                if (beat_length * b_rhythm_pos < Player.GetPosOfStream(Player.Stream_B)) 
+                if (beat_length * b_rhythm_pos < Player.GetPosOfStream(Player.Stream_Buildup))
                     TimeLine_Move();
             }
         }
@@ -222,7 +218,7 @@ namespace HuesSharp
                     else Player.build_mem = RPM.GetAudioFromZip(RPM.ResPacks[RPM.Get_rp_of_song(i)].path, RPM.allSongs[i].buildup_filename);
                     Player.Play_With_Buildup();
                     build_rhythm = RPM.allSongs[i].buildupRhythm;
-                    int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
+                    int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_Buildup) / (Audio.GetTimeOfStream(Player.Stream_Loop) / loop_rhythm.Length)));
                     if (build_rhythm == null) //In case there is buildup music without beat string
                     {
                         build_rhythm = new string('.', expected_size);
@@ -238,7 +234,7 @@ namespace HuesSharp
                 else Player.Play_Without_Buildup();
                 UIHandler.UpdateSongInfo(RPM.allSongs[i]);
 
-                beat_length = Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length;
+                beat_length = Audio.GetTimeOfStream(Player.Stream_Loop) / loop_rhythm.Length;
 
                 TimelineCheckAndFill();
                 MainWin.ShortBlackoutTimer.Interval = TimeSpan.FromSeconds(beat_length);
@@ -301,7 +297,7 @@ namespace HuesSharp
         {
             if (enabled_songs.Count > 1)
             {
-                if (current_song_ind == 0) Change_Song(enabled_songs[enabled_songs.Count-1].Ind);
+                if (current_song_ind == 0) Change_Song(enabled_songs[enabled_songs.Count - 1].Ind);
                 else Change_Song(enabled_songs[current_song_ind - 1].Ind);
             }
         }
@@ -341,7 +337,7 @@ namespace HuesSharp
             if (Player.build_mem != null)
             {
                 Player.Play_With_Buildup();
-                int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_B) / (Audio.GetTimeOfStream(Player.Stream_L) / loop_rhythm.Length)));
+                int expected_size = Convert.ToInt32(Math.Round(Audio.GetTimeOfStream(Player.Stream_Buildup) / (Audio.GetTimeOfStream(Player.Stream_Loop) / loop_rhythm.Length)));
                 current_timeline = string.Concat(build_rhythm, loop_rhythm);
                 rhythm_pos = -expected_size;
                 build_is_playing = true;

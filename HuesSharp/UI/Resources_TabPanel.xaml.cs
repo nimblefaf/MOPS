@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using Microsoft.Win32;
+using System.Linq;
 using System.Net;
-using Newtonsoft.Json;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
-using System.Timers;
 
 namespace HuesSharp.UI
 {
@@ -85,7 +77,7 @@ namespace HuesSharp.UI
             ui_reset_timer.Interval = TimeSpan.FromSeconds(3);
             ui_reset_timer.Tick += new EventHandler(ui_reset_timer_tick);
 
-            Remote_listBox.Items.Add(new setdata() { Name = "Click to load the list" }) ;
+            Remote_listBox.Items.Add(new setdata() { Name = "Click to load the list" });
         }
 
         public void SetReference(MainWindow window)
@@ -97,7 +89,7 @@ namespace HuesSharp.UI
         {
             if (respack_listbox.SelectedIndex != -1)
             {
-                if(Remote_listBox.IsEnabled) Remote_listBox.SelectedIndex = -1;
+                if (Remote_listBox.IsEnabled) Remote_listBox.SelectedIndex = -1;
                 load_remote_button.Visibility = Visibility.Hidden;
                 enableAll_button.Visibility = Visibility.Visible;
                 invert_button.Visibility = Visibility.Visible;
@@ -478,7 +470,7 @@ namespace HuesSharp.UI
         #region remote_rp_load
 
         private bool WebClient_IsActive = false;
-        
+
         private void load_remote_button_Click(object sender, RoutedEventArgs e)
         {
             WC_UI_Reset();
@@ -522,7 +514,7 @@ namespace HuesSharp.UI
 
                 Status_textBlock.Text = "Processing...";
                 backgroundWebLoader.RunWorkerAsync(e.Result);
-                
+
             }
             WebClient_IsActive = false;
         }
@@ -555,7 +547,7 @@ namespace HuesSharp.UI
                 bytesLoaded_textBlock.Text = "0b";
                 bytesToLoad_textBlock.Text = "0b";
                 percentLoaded_textBlock.Text = "0%";
-                Status_textBlock.Text = "Idle"; 
+                Status_textBlock.Text = "Idle";
                 Status_textBlock.Foreground = Brushes.Black;
             }
         }
@@ -566,7 +558,7 @@ namespace HuesSharp.UI
 
         string url_new = "https://portal.0x40hu.es/resource_packs.json";
         string url_classic = "https://cdn.0x40hu.es/getRespacks.php";
-                                
+
 
         private string error_message;
         private string hues_json;

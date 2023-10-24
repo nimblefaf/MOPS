@@ -1,19 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
+using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace HuesSharp.UI
 {
@@ -45,14 +33,14 @@ namespace HuesSharp.UI
                 "=  Fade and change image\r\n" +
                 "i  Invert all colours\r\n" +
                 "I  Invert & change image\r\n";
-                //"ı  Fade invert\r\n" +
-                //"sv Horizontal/vertical slice\r\n" +
-                //"SV Horizontal/vertical slice and change image\r\n" +
-                //"# Double slice\r\n" +
-                //"@ Double slice and change image\r\n" +
-                //"←↓↑→ Shutter\r\n" +
-                //"¯ Stop all effects in bank immediately\r\n" +
-                //"_ Stop timed effects (fade, slice etc)";
+            //"ı  Fade invert\r\n" +
+            //"sv Horizontal/vertical slice\r\n" +
+            //"SV Horizontal/vertical slice and change image\r\n" +
+            //"# Double slice\r\n" +
+            //"@ Double slice and change image\r\n" +
+            //"←↓↑→ Shutter\r\n" +
+            //"¯ Stop all effects in bank immediately\r\n" +
+            //"_ Stop timed effects (fade, slice etc)";
             shortcutsTextBox.Text =
                 "↑↓ Change song\r\n" +
                 "←→ Change image\r\n" +
