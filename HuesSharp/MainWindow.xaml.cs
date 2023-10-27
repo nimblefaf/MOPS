@@ -634,12 +634,6 @@ namespace HuesSharp
         }
 
 
-        //tied to the songs_listbox on SelectionChanged
-        public void SongPicker_SelectionChanged(int ind)
-        {
-            ImageChange(ind);
-        }
-
         public void Events_Stop()
         {
             if (Colors_Inverted)
@@ -727,16 +721,6 @@ namespace HuesSharp
             image0.Source = Core.RPM.allPics[Core.enabled_images[Core.current_image_pos].Ind].animation[anim_ind];
             if (Core.RPM.allPics[Core.enabled_images[Core.current_image_pos].Ind].animation.Length == anim_ind + 1) anim_ind = 0;
             else anim_ind++;
-        }
-
-        private void Images_listbox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void Songs_listbox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
         }
 
         private void RandomHue()
