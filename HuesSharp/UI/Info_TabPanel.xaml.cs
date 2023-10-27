@@ -33,14 +33,14 @@ namespace HuesSharp.UI
                 "=  Fade and change image\r\n" +
                 "i  Invert all colours\r\n" +
                 "I  Invert & change image\r\n";
-            //"ı  Fade invert\r\n" +
-            //"sv Horizontal/vertical slice\r\n" +
-            //"SV Horizontal/vertical slice and change image\r\n" +
-            //"# Double slice\r\n" +
-            //"@ Double slice and change image\r\n" +
-            //"←↓↑→ Shutter\r\n" +
-            //"¯ Stop all effects in bank immediately\r\n" +
-            //"_ Stop timed effects (fade, slice etc)";
+                //"ı  Fade invert\r\n" +
+                //"sv Horizontal/vertical slice\r\n" +
+                //"SV Horizontal/vertical slice and change image\r\n" +
+                //"# Double slice\r\n" +
+                //"@ Double slice and change image\r\n" +
+                //"←↓↑→ Shutter\r\n" +
+                //"¯ Stop all effects in bank immediately\r\n" +
+                //"_ Stop timed effects (fade, slice etc)";
             shortcutsTextBox.Text =
                 "↑↓ Change song\r\n" +
                 "←→ Change image\r\n" +
@@ -58,7 +58,7 @@ namespace HuesSharp.UI
                 "[O] Options\r\n" +
                 "[I] Information\r\n" +
                 "[1-6] Change UI\r\n" +
-                "[Alt+Enter] Fullscreen";
+                "[F11] Fullscreen";
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
