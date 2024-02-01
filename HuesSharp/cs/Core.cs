@@ -184,9 +184,21 @@ namespace HuesSharp
                     case '¤':
                         MainWin.timeline_whiteout();
                         break;
-                    //case '#':
-                    //    MainWin.timeline_color_change();
-                    //    break;
+                    case 's':
+                        MainWin.timeline_slice_hor();
+                        break;
+                    case 'S':
+                        MainWin.timeline_slice_hor_w_im();
+                        break;
+                    case 'v':
+                        MainWin.timeline_slice_ver();
+                        break;
+                    case 'V':
+                        MainWin.timeline_slice_ver_w_im();
+                        break;
+                    case '#':
+                        MainWin.timeline_slice_double();
+                        break;
                     default:
                         MainWin.timeline_pic_and_color();
                         break;

@@ -19,6 +19,9 @@
     <None Remove="effects\HuesYBlur26Effect.ps" />
     <None Remove="effects\HuesYBlur8Effect.ps" />
     <None Remove="effects\InvertColorEffect.ps" />
+    <None Remove="effects\SliceOmniV1Effect.ps" />
+    <None Remove="effects\SliceTestHorV1Effect.ps" />
+    <None Remove="effects\SliceTestVertV1Effect.ps" />
     <None Remove="fonts\HuesExtra.ttf" />
     <None Remove="fonts\PetMe.ttf" />
     <None Remove="fonts\PetMe128.ttf" />
@@ -63,6 +66,9 @@
     <Resource Include="effects\HuesYBlur26Effect.ps" />
     <Resource Include="effects\HuesYBlur8Effect.ps" />
     <Resource Include="effects\InvertColorEffect.ps" />
+    <Resource Include="effects\SliceOmniV1Effect.ps" />
+    <Resource Include="effects\SliceTestHorV1Effect.ps" />
+    <Resource Include="effects\SliceTestVertV1Effect.ps" />
     <Content Include="fonts\HuesExtra.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

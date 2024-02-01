@@ -29,6 +29,9 @@ namespace HuesSharp
         Shaders.HuesXBlur14Effect XBlur14 = new Shaders.HuesXBlur14Effect();
         Shaders.HuesYBlur26Effect YBlur26 = new Shaders.HuesYBlur26Effect();
         Shaders.HuesXBlur26Effect XBlur26 = new Shaders.HuesXBlur26Effect();
+        Shaders.SliceOmniV1Effect SliceOmni = new Shaders.SliceOmniV1Effect();
+        Shaders.SliceTestHorV1Effect SliceHorizontal = new Shaders.SliceTestHorV1Effect();
+        Shaders.SliceTestVertV1Effect SliceVertical = new Shaders.SliceTestVertV1Effect();
 
         public Hues.Palette[] hues;
 
@@ -90,6 +93,9 @@ namespace HuesSharp
         private Storyboard BlurAnimSB = new Storyboard();
         public DoubleAnimation BlurAnim = new DoubleAnimation();
 
+        private Storyboard SlideAnimSB = new Storyboard();
+        private DoubleAnimation SlideAnim = new DoubleAnimation();
+
         public Storyboard SB_Blackout = new Storyboard();
         private DoubleAnimation Blackout = new DoubleAnimation();
         private Storyboard SB_Blackout_Short = new Storyboard();
@@ -107,6 +113,17 @@ namespace HuesSharp
             BlurAnimSB.Children.Add(BlurAnim);
             BlurAnimSB.FillBehavior = FillBehavior.Stop;
             BlurAnimSB.DecelerationRatio = 1;
+
+            SlideAnim.From = 0.04;
+            SlideAnim.To = 0;
+            SlideAnim.Duration = TimeSpan.FromSeconds(0.3);
+            Storyboard.SetTargetProperty(SlideAnim, new PropertyPath("Effect.BlurAmount"));
+            Storyboard.SetTarget(SlideAnim, ImageGrid);
+            SlideAnimSB.Children.Add(SlideAnim);
+            SlideAnimSB.FillBehavior = FillBehavior.Stop;
+            SlideAnimSB.DecelerationRatio = 1;
+
+
 
             Fade.FillBehavior = FillBehavior.HoldEnd;
             Fade.BeginTime = TimeSpan.FromSeconds(0);
@@ -594,34 +611,43 @@ namespace HuesSharp
         }
 
         // 's' Horizontal slice
-        private void timeline_slice_hor()
+        public void timeline_slice_hor()
         {
-
+            ImageGrid.Effect = SliceHorizontal;
+            SlideAnimSB.Begin();
+            Core.UIHandler.TBAnimStart(false);
         }
         // 'S' Horizontal slice & change image
-        private void timeline_slice_hor_w_im()
+        public void timeline_slice_hor_w_im()
         {
-
+            timeline_image_change();
+            timeline_slice_hor();
         }
         // 'v' Vertical slice
-        private void timeline_slice_ver()
+        public void timeline_slice_ver()
         {
-
+            ImageGrid.Effect = SliceVertical;
+            SlideAnimSB.Begin();
+            Core.UIHandler.TBAnimStart(true);
         }
         // 'V' Vertical slice & change image
-        private void timeline_slice_ver_w_im()
+        public void timeline_slice_ver_w_im()
         {
-
+            timeline_image_change();
+            timeline_slice_ver();
         }
         // '#' Double slice
-        private void timeline_slice_double()
+        public void timeline_slice_double()
         {
-
+            ImageGrid.Effect = SliceOmni;
+            SlideAnimSB.Begin();
+            Core.UIHandler.TBAnimStart(true);
         }
         // '@' Double slice and change image
-        private void timeline_scice_double_w_im()
+        public void timeline_scice_double_w_im()
         {
-
+            timeline_image_change();
+            timeline_slice_double();
         }
 
         #endregion
