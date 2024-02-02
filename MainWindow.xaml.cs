@@ -413,6 +413,13 @@ namespace HuesSharp
                     if (this.WindowState == WindowState.Maximized)
                         toggle_fullscreen();
                     break;
+                case Key.Add:
+                    Core.ChangeVolume(1);
+                    break;
+                case Key.Subtract: 
+                    Core.ChangeVolume(-1);
+                    break;
+
             }
         }
 
