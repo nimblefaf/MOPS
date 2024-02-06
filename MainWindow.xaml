@@ -15,10 +15,12 @@
             <Ellipse x:Name="PrettyCircle" Fill="Blue" Visibility="Hidden" Width="300" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
         <Grid x:Name="RenderGrid">
-            <Grid x:Name="ImageGrid">
-                <Rectangle x:Name="ImageGrid_Rectangle" Fill="Transparent"/>
-                <!--This line allows pixelshader affect the whole screen (difference visible on high blur amount)-->
-                <Image x:Name="image0" Opacity="1" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" SourceUpdated="image_SourceUpdated" RenderOptions.EdgeMode="Aliased"/>
+            <Grid x:Name="AnisotropicGrid">
+                <Grid x:Name="ImageGrid">
+                    <Rectangle x:Name="ImageGrid_Rectangle" Fill="Transparent"/>
+                    <!--This line allows pixelshader affect the whole screen (difference visible on high blur amount)-->
+                    <Image x:Name="image0" Opacity="1" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode ="HighQuality" UseLayoutRounding="True" Stretch="UniformToFill" SourceUpdated="image_SourceUpdated" RenderOptions.EdgeMode="Aliased"/>
+                </Grid>
             </Grid>
         </Grid>
         <Rectangle x:Name="Blackout_Rectangle" Fill="Black" Stroke="Black" Opacity="0" Visibility="Visible" Margin="-1"/>

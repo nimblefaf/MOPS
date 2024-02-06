@@ -153,6 +153,9 @@ namespace HuesSharp.UI
 
             if (Properties.Settings.Default.shuffleImages) OB_ShuffleImagesOn.Background = Brushes.White;
             else OB_ShuffleImagesOff.Background = Brushes.White;
+
+            if (Properties.Settings.Default.anisotropicBlurEnabled) OB_Anisotropic_ON.Background = Brushes.White;
+            else OB_Anisotropic_OFF.Background = Brushes.White;
         }
 
 
@@ -439,6 +442,20 @@ namespace HuesSharp.UI
                 OB_UI_modern.Background = Brushes.White;
                 main.UIStyle_Graphics_Update();
             }
+        }
+
+        private void OB_Anisotropic_OFF_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.anisotropicBlurEnabled = false;
+            OB_Anisotropic_OFF.Background = Brushes.White;
+            OB_Anisotropic_ON.Background = Brushes.LightGray;
+        }
+
+        private void OB_Anisotropic_ON_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.anisotropicBlurEnabled = true;
+            OB_Anisotropic_OFF.Background = Brushes.LightGray;
+            OB_Anisotropic_ON.Background = Brushes.White;
         }
     }
 }

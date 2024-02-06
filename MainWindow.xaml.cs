@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HuesSharp.Shaders;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
@@ -93,6 +94,9 @@ namespace HuesSharp
         private Storyboard BlurAnimSB = new Storyboard();
         public DoubleAnimation BlurAnim = new DoubleAnimation();
 
+        private Storyboard AnisBlurAnimSB = new Storyboard();
+        private DoubleAnimation AnisBlurAnim = new DoubleAnimation();
+
         private Storyboard SlideAnimSB = new Storyboard();
         private DoubleAnimation SlideAnim = new DoubleAnimation();
 
@@ -113,6 +117,15 @@ namespace HuesSharp
             BlurAnimSB.Children.Add(BlurAnim);
             BlurAnimSB.FillBehavior = FillBehavior.Stop;
             BlurAnimSB.DecelerationRatio = 1;
+
+            AnisBlurAnim.From = 0.005;
+            AnisBlurAnim.To = 0;
+            AnisBlurAnim.Duration = TimeSpan.FromSeconds(0.5);
+            Storyboard.SetTargetProperty(AnisBlurAnim, new PropertyPath("Effect.BlurAmount"));
+            Storyboard.SetTarget(AnisBlurAnim, AnisotropicGrid);
+            AnisBlurAnimSB.Children.Add(AnisBlurAnim);
+            AnisBlurAnimSB.FillBehavior = FillBehavior.Stop;
+            AnisBlurAnimSB.DecelerationRatio = 1;
 
             SlideAnim.From = 0.04;
             SlideAnim.To = 0;
@@ -229,15 +242,19 @@ namespace HuesSharp
             {
                 case BlurDecay.Slow:
                     BlurAnim.Duration = TimeSpan.FromSeconds(0.35);
+                    AnisBlurAnim.Duration = TimeSpan.FromSeconds(0.35);
                     break;
                 case BlurDecay.Medium:
                     BlurAnim.Duration = TimeSpan.FromSeconds(0.25);
+                    AnisBlurAnim.Duration = TimeSpan.FromSeconds(0.25);
                     break;
                 case BlurDecay.Fast:
                     BlurAnim.Duration = TimeSpan.FromSeconds(0.15);
+                    AnisBlurAnim.Duration = TimeSpan.FromSeconds(0.15);
                     break;
                 case BlurDecay.Fastest:
                     BlurAnim.Duration = TimeSpan.FromSeconds(0.10);
+                    AnisBlurAnim.Duration = TimeSpan.FromSeconds(0.10);
                     break;
             }
 
@@ -255,6 +272,22 @@ namespace HuesSharp
                 case BlurAmount.High:
                     BlurAnim.From = 0.05 / (Properties.Settings.Default.blurQuality + 1);
                     break;
+            }
+        }
+
+        public void AnisotropicState_Upd()
+        {
+            if (Properties.Settings.Default.anisotropicBlurEnabled)
+            {
+                if (ImageGrid.Effect == XBlur8 | ImageGrid.Effect == XBlur14 | ImageGrid.Effect == XBlur26)
+                    AnisotropicGrid.Effect = YBlur8;
+                else if (ImageGrid.Effect == YBlur8 | ImageGrid.Effect == YBlur14 | ImageGrid.Effect == YBlur26)
+                    AnisotropicGrid.Effect = XBlur8;
+            }
+            else
+            {
+                AnisBlurAnimSB.Stop();
+                AnisotropicGrid.Effect = null;
             }
         }
 
@@ -526,7 +559,9 @@ namespace HuesSharp
         // 'X' Vertical blur only
         public void timeline_blur_vert()
         {
-            if (Core.enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
+            if (Core.enabled_images.Count != 0)
+            { 
+                switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
                     case BlurQuality.Low:
                         ImageGrid.Effect = YBlur8;
@@ -538,14 +573,23 @@ namespace HuesSharp
                         ImageGrid.Effect = YBlur26;
                         break;
                 }
+                if (Properties.Settings.Default.anisotropicBlurEnabled)
+                    AnisotropicGrid.Effect = XBlur8;
+                else
+                    AnisotropicGrid.Effect = null;
+            }
             BlurAnimSB.Begin();
+            if (Properties.Settings.Default.anisotropicBlurEnabled) AnisBlurAnimSB.Begin();
+
             Core.UIHandler.TBAnimStart(true);
         }
 
         // 'O' Vertical blur only
         public void timeline_blur_hor()
         {
-            if (Core.enabled_images.Count != 0) switch ((BlurQuality)Properties.Settings.Default.blurQuality)
+            if (Core.enabled_images.Count != 0)
+            {
+                switch ((BlurQuality)Properties.Settings.Default.blurQuality)
                 {
                     case BlurQuality.Low:
                         ImageGrid.Effect = XBlur8;
@@ -557,7 +601,15 @@ namespace HuesSharp
                         ImageGrid.Effect = XBlur26;
                         break;
                 }
+                if (Properties.Settings.Default.anisotropicBlurEnabled)
+                    AnisotropicGrid.Effect = YBlur8;
+                else
+                    AnisotropicGrid.Effect = null;
+            }
+            
             BlurAnimSB.Begin();
+            if (Properties.Settings.Default.anisotropicBlurEnabled) AnisBlurAnimSB.Begin();
+
             Core.UIHandler.TBAnimStart(false);
         }
 
