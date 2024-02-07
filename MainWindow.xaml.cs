@@ -118,7 +118,7 @@ namespace HuesSharp
             BlurAnimSB.FillBehavior = FillBehavior.Stop;
             BlurAnimSB.DecelerationRatio = 1;
 
-            AnisBlurAnim.From = 0.005;
+            AnisBlurAnim.From = 0.01;
             AnisBlurAnim.To = 0;
             AnisBlurAnim.Duration = TimeSpan.FromSeconds(0.5);
             Storyboard.SetTargetProperty(AnisBlurAnim, new PropertyPath("Effect.BlurAmount"));
@@ -277,17 +277,42 @@ namespace HuesSharp
 
         public void AnisotropicState_Upd()
         {
-            if (Properties.Settings.Default.anisotropicBlurEnabled)
+            switch ((anisotropicBlurPower)Properties.Settings.Default.anisotropicBlurPower)
             {
-                if (ImageGrid.Effect == XBlur8 | ImageGrid.Effect == XBlur14 | ImageGrid.Effect == XBlur26)
-                    AnisotropicGrid.Effect = YBlur8;
-                else if (ImageGrid.Effect == YBlur8 | ImageGrid.Effect == YBlur14 | ImageGrid.Effect == YBlur26)
-                    AnisotropicGrid.Effect = XBlur8;
-            }
-            else
-            {
-                AnisBlurAnimSB.Stop();
-                AnisotropicGrid.Effect = null;
+                case anisotropicBlurPower.Off:
+                    AnisBlurAnimSB.Stop();
+                    AnisotropicGrid.Effect = null;
+                    break;
+                case anisotropicBlurPower.Low:
+                    if (AnisotropicGrid.Effect == null)
+                    {
+                        if (ImageGrid.Effect == XBlur8 | ImageGrid.Effect == XBlur14 | ImageGrid.Effect == XBlur26)
+                            AnisotropicGrid.Effect = YBlur8;
+                        else if (ImageGrid.Effect == YBlur8 | ImageGrid.Effect == YBlur14 | ImageGrid.Effect == YBlur26)
+                            AnisotropicGrid.Effect = XBlur8;
+                    }
+                    AnisBlurAnim.From = 0.005;
+                    break;
+                case anisotropicBlurPower.Medium:
+                    if (AnisotropicGrid.Effect == null)
+                    {
+                        if (ImageGrid.Effect == XBlur8 | ImageGrid.Effect == XBlur14 | ImageGrid.Effect == XBlur26)
+                            AnisotropicGrid.Effect = YBlur8;
+                        else if (ImageGrid.Effect == YBlur8 | ImageGrid.Effect == YBlur14 | ImageGrid.Effect == YBlur26)
+                            AnisotropicGrid.Effect = XBlur8;
+                    }
+                    AnisBlurAnim.From = 0.007;
+                    break;
+                case anisotropicBlurPower.High:
+                    if (AnisotropicGrid.Effect == null)
+                    {
+                        if (ImageGrid.Effect == XBlur8 | ImageGrid.Effect == XBlur14 | ImageGrid.Effect == XBlur26)
+                            AnisotropicGrid.Effect = YBlur8;
+                        else if (ImageGrid.Effect == YBlur8 | ImageGrid.Effect == YBlur14 | ImageGrid.Effect == YBlur26)
+                            AnisotropicGrid.Effect = XBlur8;
+                    }
+                    AnisBlurAnim.From = 0.01;
+                    break;
             }
         }
 
@@ -573,13 +598,13 @@ namespace HuesSharp
                         ImageGrid.Effect = YBlur26;
                         break;
                 }
-                if (Properties.Settings.Default.anisotropicBlurEnabled)
+                if (Properties.Settings.Default.anisotropicBlurPower != 0)
                     AnisotropicGrid.Effect = XBlur8;
                 else
                     AnisotropicGrid.Effect = null;
             }
             BlurAnimSB.Begin();
-            if (Properties.Settings.Default.anisotropicBlurEnabled) AnisBlurAnimSB.Begin();
+            if (Properties.Settings.Default.anisotropicBlurPower != 0) AnisBlurAnimSB.Begin();
 
             Core.UIHandler.TBAnimStart(true);
         }
@@ -601,14 +626,14 @@ namespace HuesSharp
                         ImageGrid.Effect = XBlur26;
                         break;
                 }
-                if (Properties.Settings.Default.anisotropicBlurEnabled)
+                if (Properties.Settings.Default.anisotropicBlurPower != 0)
                     AnisotropicGrid.Effect = YBlur8;
                 else
                     AnisotropicGrid.Effect = null;
             }
             
             BlurAnimSB.Begin();
-            if (Properties.Settings.Default.anisotropicBlurEnabled) AnisBlurAnimSB.Begin();
+            if (Properties.Settings.Default.anisotropicBlurPower != 0) AnisBlurAnimSB.Begin();
 
             Core.UIHandler.TBAnimStart(false);
         }

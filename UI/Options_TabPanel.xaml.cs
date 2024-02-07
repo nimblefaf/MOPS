@@ -154,8 +154,36 @@ namespace HuesSharp.UI
             if (Properties.Settings.Default.shuffleImages) OB_ShuffleImagesOn.Background = Brushes.White;
             else OB_ShuffleImagesOff.Background = Brushes.White;
 
-            if (Properties.Settings.Default.anisotropicBlurEnabled) OB_Anisotropic_ON.Background = Brushes.White;
-            else OB_Anisotropic_OFF.Background = Brushes.White;
+
+            switch ((anisotropicBlurPower)Properties.Settings.Default.anisotropicBlurPower)
+            {
+                case anisotropicBlurPower.Off:
+                    OB_Anisotropic_OFF.Background = Brushes.White;
+                    OB_Anisotropic_LOW.Background = Brushes.LightGray;
+                    OB_Anisotropic_MEDIUM.Background = Brushes.LightGray;
+                    OB_Anisotropic_HIGH.Background = Brushes.LightGray;
+                    break;
+
+                case anisotropicBlurPower.Low:
+                    OB_Anisotropic_OFF.Background = Brushes.LightGray;
+                    OB_Anisotropic_LOW.Background = Brushes.White;
+                    OB_Anisotropic_MEDIUM.Background = Brushes.LightGray;
+                    OB_Anisotropic_HIGH.Background = Brushes.LightGray;
+                    break;
+                case anisotropicBlurPower.Medium:
+                    OB_Anisotropic_OFF.Background = Brushes.LightGray;
+                    OB_Anisotropic_LOW.Background = Brushes.LightGray;
+                    OB_Anisotropic_MEDIUM.Background = Brushes.White;
+                    OB_Anisotropic_HIGH.Background = Brushes.LightGray;
+                    break;
+                case anisotropicBlurPower.High:
+                    OB_Anisotropic_OFF.Background = Brushes.LightGray;
+                    OB_Anisotropic_LOW.Background = Brushes.LightGray;
+                    OB_Anisotropic_MEDIUM.Background = Brushes.LightGray;
+                    OB_Anisotropic_HIGH.Background = Brushes.White;
+                    break;
+
+            }
         }
 
 
@@ -446,16 +474,30 @@ namespace HuesSharp.UI
 
         private void OB_Anisotropic_OFF_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.anisotropicBlurEnabled = false;
-            OB_Anisotropic_OFF.Background = Brushes.White;
-            OB_Anisotropic_ON.Background = Brushes.LightGray;
+            Properties.Settings.Default.anisotropicBlurPower = 0;
+            main.AnisotropicState_Upd();
+            Options_UI_Update();
         }
 
-        private void OB_Anisotropic_ON_Click(object sender, RoutedEventArgs e)
+        private void OB_Anisotropic_LOW_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.anisotropicBlurEnabled = true;
-            OB_Anisotropic_OFF.Background = Brushes.LightGray;
-            OB_Anisotropic_ON.Background = Brushes.White;
+            Properties.Settings.Default.anisotropicBlurPower = 1;
+            main.AnisotropicState_Upd();
+            Options_UI_Update();
+        }
+
+        private void OB_Anisotropic_MEDIUM_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.anisotropicBlurPower = 2;
+            main.AnisotropicState_Upd();
+            Options_UI_Update();
+        }
+
+        private void OB_Anisotropic_HIGH_Click(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.anisotropicBlurPower = 3;
+            main.AnisotropicState_Upd();
+            Options_UI_Update();
         }
     }
 }

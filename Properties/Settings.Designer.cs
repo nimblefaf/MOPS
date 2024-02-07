@@ -145,13 +145,13 @@ namespace HuesSharp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool anisotropicBlurEnabled {
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int anisotropicBlurPower {
             get {
-                return ((bool)(this["anisotropicBlurEnabled"]));
+                return ((int)(this["anisotropicBlurPower"]));
             }
             set {
-                this["anisotropicBlurEnabled"] = value;
+                this["anisotropicBlurPower"] = value;
             }
         }
     }

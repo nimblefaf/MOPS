@@ -491,4 +491,11 @@ namespace HuesSharp
         Weed = 3,
         Modern = 4,
     }
+    public enum anisotropicBlurPower
+    {
+        Off = 0,
+        Low = 1, 
+        Medium = 2,
+        High = 3
+    }
 }
