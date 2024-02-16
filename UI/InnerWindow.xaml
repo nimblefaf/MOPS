@@ -9,15 +9,13 @@
              d:DesignHeight="450" d:DesignWidth="600" FontFamily="{StaticResource PetMe128}" Background="#FFC5C5C5" Opacity="0.8">
     <Border BorderBrush="Black" BorderThickness="2">
     <Grid>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="435" VerticalAlignment="Top" Width="600" Margin="0,15,0,0" SelectionChanged="tabControl_SelectionChanged">
+        <TabControl x:Name="tabControl" Height="435" VerticalAlignment="Top" Width="Auto" Margin="0,15,0,0" SelectionChanged="tabControl_SelectionChanged">
             <TabItem Name="res_tab" Header="RESOURCES" Cursor="Hand" FontSize="10" Width="150" Height="25">
                 <uc:Resources_TabPanel/>
             </TabItem>
-            <TabItem Header="EDITOR" Cursor="Hand" FontSize="10" Width="150" Height="25">
-                <Grid Background="#FFE5E5E5" Cursor="Arrow">
-                    <TextBlock x:Name="EditorTitle" TextWrapping="Wrap" Text="Coming much, much later..." FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Grid>
-            </TabItem>
+                <TabItem Header="EDITOR" Cursor="Hand" FontSize="10" Width="150" Height="25">
+                    <uc:Editor_TabPanel HorizontalAlignment="Stretch"></uc:Editor_TabPanel>
+                </TabItem>
             <TabItem Name="opt_tab" Header="OPTIONS" Cursor="Hand" FontSize="10" Width="150" Height="25">
                 <uc:Options_TabPanel/>
             </TabItem>
@@ -25,7 +23,7 @@
                 <uc:Info_TabPanel/>
             </TabItem>
         </TabControl>
-            <Button x:Name="hide_button" Content="X" HorizontalAlignment="Left" Margin="585,0,0,0" VerticalAlignment="Top" Width="15" Height="15" FontWeight="Bold" FontSize="6" FontFamily="SimHei" Foreground="White" Background="Black" BorderBrush="Black" Click="hide_button_Click" Cursor="Hand"/>
-        </Grid>
+            <Button x:Name="hide_button" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" Width="15" Height="15" FontWeight="Bold" FontSize="6" FontFamily="SimHei" Foreground="White" Background="Black" BorderBrush="Black" Click="hide_button_Click" Cursor="Hand"/>
+    </Grid>
     </Border>
 </UserControl>

@@ -31,6 +31,11 @@ namespace HuesSharp.UI
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //TO DO: Resize the window for Editor
+            if (tabControl.SelectedIndex == 1)
+            {
+                InnerWin.Width = 800;
+            }
+            else InnerWin.Width = 600;
         }
 
         private void hide_button_Click(object sender, RoutedEventArgs e)
