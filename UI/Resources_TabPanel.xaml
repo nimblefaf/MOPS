@@ -16,8 +16,8 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click"/>
-                <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" Width="345" TextWrapping="Wrap"/>
+                <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="345" TextWrapping="Wrap"/>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="DataTemplateCheckboxedImages" x:Name="C_DataTemplateCheckboxedImages">
