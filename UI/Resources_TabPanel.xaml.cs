@@ -103,12 +103,18 @@ namespace HuesSharp.UI
                 Songs_tab.Header = "Songs: " + main.Core.RPM.ResPacks[ind].songs_count;
                 Images_tab.Header = "Images: " + main.Core.RPM.ResPacks[ind].pics_count;
 
+                if (songs_listbox.ItemTemplate == (DataTemplate)Resources["DataTemplateStateless"])
+                    songs_listbox.ItemTemplate = (DataTemplate)Resources["DataTemplateCheckboxedSongs"]; //returning checkboxes
+
                 song_names.Clear();
                 int ceiling = main.Core.RPM.ResPacks[ind].songs_start + main.Core.RPM.ResPacks[ind].songs_count;
                 for (int i = main.Core.RPM.ResPacks[ind].songs_start; i < ceiling; i++)
                 {
                     song_names.Add(new setdata() { Name = main.Core.RPM.allSongs[i].title, State = main.Core.RPM.allSongs[i].enabled, Ind = i });
                 }
+
+                if (images_listbox.ItemTemplate == (DataTemplate)Resources["DataTemplateStateless"])
+                    images_listbox.ItemTemplate = (DataTemplate)Resources["DataTemplateCheckboxedImages"]; //returning checkboxes
 
                 images_names.Clear();
                 ceiling = main.Core.RPM.ResPacks[ind].pics_start + main.Core.RPM.ResPacks[ind].pics_count;

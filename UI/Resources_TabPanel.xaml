@@ -5,10 +5,30 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HuesSharp.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="401" d:DesignWidth="590" FontFamily="{StaticResource PetMe128}">
+             d:DesignHeight="401" d:DesignWidth="590" FontFamily="{StaticResource PetMe64}">
     <UserControl.Resources>
         <DataTemplate x:Key="DataTemplateStateless" x:Name="C_DataTemplateStateless">
             <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="Auto" TextWrapping="Wrap" Margin="2"/>
+        </DataTemplate>
+        <DataTemplate x:Key="DataTemplateCheckboxedSongs" x:Name="C_DataTemplateCheckboxedSongs">
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click"/>
+                <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" Width="345" TextWrapping="Wrap"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="DataTemplateCheckboxedImages" x:Name="C_DataTemplateCheckboxedImages">
+            <Grid Margin="0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Images_CheckBox_Click" VerticalAlignment="Center"></CheckBox>
+                <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="auto" TextWrapping="Wrap"/>
+            </Grid>
         </DataTemplate>
     </UserControl.Resources>
     <Grid Background="#FFE5E5E5" Cursor="Arrow" HorizontalAlignment="Stretch" Margin="0,0,0,0" >
@@ -29,7 +49,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <CheckBox x:Name="rp_checkbox" IsChecked="{Binding State, Mode=TwoWay}" Click="RPList_CheckBox_Clicked" VerticalAlignment="Center"/>
+                        <CheckBox Grid.Column="0"  IsChecked="{Binding State, Mode=TwoWay}" Click="RPList_CheckBox_Clicked" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" Width="175"/>
                     </Grid>
                 </DataTemplate>
@@ -43,38 +63,12 @@
         <TabControl x:Name="ResTabControl" BorderBrush="Black" BorderThickness="1.5" HorizontalAlignment="Left" Margin="5,0,0,5" Width="395" Grid.Column="1" Grid.Row="1">
             <TabItem x:Name="Songs_tab" Header="Songs: &lt;&gt;" Width="200">
                 <Grid Background="#FFE5E5E5">
-                    <ListBox x:Name="songs_listbox" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" d:ItemsSource="{d:SampleData ItemCount=5 }">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="345" TextWrapping="Wrap"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <ListBox x:Name="songs_listbox" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="songs_listbox_SelectionChanged" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" ItemTemplate="{DynamicResource DataTemplateCheckboxedSongs}" d:ItemsSource="{d:SampleData ItemCount=5 }"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="Images_tab" Header="Images: &lt;&gt;" Margin="-2,-2,-75,-1">
                 <Grid Background="#FFE5E5E5">
-                    <ListBox x:Name="images_listbox" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="images_listbox_SelectionChanged" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" d:ItemsSource="{d:SampleData ItemCount=5}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Images_CheckBox_Click" VerticalAlignment="Center"></CheckBox>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="auto" TextWrapping="Wrap"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <ListBox x:Name="images_listbox" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Width="385" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="images_listbox_SelectionChanged" Background="#FFE2E2E2" ItemContainerStyle="{DynamicResource ListBoxItemStyleHues}" ItemTemplate="{DynamicResource DataTemplateCheckboxedImages}" d:ItemsSource="{d:SampleData ItemCount=5}"/>
                 </Grid>
             </TabItem>
         </TabControl>
