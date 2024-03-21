@@ -514,7 +514,11 @@ namespace HuesSharp
                 if (node.NodeType == XmlNodeType.Comment) continue; //WHY DOES IT EVEN PARSE COMMENTS?!
                 tempPic.name = node.Attributes[0].Value;
 
-                if (Buffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
+                if (Buffer.ContainsKey(node.Attributes[0].Value)) 
+                    tempPic.pic = Buffer[node.Attributes[0].Value];
+                else if (Buffer.ContainsKey(node.ChildNodes[1].InnerText)) 
+                    tempPic.pic = Buffer[node.ChildNodes[1].InnerText];
+                else if (Buffer.ContainsKey(RemoveDiacritics(node.Attributes[0].Value)))
                     tempPic.pic = Buffer[RemoveDiacritics(node.Attributes[0].Value)];
                 else if (Buffer.ContainsKey(RemoveDiacritics(node.ChildNodes[1].InnerText)))
                     tempPic.pic = Buffer[RemoveDiacritics(node.ChildNodes[1].InnerText)];
