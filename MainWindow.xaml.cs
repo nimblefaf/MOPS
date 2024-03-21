@@ -771,11 +771,11 @@ namespace HuesSharp
             {
                 int index = Core.enabled_images[p].Ind;
                 image0.Source = Core.RPM.allPics[index].pic;
+                Core.UIHandler.UpdatePicName(Core.RPM.allPics[index]);
 
                 if (Core.RPM.allPics[index].animation == null)
                 {
                     AnimTimer.Stop();
-                    Core.UIHandler.UpdatePicName(Core.RPM.allPics[index]);
                     switch (Core.RPM.allPics[index].align)
                     {
                         case "left":
