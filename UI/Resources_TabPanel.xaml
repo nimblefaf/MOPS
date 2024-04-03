@@ -16,7 +16,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click" VerticalAlignment="Center" />
+                <CheckBox Grid.Column="0" Style="{DynamicResource CheckBoxStyleHues}" IsChecked="{Binding State, Mode=TwoWay}" Click="Song_CheckBox_Click" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center"  Width="345" TextWrapping="Wrap"/>
             </Grid>
         </DataTemplate>
@@ -26,7 +26,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <CheckBox Grid.Column="0" IsChecked="{Binding State, Mode=TwoWay}" Click="Images_CheckBox_Click" VerticalAlignment="Center"></CheckBox>
+                <CheckBox Grid.Column="0" Style="{DynamicResource CheckBoxStyleHues}" IsChecked="{Binding State, Mode=TwoWay}" Click="Images_CheckBox_Click" VerticalAlignment="Center"></CheckBox>
                 <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="auto" TextWrapping="Wrap"/>
             </Grid>
         </DataTemplate>
@@ -49,7 +49,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <CheckBox Grid.Column="0"  IsChecked="{Binding State, Mode=TwoWay}" Click="RPList_CheckBox_Clicked" VerticalAlignment="Center"/>
+                        <CheckBox Style="{DynamicResource CheckBoxStyleHues}" Grid.Column="0"  IsChecked="{Binding State, Mode=TwoWay}" Click="RPList_CheckBox_Clicked" VerticalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" Width="175"/>
                     </Grid>
                 </DataTemplate>
